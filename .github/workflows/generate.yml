@@ -1,0 +1,44 @@
+name: Generate (dataimago::ai)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dataimago-spec.yaml'
+      - 'packages/r-packages/**/R/**'
+      - 'packages/r-packages/**/DESCRIPTION'
+  workflow_dispatch: {}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::dataimago
+            any::yaml
+            any::jsonlite
+
+      - name: Run dataimago::ai(spec_path)
+        run: |
+          Rscript -e 'dataimago::ai(spec_path = "dataimago-spec.yaml")'
+
+      - name: Commit + push generated changes
+        run: |
+          git config user.name "dataimago-bot"
+          git config user.email "bot@dataimago.ai"
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(generate): refresh from dataimago::ai() [skip ci]"
+            git push
+          else
+            echo "(no changes to commit)"
+          fi

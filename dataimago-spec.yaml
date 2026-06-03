@@ -1,0 +1,126 @@
+# dataimago-spec.yaml — the contract between dissertation.ai and dataimago::ai().
+#
+# This file is the COMPLETE representation of your dissertation. Edit it any time
+# to refine your dissertation's configuration; the `generate.yml` CI workflow
+# re-runs `dataimago::ai()` on every push to this file.
+#
+# Full schema: dissertation-ai/docs/iteration-3-d-2-design.md §3
+# Down-the-road logistical fields (IRB, funding, embargo, deadlines, co-authorship):
+#   per the design principle "spec accommodates, interview asks the critical subset"
+#   these fields are optional and default to empty. Fill them in over time.
+#
+# THIS FILE IS A PLACEHOLDER. It gets overwritten at provision time with your
+# actual answers from the dissertation.ai onboarding interview.
+
+apiVersion: dataimago.ai/v1alpha1
+kind: ProjectSpec
+
+metadata:
+  name: PLACEHOLDER-dissertation
+  vertical: dissertation
+  generatedBy: dissertation-ai
+  generatedAt: "2026-01-01T00:00:00Z"
+  specVersion: 1
+
+user:
+  name: "Your Name"
+  email: "you@institution.edu"
+  githubUsername: "your-github-username"
+
+project:
+  title: "Your dissertation working title"
+  description: "One-paragraph description of your dissertation."
+
+source:
+  case: extension                # 'extension' | 'retrofit' | 'no-r'
+  rPackage:
+    name: PLACEHOLDER-thesis-rpkg
+    submoduleUrl: "https://github.com/your-github-username/PLACEHOLDER-thesis-rpkg"
+    submodulePath: "packages/r-packages/PLACEHOLDER-thesis-rpkg"
+    quartoRoot: "ui/www"
+
+vertical:
+  dissertation:
+    institution:
+      name: "Your University"
+      degreeProgram: "Ph.D. Your Program"
+      department: ""
+      expectedDefenseYear: null
+      # D.2.1.h down-the-road fields (optional; fill in over time):
+      submissionDeadline: ""
+      archiveUrl: ""
+      administratorContact:
+        name: ""
+        email: ""
+        role: ""
+
+    advisors:
+      chair:
+        name: "Dr. Your Chair"
+      committee: []
+
+    timeline:
+      proposalDate: ""
+      defenseDate: ""
+      submissionDate: ""
+
+    thesis:
+      workingTitle: "Your dissertation working title"
+      workingSubtitle: ""
+      researchQuestion: "What is the central question your dissertation answers?"
+      background: "What brought you to this topic?"
+      contribution: "What is the novel contribution?"
+      chapters:
+        - { id: introduction, title: "Introduction" }
+        - { id: literature, title: "Literature Review" }
+        - { id: methodology, title: "Methodology" }
+        - { id: results, title: "Results" }
+        - { id: discussion, title: "Discussion" }
+        - { id: conclusion, title: "Conclusion" }
+      methodology:
+        approach: computational      # quantitative | qualitative | mixed-methods | computational
+        summary: "Brief description of your methodology."
+      bibliography:
+        file: references.bib
+        citationStyle: apa-7         # apa-7 | chicago | mla | harvard | custom
+      classFile:
+        type: shipped                # shipped | vendored | generated
+        path: thesis.cls
+        guidelinesDocuments: []
+      # D.2.1.h down-the-road fields:
+      embargo:
+        type: none                   # none | one-year | two-year | custom
+        durationMonths: 0
+        reason: ""
+      coauthors: []
+
+    context:
+      researchDocuments: []
+      advisorWritings: []
+      styleExemplars: []
+      background: []
+      additionalNotes: ""
+
+    rEcosystem: []                   # tidyverse | data-table | collapse | base | stan | tidymodels | shiny | targets
+
+    # D.2.1.h down-the-road sections:
+    compliance:
+      irb:
+        status: not-required         # pending | approved | exempt | not-required
+        number: ""
+        expirationDate: ""
+        link: ""
+      dua: []
+    funding: []
+
+features:
+  quartoBuild: true
+  thesisPdf: true
+  mcpTools: true
+  aiContext: true
+  apiScaffolding: true
+
+generator:
+  rpkgVersion: ">=0.5.0"
+  designVersion: ">=2.0.0"
+  outputDir: "."
