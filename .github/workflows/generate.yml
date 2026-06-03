@@ -1,11 +1,23 @@
 name: Generate (dataimago::ai)
+#
+# Re-generates derived files (types.ts, mcp-schema.json, .ai-context/, etc.)
+# from the current `dataimago-spec.yaml` + R package source.
+#
+# Currently **manual-trigger only** (`workflow_dispatch`).
+#
+# Why manual-only as of D.2.2.b: the underlying `dataimago::ai(spec_path)`
+# function in `dataimago-rpkg` doesn't yet read the spec.yaml + drive
+# generation — that's tracked work for D.2.3.b (or possibly iteration-4).
+# Once it ships, this workflow flips to `on: push: branches: [main]` with
+# `paths: ['dataimago-spec.yaml', 'packages/r-packages/**']` so changes to
+# the spec auto-regenerate.
+#
+# For now, **AI assistance in your editor** (Claude Code, Cursor, etc.) is
+# how you regenerate. After editing `dataimago-spec.yaml`, ask the AI to
+# apply the changes wherever needed (mostly chapter front-matter +
+# README + the methodology section).
+#
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'dataimago-spec.yaml'
-      - 'packages/r-packages/**/R/**'
-      - 'packages/r-packages/**/DESCRIPTION'
   workflow_dispatch: {}
 
 jobs:
