@@ -1,4 +1,14 @@
 name: CI
+#
+# Runs typecheck + lint on every push + PR.
+#
+# **Skipped on the template repo itself** (`dataimago/dissertation-app-template`).
+# The template ships placeholders (PLACEHOLDER-dissertation, {{user.name}},
+# etc.) that don't pass `tsc --noEmit` or `eslint`, and there's no
+# `package-lock.json` to feed `npm ci` here. CI runs normally in user-
+# derived repos after they `npm install` once (which generates a lockfile)
+# and `/api/generate` has substituted real values into the placeholders.
+#
 on:
   pull_request:
     branches: [main]
@@ -7,6 +17,7 @@ on:
 
 jobs:
   typecheck:
+    if: github.repository != 'dataimago/dissertation-app-template'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
