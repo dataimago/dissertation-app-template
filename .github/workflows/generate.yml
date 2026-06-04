@@ -1,23 +1,21 @@
 name: Generate (dataimago::ai)
 #
-# Re-generates derived files (types.ts, mcp-schema.json, .ai-context/, etc.)
-# from the current `dataimago-spec.yaml` + R package source.
+# Re-generates the producer-driver integration artifacts (public/api/*.json
+# incl. discover.json + mcp-schema.json, packages/shared-utils/src/types.ts,
+# optional R/api.R) from the current `dataimago-spec.yaml` + R package source.
 #
-# Currently **manual-trigger only** (`workflow_dispatch`).
-#
-# Why manual-only as of D.2.2.b: the underlying `dataimago::ai(spec_path)`
-# function in `dataimago-rpkg` doesn't yet read the spec.yaml + drive
-# generation — that's tracked work for D.2.3.b (or possibly iteration-4).
-# Once it ships, this workflow flips to `on: push: branches: [main]` with
-# `paths: ['dataimago-spec.yaml', 'packages/r-packages/**']` so changes to
-# the spec auto-regenerate.
-#
-# For now, **AI assistance in your editor** (Claude Code, Cursor, etc.) is
-# how you regenerate. After editing `dataimago-spec.yaml`, ask the AI to
-# apply the changes wherever needed (mostly chapter front-matter +
-# README + the methodology section).
+# Triggers on pushes that change the spec or the R package (and manually).
+# Enabled in D.2.3.b, once `dataimago::ai(spec_path)` shipped in the
+# `dataimago/dataimago` R package. The bot's commit carries `[skip ci]` so its
+# own push doesn't retrigger this workflow.
 #
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'dataimago-spec.yaml'
+      - 'packages/r-packages/**/R/**'
+      - 'packages/r-packages/**/DESCRIPTION'
   workflow_dispatch: {}
 
 jobs:
@@ -34,8 +32,10 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # `dataimago` is not on CRAN — install from the GitHub repo's package
+          # subdirectory (pak ref: github::owner/repo/subdir).
           packages: |
-            any::dataimago
+            github::dataimago/dataimago/dataimago
             any::yaml
             any::jsonlite
 
