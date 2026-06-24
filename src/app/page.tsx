@@ -25,6 +25,9 @@ export default function Home() {
   const author = spec.user.name;
   const institution = spec.vertical.dissertation.institution;
   const rpkgName = spec.source.rPackage?.name ?? '';
+  // Content-only (no-r): the manuscript lives in this repo's `thesis/`, not an
+  // R-package submodule. The chapter path + build trigger differ.
+  const isNoR = !rpkgName;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -50,20 +53,30 @@ export default function Home() {
             </li>
           ))}
         </ol>
-        {rpkgName && (
-          <p className="mt-4 text-sm text-stone-700">
-            Edit chapter sources at{' '}
-            <code className="font-mono">packages/r-packages/{rpkgName}/ui/www/chapters/*.qmd</code>.
-          </p>
-        )}
+        <p className="mt-4 text-sm text-stone-700">
+          Edit chapter sources at{' '}
+          <code className="font-mono">
+            {isNoR
+              ? 'thesis/chapters/*.qmd'
+              : `packages/r-packages/${rpkgName}/ui/www/chapters/*.qmd`}
+          </code>
+          .
+        </p>
       </section>
 
       <section className="mt-12">
         <h2 className="font-display text-2xl text-ink">Thesis PDF</h2>
         <p className="mt-2 text-stone-700">
-          Rebuilt by your R package’s <code className="font-mono">build-thesis.yml</code> workflow
-          on every push that touches <code className="font-mono">ui/www/</code> or{' '}
-          <code className="font-mono">R/</code>.
+          Rebuilt by the <code className="font-mono">build-thesis.yml</code> workflow on every
+          push that touches{' '}
+          <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
+          {isNoR ? '' : (
+            <>
+              {' '}or <code className="font-mono">R/</code>
+            </>
+          )}
+          . The built PDF is committed to <code className="font-mono">docs/thesis.pdf</code> after
+          your first build.
         </p>
       </section>
 

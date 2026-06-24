@@ -1,0 +1,69 @@
+name: Build thesis PDF
+#
+# Content-only (no-R) dissertations host the thesis bundle directly in this app
+# repo's `thesis/` (provisioned by dissertation.ai from the canonical rpkg
+# template). The build is pure Quarto + XeLaTeX — no R — so this is the rpkg
+# template's build-thesis.yml minus the R setup steps, working in `thesis/`.
+#
+# R-bearing dissertations build their PDF in the R package instead; they never
+# populate `thesis/`, so the `thesis/**` path trigger never fires here and the
+# real steps are additionally guarded on `thesis/` existing.
+#
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'thesis/**'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    # Skipped on the template repo itself (it ships no `thesis/` + placeholders).
+    if: github.repository != 'dataimago/dissertation-app-template'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+      # setup-tinytex installs TinyTeX AND puts `tlmgr` on PATH (a bare `tlmgr`
+      # otherwise isn't found — the failure the first real E2E run hit rpkg-side).
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install fonts the thesis uses (Noto family for XeLaTeX/fontspec)
+        if: hashFiles('thesis/_quarto.yml') != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core fonts-noto-extra fonts-noto-cjk
+          fc-cache -f
+
+      - name: Install thesis-class LaTeX packages
+        if: hashFiles('thesis/_quarto.yml') != ''
+        run: |
+          tlmgr install xetex fontspec unicode-math
+          tlmgr install enumitem etoolbox geometry hyperref tocbibind setspace xstring
+
+      - name: Render thesis PDF
+        if: hashFiles('thesis/_quarto.yml') != ''
+        working-directory: thesis
+        run: quarto render --to pdf
+
+      - name: Upload PDF artifact
+        if: hashFiles('thesis/_quarto.yml') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis-pdf
+          path: docs/thesis.pdf
+          retention-days: 30
+
+      - name: Commit rendered PDF to repo
+        if: github.event_name == 'push' && hashFiles('thesis/_quarto.yml') != ''
+        run: |
+          git config user.name "dataimago-thesis-bot"
+          git config user.email "thesis-bot@dataimago.ai"
+          git add -f docs/thesis.pdf  # -f: docs/ is gitignored build output
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(thesis): rebuild PDF [skip ci]"
+            git push
+          fi
