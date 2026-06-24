@@ -61,7 +61,7 @@ export default function Home() {
       <section className="mt-12">
         <h2 className="font-display text-2xl text-ink">Thesis PDF</h2>
         <p className="mt-2 text-stone-700">
-          Rebuilt by your R package's <code className="font-mono">build-thesis.yml</code> workflow
+          Rebuilt by your R package’s <code className="font-mono">build-thesis.yml</code> workflow
           on every push that touches <code className="font-mono">ui/www/</code> or{' '}
           <code className="font-mono">R/</code>.
         </p>
