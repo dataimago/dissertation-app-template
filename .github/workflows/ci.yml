@@ -3,11 +3,14 @@ name: CI
 # Runs typecheck + lint on every push + PR.
 #
 # **Skipped on the template repo itself** (`dataimago/dissertation-app-template`).
-# The template ships placeholders (PLACEHOLDER-dissertation, {{user.name}},
-# etc.) that don't pass `tsc --noEmit` or `eslint`, and there's no
-# `package-lock.json` to feed `npm ci` here. CI runs normally in user-
-# derived repos after they `npm install` once (which generates a lockfile)
-# and `/api/generate` has substituted real values into the placeholders.
+# The template ships placeholders ({{user.name}}, etc.) that don't pass
+# `tsc --noEmit` or `eslint`. CI runs in user-derived repos once
+# `/api/generate` has substituted real values into the placeholders.
+#
+# Uses `npm install` (not `npm ci`) and no npm cache so it's green out of the
+# box: a freshly-provisioned repo has no committed `package-lock.json` yet, and
+# `cache: 'npm'` / `npm ci` both hard-fail without one (the first real E2E run
+# failed here). Node 24 — Node 20 is deprecated on GitHub Actions runners.
 #
 on:
   pull_request:
@@ -26,9 +29,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '24'
 
-      - run: npm ci
+      - run: npm install
       - run: npm run typecheck
       - run: npm run lint

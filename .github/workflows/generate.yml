@@ -32,10 +32,12 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # `dataimago` is not on CRAN — install from the GitHub repo's package
-          # subdirectory (pak ref: github::owner/repo/subdir).
+          # `dataimago` is not on CRAN — install from the GitHub repo. The R
+          # package is at the repo ROOT, so NO subdir (pak ref: github::owner/repo).
+          # The stale `github::dataimago/dataimago/dataimago` (subdir) ref failed
+          # the first real E2E run ("Can't find R package ... in directory 'dataimago'").
           packages: |
-            github::dataimago/dataimago/dataimago
+            github::dataimago/dataimago
             any::yaml
             any::jsonlite
 
