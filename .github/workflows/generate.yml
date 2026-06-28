@@ -19,7 +19,32 @@ on:
   workflow_dispatch: {}
 
 jobs:
+  # When dissertation.ai provisions a repo, `createRepoFromTemplate` lands an
+  # initial commit of the RAW template — `dataimago-spec.yaml` still holds
+  # `{{…}}` / `PLACEHOLDER-…` tokens — before the hub commits the substituted
+  # spec. That raw commit touches `dataimago-spec.yaml`, so without this guard it
+  # triggers `generate` against a placeholder spec and fails
+  # ("Could not find the R package at …/PLACEHOLDER-thesis-rpkg"), leaving a
+  # confusing red ✗ in the brand-new repo even though the real (substituted) run
+  # right after it is green. The guard skips the heavy job until the spec is real.
+  guard:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: check
+        run: |
+          if grep -qE 'PLACEHOLDER-|\{\{' dataimago-spec.yaml; then
+            echo "dataimago-spec.yaml is still an unsubstituted template (raw provisioning state); skipping generate until dissertation.ai commits the real spec."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
   generate:
+    needs: guard
+    if: needs.guard.outputs.ready == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
