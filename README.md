@@ -101,9 +101,19 @@ MIT
   thesis HTML book + PDF + package reference via its `quarto-publish.yml`.
   Enable Pages once (repo Settings → Pages → Source: GitHub Actions) if the
   provisioning flow hasn't already.
-- **Vercel (this app):** import this repo at
+- **Knowledge base (GitHub Pages, this repo):** once your AI assistant seeds
+  `wiki/` (per your spec's FIRST ACTIONS), `wiki-publish.yml` publishes it —
+  theory and methods pages, the claim ledger, and the experiment registry — at
+  `https://<you>.github.io/<this-repo>/`. Enable Pages once
+  (Settings → Pages → Source: GitHub Actions) if onboarding hasn't.
+- **Vercel (this app, optional):** import this repo at
   [vercel.com/new/import](https://vercel.com/new/import) — Next.js is
-  auto-detected, no configuration needed. The landing page reads
-  `dataimago-spec.yaml` at build time, so redeploys pick up spec edits.
+  auto-detected, no configuration needed; pushes then deploy automatically.
+  The landing page reads `dataimago-spec.yaml` at build time, so redeploys
+  pick up spec edits. **Vercel is one host among several** — this is a
+  standard Next.js app and runs anywhere Next.js runs (Netlify,
+  self-hosting, `npm run dev` locally); GitHub is the only requirement.
+  `vercel-deploy.yml` offers an opt-in CI-driven alternative whose
+  credentials live only in YOUR repo secrets.
 - After your first `npm install`, commit the generated `package-lock.json`
   for reproducible installs.
