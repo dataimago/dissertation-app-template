@@ -1,0 +1,25 @@
+# The knowledge-base site: publishes this repo's llm wiki (maintained
+# markdown + the claim ledger + the experiment registry) to GitHub Pages.
+# Scoped inside wiki/ deliberately -- the repo root is a Next.js app.
+# Neutral identity per the tokens-neutral-sibling ADR (Level-3 property).
+# The sidebar is auto-generated from the wiki's structure; replace with a
+# curated sidebar as your knowledge base matures (see the IRTc instance).
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Knowledge Base"
+  search: true
+  page-navigation: true
+  sidebar:
+    style: docked
+    contents: auto
+
+format:
+  html:
+    theme:
+      light: assets/neutral-light.scss
+      dark: assets/neutral-dark.scss
+    toc: true
+    link-external-newwindow: true

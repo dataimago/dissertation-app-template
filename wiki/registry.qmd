@@ -1,0 +1,29 @@
+---
+title: "Experiment registry"
+---
+
+Every experiment registers here **before it runs** — no post-hoc entries.
+Rendered from `experiments/registry.yaml` at publish time.
+
+```{r}
+#| echo: false
+#| results: asis
+reg_path <- "../experiments/registry.yaml"
+if (!file.exists(reg_path)) {
+  cat("*No experiment registry yet — it is seeded with the knowledge base.*\n")
+  knitr::knit_exit()
+}
+reg <- yaml::read_yaml(reg_path)$experiments
+if (length(reg) == 0) {
+  cat("*No experiments registered yet. The first registrations arrive with",
+      "M4's benchmark plan — baselines vs copula families on the frozen",
+      "splits, primary metric held-out log-loss.*\n")
+} else {
+  cat("| Run | Question | Dataset | Primary metric | Status |\n|---|---|---|---|---|\n")
+  for (e in reg) {
+    cat(sprintf("| `%s` | %s | `%s` | `%s` | **%s** |\n",
+                e$run_id, e$research_question, e$dataset_id,
+                e$metrics$primary, e$status))
+  }
+}
+```

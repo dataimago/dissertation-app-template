@@ -1,0 +1,41 @@
+name: Deploy to Vercel (opt-in)
+
+# OPT-IN, user-owned deployment (off by default). The dissertation hub never
+# holds a Vercel credential -- everything here lives in YOUR repo settings:
+#   1. Create a Vercel project for this repo (vercel.com/new/import), or use
+#      the "Deploy to Vercel" button from onboarding -- Git-connected projects
+#      deploy on push automatically and DON'T need this workflow at all.
+#   2. Only if you prefer CI-driven deploys instead: add repo secrets
+#      VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID and set the repository
+#      variable ENABLE_VERCEL_DEPLOY=true.
+# Vercel is one host among several -- this is a standard Next.js app and runs
+# anywhere Next.js runs (Netlify, self-hosted, `npm run dev` locally).
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    if: vars.ENABLE_VERCEL_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false   # the app build reads only the root spec
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Deploy production build to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npm install --global vercel@latest
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

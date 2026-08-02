@@ -1,0 +1,60 @@
+---
+title: "The claim ledger"
+---
+
+Every material research claim, typed and provenance-linked. Rendered directly
+from `research/literature/claims.yaml` at publish time — this page cannot
+drift from the ledger. Claims whose notes name a test file are re-verified by
+CI on every push to the linked repo.
+
+```{r}
+#| echo: false
+#| results: asis
+`%||%` <- function(a, b) if (is.null(a)) b else a
+spec <- yaml::read_yaml("../dataimago-spec.yaml")
+app_repo <- sprintf("https://github.com/%s/%s", spec$user$githubUsername, spec$metadata$name)
+rpkg_repo <- sub("\\.git$", "", spec$source$rPackage$submoduleUrl %||% app_repo)
+
+ledger_path <- "../research/literature/claims.yaml"
+if (!file.exists(ledger_path)) {
+  cat("*No claim ledger yet — it is seeded when your AI assistant bootstraps",
+      "the knowledge base (see your spec's FIRST ACTIONS).*\n")
+  knitr::knit_exit()
+}
+ledger <- yaml::read_yaml(ledger_path)$claims
+
+# Summary table
+cat("| ID | Type | Scope | Risk | Verified |\n|---|---|---|---|---|\n")
+for (cl in ledger) {
+  cat(sprintf(
+    "| [%s](#%s) | %s | %s | %s | %s |\n",
+    cl$claim_id, tolower(cl$claim_id), cl$claim_type, cl$scope, cl$risk_level,
+    if (is.null(cl$verification_date)) "—" else as.character(cl$verification_date)
+  ))
+}
+cat("\n")
+
+for (cl in ledger) {
+  cat(sprintf("## %s {#%s}\n\n", cl$claim_id, tolower(cl$claim_id)))
+  cat(sprintf("> %s\n\n", trimws(cl$claim_text)))
+  cat(sprintf("**Type:** `%s` · **Scope:** %s · **Risk:** %s · **Source quality:** %s\n\n",
+              cl$claim_type, cl$scope, cl$risk_level, cl$source_quality))
+  if (length(cl$source_ids) > 0) {
+    cat(sprintf(
+      "**Sources:** %s (see [the bibliography](%s/blob/main/research/literature/bibliography.bib))\n\n",
+      paste(sprintf("`%s`", unlist(cl$source_ids)), collapse = ", "), app_repo))
+  }
+  if (!is.null(cl$verified_by)) {
+    cat(sprintf("**Verified:** %s by `%s`\n\n", cl$verification_date, cl$verified_by))
+  }
+  if (!is.null(cl$notes)) {
+    notes <- trimws(cl$notes)
+    # Link any named test files to the R package repo (the CI provenance edge).
+    tests <- regmatches(notes, gregexpr("tests/testthat/[A-Za-z0-9._-]+\\.R", notes))[[1]]
+    cat(sprintf("*%s*\n\n", notes))
+    for (tf in unique(tests)) {
+      cat(sprintf("→ Re-verified in CI: [`%s`](%s/blob/main/%s)\n\n", tf, rpkg_repo, tf))
+    }
+  }
+}
+```
