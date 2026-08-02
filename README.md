@@ -34,7 +34,7 @@ quarto preview        # live HTML preview while you write
 quarto render --to pdf   # build the PDF locally
 ```
 
-**5. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** and linked from this app's landing page.
+**5. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations).
 
 ### The submodule mental model (R-package dissertations only)
 
@@ -94,3 +94,16 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 ## License
 
 MIT
+
+## Deployment (optional, recommended)
+
+- **GitHub Pages (R-package dissertations):** the R package repo publishes the
+  thesis HTML book + PDF + package reference via its `quarto-publish.yml`.
+  Enable Pages once (repo Settings → Pages → Source: GitHub Actions) if the
+  provisioning flow hasn't already.
+- **Vercel (this app):** import this repo at
+  [vercel.com/new/import](https://vercel.com/new/import) — Next.js is
+  auto-detected, no configuration needed. The landing page reads
+  `dataimago-spec.yaml` at build time, so redeploys pick up spec edits.
+- After your first `npm install`, commit the generated `package-lock.json`
+  for reproducible installs.

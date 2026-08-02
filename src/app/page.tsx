@@ -3,7 +3,8 @@ import { resolve } from 'node:path';
 import { load } from 'js-yaml';
 
 interface SpecMetadata {
-  user: { name: string };
+  metadata: { name: string };
+  user: { name: string; githubUsername: string };
   vertical: {
     dissertation: {
       institution: { name: string; degreeProgram: string };
@@ -13,7 +14,7 @@ interface SpecMetadata {
       };
     };
   };
-  source: { rPackage: { name: string } | null };
+  source: { rPackage: { name: string; submoduleUrl?: string } | null };
 }
 
 export default function Home() {
@@ -28,6 +29,17 @@ export default function Home() {
   // Content-only (no-r): the manuscript lives in this repo's `thesis/`, not an
   // R-package submodule. The chapter path + build trigger differ.
   const isNoR = !rpkgName;
+
+  // Publish surfaces, derived entirely from the spec. The PDF is committed
+  // by CI into the repo that hosts the manuscript (the R package for the
+  // r-cases, this repo for no-r); the Pages site exists for r-cases only.
+  const githubUser = spec.user.githubUsername;
+  const manuscriptRepoUrl = isNoR
+    ? `https://github.com/${githubUser}/${spec.metadata.name}`
+    : (spec.source.rPackage?.submoduleUrl ??
+       `https://github.com/${githubUser}/${rpkgName}`);
+  const thesisPdfRawUrl = `${manuscriptRepoUrl}/raw/main/docs/thesis.pdf`;
+  const pagesUrl = isNoR ? null : `https://${githubUser}.github.io/${rpkgName}/`;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -65,19 +77,44 @@ export default function Home() {
       </section>
 
       <section className="mt-12">
-        <h2 className="font-display text-2xl text-ink">Thesis PDF</h2>
-        <p className="mt-2 text-stone-700">
-          Rebuilt by the <code className="font-mono">build-thesis.yml</code> workflow on every
-          push that touches{' '}
-          <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
-          {isNoR ? '' : (
-            <>
-              {' '}or <code className="font-mono">R/</code>
-            </>
+        <h2 className="font-display text-2xl text-ink">Read it</h2>
+        <ul className="mt-3 space-y-2 text-stone-900">
+          <li>
+            <a
+              className="text-forest-700 underline hover:text-forest-800"
+              href={pagesUrl ? `${pagesUrl}thesis.pdf` : thesisPdfRawUrl}
+            >
+              Thesis PDF
+            </a>{' '}
+            <span className="text-sm text-stone-700">
+              — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
+              touches <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
+              {isNoR ? '' : (
+                <>
+                  {' '}or <code className="font-mono">R/</code>
+                </>
+              )}
+              {' '}(<a className="hover:underline" href={thesisPdfRawUrl}>direct download</a>)
+            </span>
+          </li>
+          {pagesUrl && (
+            <li>
+              <a
+                className="text-forest-700 underline hover:text-forest-800"
+                href={pagesUrl}
+              >
+                Methodology &amp; package site
+              </a>{' '}
+              <span className="text-sm text-stone-700">
+                — the thesis as an HTML book plus the{' '}
+                <a className="hover:underline" href={`${pagesUrl}r-package.html`}>
+                  R package reference
+                </a>
+                , published to GitHub Pages on every push
+              </span>
+            </li>
           )}
-          . The built PDF is committed to <code className="font-mono">docs/thesis.pdf</code> after
-          your first build.
-        </p>
+        </ul>
       </section>
 
       <footer className="mt-16 border-t border-stone-200 pt-6 text-xs text-stone-500">
