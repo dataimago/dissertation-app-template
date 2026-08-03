@@ -36,6 +36,8 @@ The spec is documented in [dissertation-ai's design doc](https://github.com/data
 - **"Change citation style"** — edit `dataimago-spec.yaml`'s `vertical.dissertation.thesis.bibliography.citationStyle`. Push.
 - **"My institution requires a specific thesis format"** — see `THESIS-CLS-README.md` (under the R package's `ui/www/`, or under `thesis/` for content-only) for the 3-mode strategy (shipped / vendored / generated).
 - **"How do I add my IRB number?"** — edit `dataimago-spec.yaml`'s `vertical.dissertation.compliance.irb` block. The interview deliberately didn't ask for this; it's an "additional information (fill in over time)" field.
+- **Writing prose (chapters, wiki pages, READMEs)** — read `writing/STYLE.md` first and write under it. The spec's `vertical.dissertation.thesis.writingStyle` selects how that file is sourced (shipped / vendored / generated — see `writing/README.md`); the interview deliberately didn't ask.
+- **"I want figures in X"** — `vertical.dissertation.graphics.engine` records the preference (`pstricks`, `tikz`, `r-base`, `ggplot2`; default `unspecified` = choose per context). Note: LaTeX-native engines render in the thesis PDF but not on HTML surfaces until converted — prefer R engines for figures that must appear on the knowledge site.
 
 ## Constraints
 
