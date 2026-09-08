@@ -34,3 +34,7 @@ jobs:
       - run: npm install
       - run: npm run typecheck
       - run: npm run lint
+      # Ingestion completeness: every file under raw/ is cited by a wiki page,
+      # listed in raw/MANIFEST.md, or ignored by raw/.ingestignore. Reads file
+      # names only. Red means "you added material and haven't run /ingest".
+      - run: npm run ingest:check
