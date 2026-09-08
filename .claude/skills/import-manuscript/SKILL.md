@@ -69,10 +69,15 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
   ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
   The app's `build-thesis.yml` is already here and inert until `thesis/`
-  exists. The referenced repository is read, never written.
+  exists. The referenced repository is read, never written. On this path the
+  `.Rnw` chunks become **inert listings** — say so in the first lines of the
+  fidelity note (§4): the runnable analysis stays in the referenced
+  repository, and an author who wants executable chapters moves to the
+  R-package layout rather than un-escaping fences here.
 - `retrofit`, or `extension` with a local R-package submodule → the package's
   `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
-  left executable. Never fence-escape R-present chapters.
+  left executable. One rule per path: escape only under app `thesis/`, keep
+  executable only under `ui/www/` — never both on the same files.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
 stubs; front matter to `00-front-matter.qmd`,
