@@ -16,3 +16,10 @@ Then open this repository in an AI-enabled editor and run **`/ingest`**. It will
 
 Nothing in this directory is read by anything until you run `/ingest`. When
 `/ingest` finishes, this directory should be empty again.
+
+**No repository yet?** The same instructions work as a stand-alone prompt in
+any capable AI session over the folder on your own machine:
+[`.claude/skills/ingest/SKILL.md`](https://github.com/dataimago/dissertation-app-template/blob/main/.claude/skills/ingest/SKILL.md).
+Run that way it writes the same `MANIFEST.md`, inventory, and report beside
+your folder; copy the folder — those files included — into `raw/inbox/` once
+your repository exists, and `/ingest` picks up where it left off.

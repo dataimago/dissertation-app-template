@@ -15,6 +15,15 @@ and `knowledge.wikiMode` decide what the steps below do.
 Never modify a file's contents under `raw/`. Never open `raw/private/`. Never
 read a data file beyond its header row. Never fabricate.
 
+**Stand-alone use (no repository yet).** This file also works as a prompt in
+any capable AI session over a folder on the author's machine. Then: treat the
+folder as `raw/inbox/`, write `MANIFEST.md`, `inventory/corpus-inventory.yaml`
+and `ingest-report.md` *beside* it (there is no `wiki/` to build yet — stop
+after step 2 and write the report), and never move anything into a
+`private/` directory the author has not agreed to. When the repository
+exists, the folder and those files go into `raw/inbox/` and `/ingest`
+continues from step 3.
+
 ## 0. Orient (2 min)
 
 - `wiki/index.md` exists? Read it and the last 5 `log.md` entries; this is a
