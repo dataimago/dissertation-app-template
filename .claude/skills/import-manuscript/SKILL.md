@@ -54,9 +54,18 @@ the reference for what "v1.0 looked like".
 
 ## 3. Place, as v1.0
 
-Target: `thesis/chapters/` when `source.case` is `no-r` (and `thesis/` exists
-from provisioning; keep its `_quarto.yml`, `index.qmd`, `thesis.cls`); the R
-package's `ui/www/chapters/` otherwise. File names `NN-<slug>.qmd` in reading
+Target, decided by the same trio `/ingest` reads (`source.case`,
+`source.referencedRepo`, a local `source.rPackage`):
+
+- `no-r` → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
+  `index.qmd`, `thesis.cls`); knitr chunks escaped for the R-free build.
+- `extension` **with** `referencedRepo` (the author's whole dissertation is an
+  existing repository; `rPackage` is null, there is no submodule and no local
+  `ui/www/`) → **also** `thesis/chapters/` here, R-free build, chunks escaped.
+  The referenced repository is read, never written.
+- `retrofit`, or `extension` with a local R-package submodule → the package's
+  `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
+  left executable. Never fence-escape R-present chapters. File names `NN-<slug>.qmd` in reading
 order; replace the eight provisioning stubs; front matter to `00-front-matter.qmd`,
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
