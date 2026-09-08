@@ -9,8 +9,12 @@ One skill, three doors. Whether the author arrived with interview answers and
 a few uploads, a folder of everything, or an R package, this is how `raw/`
 becomes `wiki/`. Read `KNOWLEDGE.md` first; it is the contract this skill
 executes. Read `dataimago-spec.yaml` second: `source.case`,
-`source.rPackage`, `source.referencedRepo`, `vertical.dissertation.thesis.manuscript.status`,
-and `knowledge.wikiMode` decide what the steps below do.
+`source.rPackage`, `source.referencedRepo` and
+`vertical.dissertation.thesis.manuscript.status` decide what the steps below
+do. The re-run mode is **not** a spec field: it is the rule in
+`KNOWLEDGE.md` (merge by default; `/ingest --bootstrap` to overwrite seeded
+pages). An R-package repo whose spec carries `vertical.rpkg.knowledge.wikiMode`
+is honoured; a dissertation spec never gains that field.
 
 Never modify a file's contents under `raw/`. Never open `raw/private/`. Never
 read a data file beyond its header row. Never fabricate.
@@ -27,9 +31,9 @@ continues from step 3.
 ## 0. Orient (2 min)
 
 - `wiki/index.md` exists? Read it and the last 5 `log.md` entries; this is a
-  re-run, and `knowledge.wikiMode` (default `merge-seeded`) governs what you
-  may overwrite: never a page marked `curated: true`, never a page with no
-  `generator:` line. `bootstrap` overwrites seeded pages; `skip` stops here.
+  re-run. Merge by default: never overwrite a page marked `curated: true`,
+  never a page with no `generator:` line. Invoked as `/ingest --bootstrap`,
+  overwrite seeded pages (those with a `generator:` line) too.
 - `raw/inbox/` has anything besides its README? Then the author dropped a
   folder — step 1 applies in full. Otherwise step 1 only re-checks.
 - `source.referencedRepo` set (the author's whole dissertation is already a

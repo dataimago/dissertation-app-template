@@ -83,10 +83,10 @@ machine-checkable: a page without it is a guess.
 - If `raw/manuscript/LOCKED.md` exists it governs: the manuscript is authoritative
   v1.0 — cite it, summarize it, derive from it; never rewrite it.
 - Never fabricate a citation or a result.
-- Re-runs respect `knowledge.wikiMode` in the spec: `merge-seeded` (default)
-  never overwrites a page marked `curated: true` or a page with no `generator:`;
-  `bootstrap` overwrites seeded pages; `skip` does nothing. `log.md` is only
-  ever appended.
+- Re-runs merge by default: `/ingest` never overwrites a page marked
+  `curated: true` or a page with no `generator:` line; `/ingest --bootstrap`
+  overwrites seeded pages too. This is a rule of this manual, not a field of
+  your spec. `log.md` is only ever appended.
 
 ## Sovereignty
 
