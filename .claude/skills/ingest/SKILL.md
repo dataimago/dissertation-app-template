@@ -65,7 +65,12 @@ Rules: when a manuscript exists as both source (`.tex`/`.Rnw`) and rendered
 referenced by absolute paths outside the repo is a **gap**, not an error. A
 file over 50 MB is excluded with a pointer unless the author asks; note that
 Git LFS is the remedy. Move files (`git mv` for tracked ones) — never rename
-the file itself, never edit it.
+the file itself, never edit it. `raw/inbox/` is gitignored, so what the
+author dropped is untracked until you move it: only files placed in a
+category become trackable, on the author's next commit, and `raw/private/`
+never does. Do not commit or push during this step; if anything went to
+`raw/private/`, the report's first sentence asks for a private repository
+before the author pushes at all.
 
 Then write **`raw/MANIFEST.md`**: the table from its template, one row per
 item as the author brought it — class, new location, kept in git (yes / no:

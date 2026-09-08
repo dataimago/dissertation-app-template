@@ -16,10 +16,12 @@ again whenever you add material.
 - **From dissertation.ai onboarding** — the documents you attached during the
   interview land in the category directories below.
 - **From your own folders** — if you came with a finished dissertation, a
-  folder of analysis, reports, slides, data: copy all of it into **`raw/inbox/`**
-  after cloning (see `raw/inbox/README.md`) and run `/ingest`. It sorts
-  everything into the categories, keeps anything private out of git, and
-  writes `MANIFEST.md`.
+  folder of analysis, reports, slides, data: make the repository private on
+  GitHub first if the folder might hold anything private, then copy all of it
+  into **`raw/inbox/`** after cloning (see `raw/inbox/README.md`; the inbox
+  is gitignored, so nothing is committed until it has been sorted) and run
+  `/ingest`. It sorts everything into the categories, keeps anything private
+  out of git, and writes `MANIFEST.md`.
 - **Later** — drop new files into the matching category (or `inbox/`) and run
   `/ingest` again.
 

@@ -155,3 +155,7 @@ next-env.d.ts
 # never committed; the harness is denied from reading it (.claude/settings.json)
 raw/private/**
 !raw/private/README.md
+# the drop zone is never committed as dropped: /ingest classifies it first, and only
+# what it moves into raw/<category>/ becomes trackable. Never `git add -f` this directory.
+raw/inbox/**
+!raw/inbox/README.md

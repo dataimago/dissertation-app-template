@@ -14,6 +14,15 @@ Then open this repository in an AI-enabled editor and run **`/ingest`**. It will
 - write `wiki/analyses/ingest-report.md` — what it read, what it inferred, how
   confident it is, and what is still missing.
 
+**This directory is gitignored.** Nothing you drop here can be committed or
+pushed — not by you, not by the AI — until `/ingest` has sorted it into
+`raw/<category>/`, and anything it sets aside in `raw/private/` stays out of
+git for good. Never force-add (`git add -f`) this directory. If your folder
+*might* contain anything with names, addresses or other identifiers, **make
+this repository private on GitHub before you push anything** (Settings →
+General → Danger Zone → Change visibility); `/ingest` will tell you if it
+found such material, but git history is not undone by a later move.
+
 Nothing in this directory is read by anything until you run `/ingest`. When
 `/ingest` finishes, this directory should be empty again.
 
