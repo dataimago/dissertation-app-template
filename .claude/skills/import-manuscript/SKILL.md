@@ -65,14 +65,17 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   The referenced repository is read, never written.
 - `retrofit`, or `extension` with a local R-package submodule → the package's
   `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
-  left executable. Never fence-escape R-present chapters. File names `NN-<slug>.qmd` in reading
-order; replace the eight provisioning stubs; front matter to `00-front-matter.qmd`,
+  left executable. Never fence-escape R-present chapters.
+
+File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
+stubs; front matter to `00-front-matter.qmd`,
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
 `derivedFrom: raw/manuscript/<source file>`, `importedAt: <date>`.
 
-Then rewrite the last line of `raw/manuscript/LOCKED.md` so the lock names the
-derivative:
+Then **append** one sentence to `raw/manuscript/LOCKED.md` so the lock names the
+derivative (the hub wrote the lock at provision time and never names one — a
+derivative did not exist yet):
 
 > The working copy you extend is `<chapters dir>` (created by
 > `/import-manuscript` on <date> from `<source file>`). These files remain the
