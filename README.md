@@ -22,23 +22,28 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 - The fonts the default thesis class uses — the **Noto Sans** family (Noto Sans, Noto Sans Math). Install them from your OS font manager if a build complains a font is missing.
 - **R** *only if your dissertation includes an R package* (the no-R path needs none).
 
-**3. Find where your writing lives.** Each chapter is one file.
+**3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder in an AI-enabled editor (Claude Code, Cursor) and run **`/ingest`**. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
 
-- **If you have an R package** (most computational dissertations): your manuscript travels with it as a linked sub-repository (Git calls this a *submodule*). Chapters are at `packages/r-packages/{{rPackage.name}}/ui/www/chapters/*.qmd`.
-- **If you don't** (a content-only dissertation): your manuscript lives right here, at `thesis/chapters/*.qmd`. No submodule.
+- **Brought a finished dissertation, a folder of code, reports, data?** Copy all of it into `raw/inbox/` first — as it is, no sorting — then run `/ingest`. It sorts everything, keeps anything private out of git (`raw/private/`, and it will tell you to make this repository private), and writes `raw/MANIFEST.md`. Then run **`/import-manuscript`**: it turns your dissertation's sources (`.tex`, `.Rnw`, `.docx`; PDF as a last resort) into editable chapters, as **version 1.0** — the originals in `raw/manuscript/` stay locked and untouched.
+- **Started fresh at dissertation.ai?** The documents you attached are already under `raw/`; `/ingest` does the rest.
 
-**4. Write + preview.** Edit a chapter, then from the directory that holds `_quarto.yml` (your R package's `ui/www/`, or `thesis/`):
+**4. Find where your writing lives.** Each chapter is one file.
+
+- **If you have an R package** (most computational dissertations): your manuscript travels with it as a linked sub-repository (Git calls this a *submodule*). Chapters are at `packages/r-packages/<your package>/ui/www/chapters/*.qmd` — the package's name is `source.rPackage.name` in `dataimago-spec.yaml`.
+- **If you don't** (a content-only dissertation, or one whose existing repository is referenced rather than linked): your manuscript lives right here, at `thesis/chapters/*.qmd`. No submodule.
+
+**5. Write + preview.** Edit a chapter, then from the directory that holds `_quarto.yml` (your R package's `ui/www/`, or `thesis/`):
 
 ```sh
 quarto preview        # live HTML preview while you write
 quarto render --to pdf   # build the PDF locally
 ```
 
-**5. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations).
+**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations).
 
 ### The submodule mental model (R-package dissertations only)
 
-Your R package is its *own* Git repository; this dissertation repo merely **points** at a specific commit of it. So: edit + commit your chapters **inside the package** (`packages/r-packages/{{rPackage.name}}/`), then come back here and commit the updated pointer. `git clone --recursive` and `git submodule update --init --recursive` keep the two in step. (Content-only dissertations have none of this — everything is in this one repo.)
+Your R package is its *own* Git repository; this dissertation repo merely **points** at a specific commit of it. So: edit + commit your chapters **inside the package** (`packages/r-packages/<your package>/`), then come back here and commit the updated pointer. `git clone --recursive` and `git submodule update --init --recursive` keep the two in step. (Content-only dissertations have none of this — everything is in this one repo.)
 
 ### Common problems
 
@@ -50,14 +55,16 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 
 | What you want to change | Where |
 |---|---|
-Paths below are shown for the **R-package** layout. For a **content-only** dissertation, drop the `packages/r-packages/{{rPackage.name}}/ui/www/` prefix and read `thesis/` instead (e.g. `thesis/chapters/*.qmd`, `thesis/references.bib`, `thesis/thesis.cls`).
+`<chapters>` below is `packages/r-packages/<your package>/ui/www/` for an R-package dissertation and `thesis/` for a content-only one.
 
-| What you want to change | Where (R-package layout) |
+| What you want to change | Where |
 |---|---|
-| Thesis chapter content | `packages/r-packages/{{rPackage.name}}/ui/www/chapters/*.qmd` |
-| Bibliography | `packages/r-packages/{{rPackage.name}}/ui/www/references.bib` |
-| Thesis class file (formatting) | `packages/r-packages/{{rPackage.name}}/ui/www/thesis.cls` (or see `THESIS-CLS-README.md`) |
-| Methodology R code | `packages/r-packages/{{rPackage.name}}/R/` (R-package dissertations only) |
+| Thesis chapter content | `<chapters>/chapters/*.qmd` |
+| Bibliography | `<chapters>/references.bib` |
+| Thesis class file (formatting) | `<chapters>/thesis.cls` (or see `THESIS-CLS-README.md`) |
+| Methodology R code | `packages/r-packages/<your package>/R/` (R-package dissertations only) |
+| Your sources and materials | `raw/` — then run `/ingest` |
+| Your knowledge base | `wiki/` — the AI maintains it from `raw/`; you own it (see `KNOWLEDGE.md`) |
 | App landing page | `src/app/page.tsx` |
 | Dissertation metadata (title, committee, ...) | `dataimago-spec.yaml` |
 
@@ -101,8 +108,8 @@ MIT
   thesis HTML book + PDF + package reference via its `quarto-publish.yml`.
   Enable Pages once (repo Settings → Pages → Source: GitHub Actions) if the
   provisioning flow hasn't already.
-- **Knowledge base (GitHub Pages, this repo):** once your AI assistant seeds
-  `wiki/` (per your spec's FIRST ACTIONS), `wiki-publish.yml` publishes it —
+- **Knowledge base (GitHub Pages, this repo):** once `/ingest` has seeded
+  `wiki/`, `wiki-publish.yml` publishes it —
   theory and methods pages, the claim ledger, and the experiment registry — at
   `https://<you>.github.io/<this-repo>/`. Enable Pages once
   (Settings → Pages → Source: GitHub Actions) if onboarding hasn't.

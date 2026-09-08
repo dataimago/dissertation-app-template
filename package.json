@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ingest:check": "node tools/ingest-check.mjs"
   },
   "dependencies": {
     "@dataimago/tokens-neutral": "^0.1.0-alpha.0",
