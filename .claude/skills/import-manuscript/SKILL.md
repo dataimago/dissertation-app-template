@@ -61,8 +61,15 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `index.qmd`, `thesis.cls`); knitr chunks escaped for the R-free build.
 - `extension` **with** `referencedRepo` (the author's whole dissertation is an
   existing repository; `rPackage` is null, there is no submodule and no local
-  `ui/www/`) → **also** `thesis/chapters/` here, R-free build, chunks escaped.
-  The referenced repository is read, never written.
+  `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
+  on this path you create the `thesis/` bundle yourself**, because the hub
+  scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
+  `references.bib`, `thesis.cls`, `dataimago.sty`, `THESIS-CLS-README.md` from
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), apply the two
+  rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
+  ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
+  The app's `build-thesis.yml` is already here and inert until `thesis/`
+  exists. The referenced repository is read, never written.
 - `retrofit`, or `extension` with a local R-package submodule → the package's
   `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
   left executable. Never fence-escape R-present chapters.
