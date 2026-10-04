@@ -4,7 +4,7 @@
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT" || exit 0
-name="$(grep -m1 -E '^\s*name:' dataimago-spec.yaml 2>/dev/null | sed -E 's/^\s*name:\s*//; s/["'"'"']//g')"
+name="$(grep -m1 -E '^[[:space:]]*name:' dataimago-spec.yaml 2>/dev/null | sed -E 's/^[[:space:]]*name:[[:space:]]*//; s/["'"'"']//g')"
 echo "=== ${name:-this dissertation} — author orientation ==="
 echo
 if [ -f wiki/index.md ]; then
@@ -24,4 +24,4 @@ if [ -f raw/manuscript/LOCKED.md ]; then
 fi
 if [ -f wiki/log.md ]; then echo; echo "## Recent"; grep -m4 '^## ' wiki/log.md; fi
 echo
-echo "Read ./CLAUDE.md and ./KNOWLEDGE.md. Your work stays yours — nothing leaves this repo without your action."
+echo "Read ./AGENTS.md and ./KNOWLEDGE.md. Your work stays yours — nothing leaves this repo without your action."

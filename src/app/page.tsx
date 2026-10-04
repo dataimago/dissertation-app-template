@@ -126,7 +126,7 @@ export default function Home() {
 
       <footer className="mt-16 border-t border-stone-200 pt-6 text-xs text-stone-700">
         Provisioned via{' '}
-        <a className={linkClass} href="https://dissertation.ai">
+        <a className={linkClass} href="https://dissertation-ai.dataimago.ai">
           dissertation.ai
         </a>
         . Source of truth for project metadata: <code>dataimago-spec.yaml</code>.

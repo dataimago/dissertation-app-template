@@ -1,6 +1,6 @@
 # {{thesis.workingTitle}}
 
-> Your AI-native dissertation environment, set up for you by [dissertation.ai](https://dissertation.ai).
+> Your AI-native dissertation environment, set up for you by [dissertation.ai](https://dissertation-ai.dataimago.ai).
 
 This repository is your dissertation's home: where you write your chapters, where the PDF is built, and a structured summary of your project (`dataimago-spec.yaml` — a plain-text file you can read and edit any time).
 
@@ -22,7 +22,7 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 - The fonts the default thesis class uses — the **Noto Sans** family (Noto Sans, Noto Sans Math). Install them from your OS font manager if a build complains a font is missing.
 - **R** *only if your dissertation includes an R package* (the no-R path needs none).
 
-**3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder in an AI-enabled editor (Claude Code, Cursor) and run **`/ingest`**. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
+**3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder with your AI. In Claude Code, run **`/ingest`**; in any other tool (Codex, opencode, Cursor, ChatGPT with folder access), ask it: *"Read `.claude/skills/ingest/SKILL.md` and follow it."* Either way it is the same procedure. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
 
 - **Brought a finished dissertation, a folder of code, reports, data?** If it might contain anything private (names, addresses, identifiers), make this repository private on GitHub **first**. Then copy all of it into `raw/inbox/` — as it is, no sorting; the inbox is gitignored, so nothing is committed until `/ingest` has sorted it — and run `/ingest`. It sorts everything, keeps anything private out of git (`raw/private/`, and it will tell you if it found any), and writes `raw/MANIFEST.md`. Then run **`/import-manuscript`**: it turns your dissertation's sources (`.tex`, `.Rnw`, `.docx`; PDF as a last resort) into editable chapters, as **version 1.0** — the originals in `raw/manuscript/` stay locked and untouched.
 - **Started fresh at dissertation.ai?** The documents you attached are already under `raw/`; `/ingest` does the rest.
@@ -53,8 +53,6 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 
 ## Editing your dissertation
 
-| What you want to change | Where |
-|---|---|
 `<chapters>` below is `packages/r-packages/<your package>/ui/www/` for an R-package dissertation and `thesis/` for a content-only one.
 
 | What you want to change | Where |
@@ -94,9 +92,9 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 
 ## Framework links
 
-- [dissertation.ai](https://dissertation.ai) — the Level-2 hub that provisioned this repo
-- [dataimago-rpkg](https://github.com/dataimago/dataimago-rpkg) — the R generator package
-- [dataimago-design](https://github.com/dataimago/dataimago-design) — the design system + wiki
+- [dissertation.ai](https://dissertation-ai.dataimago.ai) — the hub that provisioned this repo (start a new dissertation there)
+- [dataimago](https://github.com/dataimago/dataimago) — the framework this environment is built on
+- [dissertation-app-template](https://github.com/dataimago/dissertation-app-template) — the template this repo was made from
 
 ## License
 

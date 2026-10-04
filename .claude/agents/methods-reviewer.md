@@ -24,4 +24,4 @@ not silently change analyses or overstate certainty.
 ## Guardrails
 - Don't manufacture significance or hide limitations — flag them.
 - Run code read-only or in a scratch dir; never touch `raw/private/` or secrets.
-- Data sovereignty: stays in the author's repos (see `../CLAUDE.md` SECURITY).
+- Data sovereignty: stays in the author's repos (see the Constraints in `AGENTS.md`, at the repository root).

@@ -58,6 +58,6 @@ The categories are a seed, not a schema: add a directory for anything new
 ## Size
 
 - Files over ~50 MB are set aside with a pointer rather than committed; Git
-  LFS is the remedy if you need them in the repository (extend
-  `.gitattributes`).
+  LFS is the remedy if you need them in the repository (`git lfs track`
+  writes the rule to a `.gitattributes` file).
 - Above ~100 MB of cumulative `raw/` content, use LFS for `raw/**/*.pdf`.

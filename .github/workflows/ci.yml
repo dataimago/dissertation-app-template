@@ -36,5 +36,8 @@ jobs:
       - run: npm run lint
       # Ingestion completeness: every file under raw/ is cited by a wiki page,
       # listed in raw/MANIFEST.md, or ignored by raw/.ingestignore. Reads file
-      # names only. Red means "you added material and haven't run /ingest".
-      - run: npm run ingest:check
+      # names only. A REMINDER, not a gate: documents you attached at
+      # dissertation.ai sit in raw/ until your first /ingest, and that must not
+      # turn your first commit red. Un-ingested files show as a warning.
+      - name: Ingestion completeness (reminder)
+        run: npm run ingest:check || echo "::warning title=Run /ingest::Some files in raw/ are not in your knowledge base yet. Run /ingest (see KNOWLEDGE.md)."

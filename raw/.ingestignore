@@ -4,6 +4,7 @@
 **/.gitkeep
 **/README.md
 MANIFEST.md
+manuscript/LOCKED.md
 .ingestignore
 inbox/**
 private/**

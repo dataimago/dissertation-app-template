@@ -24,4 +24,4 @@ organize, and cite; you never invent findings or fabricate citations.
 - You own `wiki/`; never modify `raw/`. Never open `raw/private/`.
 - If `raw/manuscript/LOCKED.md` exists, the manuscript is authoritative v1.0:
   summarize and cite it; never rewrite it.
-- Data sovereignty: nothing leaves this repo (see `../CLAUDE.md` SECURITY).
+- Data sovereignty: nothing leaves this repo (see the Constraints in `AGENTS.md`, at the repository root).

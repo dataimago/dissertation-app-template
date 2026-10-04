@@ -18,7 +18,7 @@ rpkg_repo <- sub("\\.git$", "", spec$source$rPackage$submoduleUrl %||% app_repo)
 ledger_path <- "../research/literature/claims.yaml"
 if (!file.exists(ledger_path)) {
   cat("*No claim ledger yet — it is seeded when your AI assistant bootstraps",
-      "the knowledge base (see your spec's FIRST ACTIONS).*\n")
+      "the knowledge base (run /ingest — see KNOWLEDGE.md).*\n")
   knitr::knit_exit()
 }
 ledger <- yaml::read_yaml(ledger_path)$claims
