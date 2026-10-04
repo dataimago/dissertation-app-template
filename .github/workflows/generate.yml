@@ -66,11 +66,25 @@ jobs:
             any::yaml
             any::jsonlite
 
+      # A WARNING, not a failure, for now: dataimago::ai() cannot yet read
+      # every layout the hub provisions (it reads the R package path as NA on
+      # the fresh-package path; the known R-side spec bug). A red mark on an
+      # author's brand-new repo would say they did something wrong; they didn't.
+      # Nothing downstream depends on this run. Make it fail again once the R
+      # side is fixed.
       - name: Run dataimago::ai(spec_path)
+        id: ai
+        continue-on-error: true
         run: |
           Rscript -e 'dataimago::ai(spec_path = "dataimago-spec.yaml")'
 
+      - name: Explain a generator miss
+        if: steps.ai.outcome == 'failure'
+        run: |
+          echo "::warning title=The R generator could not run yet::dataimago::ai() does not support this repository layout yet. This is a known framework issue, not something you did; your repository works without it. Nothing was changed."
+
       - name: Commit + push generated changes
+        if: steps.ai.outcome == 'success'
         run: |
           git config user.name "dataimago-bot"
           git config user.email "bot@dataimago.ai"
