@@ -1,0 +1,20 @@
+# Files under raw/ that /ingest and the completeness check may skip.
+# Everything else under raw/ must be cited by a wiki page's `sources:` or
+# listed in raw/MANIFEST.md as excluded — that is what "ingested" means.
+**/.gitkeep
+**/README.md
+MANIFEST.md
+manuscript/LOCKED.md
+.ingestignore
+inbox/**
+private/**
+inventory/**
+**/*.log
+**/*.aux
+**/*.bbl
+**/*.blg
+**/*.out
+**/*.toc
+**/*.synctex.gz
+**/_site/**
+**/.quarto/**

@@ -4,7 +4,7 @@ name: Publish Knowledge Base
 # registry) to GitHub Pages via the artifact flow. Neutral identity per the
 # tokens-neutral-sibling ADR. No-ops cleanly when wiki/ has no content yet
 # (fresh template repos: the knowledge base publishes once your AI assistant
-# seeds wiki/ per the spec's FIRST ACTIONS).
+# seeds wiki/ by running /ingest — see KNOWLEDGE.md).
 
 on:
   push:
