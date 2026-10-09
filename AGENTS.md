@@ -9,7 +9,7 @@ A Next.js dissertation environment holding the user's dissertation work — text
 **This repo has one of three layouts** — check `source` in `dataimago-spec.yaml`:
 - **R-package dissertation** (`source.rPackage` is non-null): the manuscript lives in a Git submodule at `packages/r-packages/<package name from the spec>/ui/www/` (chapters, `thesis.cls`, the Quarto book); R code in the package's `R/`.
 - **Content-only dissertation** (`source.rPackage` is `null`, `source.case: no-r`): there is **no submodule**; the manuscript lives directly in this repo at `thesis/` (`thesis/chapters/`, `thesis/thesis.cls`), built by this repo's own `build-thesis.yml`.
-- **Referenced whole-dissertation repository** (`source.rPackage` is `null`, `source.case: extension`, `source.referencedRepo` set; not yet offered by the hub, so only present if the spec says so): the author's existing repository holds their dissertation, scripts and data; it is **referenced, not linked as a submodule**. `/ingest` reads it in place; the working chapters, once imported, live at `thesis/` here.
+- **Referenced whole-dissertation repository** (`source.rPackage` is `null`, `source.case: extension`, `source.referencedRepo` set: the author told the hub their existing repository is their whole dissertation, not an R package): the author's existing repository holds their dissertation, scripts and data; it is **referenced, not linked as a submodule**. `/ingest` reads it in place; the working chapters, once imported, live at `thesis/` here.
 
 Read the spec first; the rest of this manual notes the locations where they differ.
 
