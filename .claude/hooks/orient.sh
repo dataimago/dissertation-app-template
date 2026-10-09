@@ -15,7 +15,7 @@ fi
 if [ -f raw/MANIFEST.md ]; then
   echo "## raw/ manifest: $(grep -m1 -iE '^(Last ingest|Status):' raw/MANIFEST.md 2>/dev/null || echo present)"
 fi
-if [ -d raw/inbox ] && [ -n "$(ls -A raw/inbox 2>/dev/null | grep -v -E '^(README.md|\.gitkeep)$')" ]; then
+if [ -d raw/inbox ] && [ -n "$(ls -A raw/inbox 2>/dev/null | grep -v -E '^(\.dataimago-keep|\.gitkeep)$')" ]; then
   echo "## raw/inbox/ has unsorted material — /ingest will classify it"
 fi
 if [ -f raw/manuscript/LOCKED.md ]; then
