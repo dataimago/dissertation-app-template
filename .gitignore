@@ -154,8 +154,12 @@ next-env.d.ts
 # the author's private material — classified by /ingest, listed in raw/MANIFEST.md,
 # never committed; the harness is denied from reading it (.claude/settings.json)
 raw/private/**
-!raw/private/README.md
+!raw/private/.dataimago-keep
 # the drop zone is never committed as dropped: /ingest classifies it first, and only
 # what it moves into raw/<category>/ becomes trackable. Never `git add -f` this directory.
+# The only tracked file in each is `.dataimago-keep`, a name an author's folder will not
+# have: a tracked README.md here was overwritten by the author's own README when they
+# copied a folder in, and that file became committable (Brief B calibration, 2026-10-09).
+# The guides are raw/INBOX.md and raw/PRIVATE.md.
 raw/inbox/**
-!raw/inbox/README.md
+!raw/inbox/.dataimago-keep

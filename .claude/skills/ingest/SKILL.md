@@ -34,7 +34,7 @@ continues from step 3.
   re-run. Merge by default: never overwrite a page marked `curated: true`,
   never a page with no `generator:` line. Invoked as `/ingest --bootstrap`,
   overwrite seeded pages (those with a `generator:` line) too.
-- `raw/inbox/` has anything besides its README? Then the author dropped a
+- `raw/inbox/` has anything besides its `.dataimago-keep` placeholder? Then the author dropped a
   folder — step 1 applies in full. Otherwise step 1 only re-checks.
 - `source.referencedRepo` set (the author's whole dissertation is already a
   repository)? Read it in place — clone it read-only beside this repo if it is
