@@ -19,7 +19,7 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 
 - [Quarto](https://quarto.org/docs/get-started/) — the document engine.
 - [TinyTeX](https://yihui.org/tinytex/) for the LaTeX/PDF step: `quarto install tinytex`.
-- The fonts the default thesis class uses — the **Noto Sans** family (Noto Sans, Noto Sans Math). Install them from your OS font manager if a build complains a font is missing.
+- The fonts the default thesis class uses — the **Noto Sans** family (Noto Sans, Noto Sans Math). Install them from your OS font manager if a build complains a font is missing. Noto Sans Math must be **version 3 or later**: get it from [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Sans+Math). Linux distributions ship version 2.001, and with it LaTeX silently sets your equations in a different font (Latin Modern Math) without any error.
 - **R** *only if your dissertation includes an R package* (the no-R path needs none).
 
 **3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder with your AI. In Claude Code, run **`/ingest`**; in any other tool (Codex, opencode, Cursor, ChatGPT with folder access), ask it: *"Read `.claude/skills/ingest/SKILL.md` and follow it."* Either way it is the same procedure. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
