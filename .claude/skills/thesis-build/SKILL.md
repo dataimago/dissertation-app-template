@@ -26,6 +26,11 @@ to see the real `! LaTeX Error`.
 - **`tlmgr: command not found`** — `quarto install tinytex` doesn't put `tlmgr`
   on PATH. Use `r-lib/actions/setup-tinytex@v2`, and `apt-get install` the fonts
   the class needs (e.g. `fonts-noto-core fonts-noto-extra`).
+- **Equations come out in Latin Modern Math although `mathfont` is Noto Sans Math** —
+  no error, just the wrong font (`pdffonts docs/thesis.pdf` lists `LatinModernMath`).
+  The installed Noto Sans Math is 2.001, which has no OpenType MATH table; Linux
+  distributions ship that version. Install 3.000 from google/fonts, as
+  `build-thesis.yml` does, whose last step fails the run on this fallback.
 - **`Emergency stop … no legal \end found`, last package loaded is the .sty** —
   a support `.sty` was pulled in via Quarto `include-in-header:` file injection,
   which inlines the file's `\endinput` and truncates `index.tex`. Load it as a
