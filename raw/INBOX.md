@@ -29,6 +29,8 @@ Nothing in `raw/inbox/` is read by anything until you run `/ingest`. When
 **No repository yet?** The same instructions work as a stand-alone prompt in
 any capable AI session over the folder on your own machine:
 [`.claude/skills/ingest/SKILL.md`](https://github.com/dataimago/dissertation-app-template/blob/main/.claude/skills/ingest/SKILL.md).
-Run that way it writes the same `MANIFEST.md`, inventory, and report beside
-your folder; copy the folder — those files included — into `raw/inbox/` once
-your repository exists, and `/ingest` picks up where it left off.
+Run that way it only reads: it moves nothing, and writes `MANIFEST.md`, an
+inventory and a report beside your folder. Once your repository exists, copy
+the folder **and** those three files into `raw/inbox/`, side by side, and run
+`/ingest`. It recognises the earlier run, sorts the folder, and keeps the gaps
+you already answered.
