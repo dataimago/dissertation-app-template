@@ -20,13 +20,15 @@ Never modify a file's contents under `raw/`. Never open `raw/private/`. Never
 read a data file beyond its header row. Never fabricate.
 
 **Stand-alone use (no repository yet).** This file also works as a prompt in
-any capable AI session over a folder on the author's machine. Then: treat the
-folder as `raw/inbox/`, write `MANIFEST.md`, `inventory/corpus-inventory.yaml`
-and `ingest-report.md` *beside* it (there is no `wiki/` to build yet — stop
-after step 2 and write the report), and never move anything into a
-`private/` directory the author has not agreed to. When the repository
-exists, the folder and those files go into `raw/inbox/` and `/ingest`
-continues from step 3.
+any capable AI session over a folder on the author's machine. Then **classify
+and record only**: read the folder as if it were `raw/inbox/`, but do not
+move, rename, copy or delete any file, run no git command, and create no
+`.dataimago/`. In step 1 the "Goes to" column becomes where each file *would*
+go. Write `MANIFEST.md` (with `Status: stand-alone` at the top),
+`inventory/corpus-inventory.yaml` and `ingest-report.md` *beside* the folder,
+not inside it. There is no `wiki/` to build yet: stop after step 2 and write
+the report. When the repository exists, the folder and those three files go
+into `raw/inbox/` together, and `/ingest` runs in full, reusing them (step 0).
 
 ## 0. Orient (2 min)
 
@@ -36,6 +38,16 @@ continues from step 3.
   overwrite seeded pages (those with a `generator:` line) too.
 - `raw/inbox/` has anything besides its `.dataimago-keep` placeholder? Then the author dropped a
   folder — step 1 applies in full. Otherwise step 1 only re-checks.
+- `raw/inbox/` holds a `MANIFEST.md` whose top says `Status: stand-alone`
+  (with `ingest-report.md` and `inventory/corpus-inventory.yaml` beside it)?
+  That is the author's earlier stand-alone run, not material: read all three
+  first and never classify them. Step 1 still runs in full on the folder,
+  using the stand-alone manifest's "would go to" column as a starting point
+  and checking each row. Step 2 starts from the stand-alone inventory: point
+  each claim's evidence at the file's new path, drop any claim whose evidence
+  is gone, and keep every gap the author has since answered as answered,
+  citing their answer. Then move the three files, unedited, to
+  `raw/inventory/stand-alone/` as the record of that run.
 - `source.referencedRepo` set (the author's whole dissertation is already a
   repository)? Read it in place — clone it read-only beside this repo if it is
   not already there — and treat its tree as the inbox; nothing is copied in.
@@ -43,7 +55,8 @@ continues from step 3.
 ## 1. Classify (the archive rule: classify everything, store what is safe)
 
 Walk every file under `raw/inbox/` (or the referenced repo) and every file
-already under `raw/`. Assign one class per file, by extension and name first,
+already under `raw/`, except an earlier stand-alone run's three files
+(step 0). Assign one class per file, by extension and name first,
 then a light look at text files and **only the header row** of tabular ones:
 
 | Class | Signals | Goes to |
