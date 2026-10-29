@@ -1,6 +1,6 @@
 ---
 name: ingest
-description: The first act after cloning, and any time raw/ changes — classify everything the author brought (raw/ and raw/inbox/), keep private material out of git, write raw/MANIFEST.md and the corpus inventory, build wiki/ from all of it (one sources/ page per source, then the synthesis pages), refine the spec's prospective fields from an imported manuscript (never invent), and end with wiki/analyses/ingest-report.md plus one work item per gap. Idempotent. Use for "ingest", "seed the wiki", "I added files to raw/", or a fresh clone with an empty wiki.
+description: The first act after cloning, and any time raw/ changes — classify everything the author brought (raw/ and raw/inbox/), keep private material out of git, write raw/MANIFEST.md and the corpus inventory, build wiki/ from all of it (one sources/ page per source, then the synthesis pages), propose refinements to the spec's prospective fields from an imported manuscript (never applied until the author confirms; never invented), and end with wiki/analyses/ingest-report.md plus one work item per gap. Idempotent. Use for "ingest", "seed the wiki", "I added files to raw/", or a fresh clone with an empty wiki.
 ---
 
 # /ingest — from what the author brought to a knowledge base
@@ -129,18 +129,30 @@ key terms), and the research-domain pages `theories/`, `methods/`,
 each with `sources:`. Then `wiki/index.md` (catalog, with a `Status:` line
 naming this ingest) and append to `wiki/log.md`.
 
-## 5. Refine the spec (imported dissertation only)
+## 5. Propose refinements to the spec (imported dissertation only)
 
 If `thesis.manuscript.status` is `locked-v1`, the hub's short door filled the
 spec's prospective fields from what the author pasted — their abstract
 (research question, background, contribution) and their chapter titles
-(`thesis.chapters`). Those are the author's words, not placeholders. Refine
-them from the manuscript itself: a sharper research question from the
-introduction, chapter titles and ids matched to the table of contents, a
-methodology summary from the methods chapter. Record each change in the
-inventory with `confidence` and `evidence`, and mention it in the report so
-the author sees what was rewritten. **Never invent** a value the manuscript
-does not support — open a gap instead — and never touch other spec fields.
+(`thesis.chapters`). Those are the author's words, not placeholders.
+**Propose; do not write.** Do not edit `dataimago-spec.yaml` in this pass.
+
+Compare each of those fields with the manuscript itself: a sharper research
+question from the introduction, chapter titles and ids matched to the table of
+contents, a methodology summary from the methods chapter. Where the manuscript
+supports a better version, record a proposal: the field, **the author's
+current text, verbatim**, the proposed text, its `confidence` and `evidence`
+(`{path, line}`), in the inventory under `proposals[]` with an id
+(`refine-<field>`), and list it in the report (step 6). **Never invent** a
+value the manuscript does not support — open a gap instead — and never touch
+other spec fields.
+
+Apply a proposal only when the author confirms it, in their own words, in this
+session or a later one ("apply refine-researchQuestion", or an edited version
+of it). Then write exactly what they confirmed to `dataimago-spec.yaml`, mark
+the proposal `applied` (or `declined`) in the inventory with the date, and
+append a `log.md` entry. A re-run never re-proposes a declined refinement
+unless the manuscript has changed.
 
 ## 6. The report, and the gaps as work
 
@@ -148,7 +160,10 @@ Write `wiki/analyses/ingest-report.md` **for the author, not for the machine**:
 lead with the scene — what you found in their folder in plain terms, what you
 could read, what you could not, what you inferred and how sure you are — then
 the counts, then the gaps, each with why it matters and how to supply it. If
-private material was set aside, say so first. For each gap, file a work item
+private material was set aside, say so first. For an imported dissertation,
+add **Proposed refinements to your answers**: for each proposal, your words
+and the proposed text side by side, the evidence, and how to accept, edit or
+decline it; nothing in it has been applied yet. For each gap, file a work item
 in `.dataimago/work/wi-<date>-<slug>.yaml` (`createdBy: ai`, `discoveredFrom:
 ingest`), so the punch list lives where work lives.
 
