@@ -13,6 +13,14 @@
 // synced theme sets $sidebar-bg itself.
 $sidebar-bg: $body-bg !default;
 
+// Muted text (the previous/next chapter links, the page footer, Quarto's
+// --quarto-text-muted) takes the theme's secondary colour, which is the
+// content.secondary token. Without this it is Bootstrap's fixed #6c757d:
+// 4.0:1 on the light page and 3.9:1 on the dark one. Not !default: Quarto's
+// website layer sets it earlier, so only a plain assignment takes. Remove
+// once the synced theme sets $text-muted itself.
+$text-muted: $secondary;
+
 /*-- scss:rules --*/
 // Block quotes and captions take the secondary text colour. Quarto dims the
 // body colour at compile time instead, which turns the neutral palette's warm

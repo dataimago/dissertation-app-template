@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Design specimen",
+    "section": "",
+    "text": "Skip to main content\nThis page exercises the theme. A paragraph of running text carries an inline link, some emphasis, some strong text, and inline code. Accented names (Dvořák, Łódź, Nguyễn) and Greek letters in text (α, β, θ) use the same face."
+  },
+  {
+    "objectID": "index.html#a-second-level-heading",
+    "href": "index.html#a-second-level-heading",
+    "title": "Design specimen",
+    "section": "A second-level heading",
+    "text": "A second-level heading\n\nA list item\nAnother, with a link\n\n\nA numbered item\nAnother\n\n\nA block quotation, set off from the running text.\n\n\nA third-level heading\nfit &lt;- lm(score ~ prior, data = students)\nsummary(fit)\n\n\n\n\n\n\nNoteA note\n\n\n\nCallouts carry the theme’s semantic colours.\n\n\n\n\n\n\n\n\nWarning\n\n\n\nA warning without a title.\n\n\n\nA table with a caption.\n\n\nMeasure\nEstimate\nSE\n\n\n\n\nMean\n0.42\n0.03\n\n\nSD\n1.07\n0.02\n\n\n\nDisplay maths: P(Xij=1∣θi)=11+e−aj(θi−bj)P(X_{ij} = 1 \\mid \\theta_i) = \\frac{1}{1 + e^{-a_j(\\theta_i - b_j)}} and inline maths, θ̂±1.96SE\\hat{\\theta} \\pm 1.96\\,\\mathrm{SE}.\nA footnote reference.1"
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Design specimen",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThe footnote text.↩︎"
+  }
+]
