@@ -1,0 +1,24 @@
+/*-- scss:defaults --*/
+// This site's own layer over the synced theme. The synced files
+// (neutral-*.scss, fonts/) are never edited; what this site needs on top of
+// them goes here.
+//
+// Listed BEFORE the synced theme in _quarto.yml: Quarto emits the defaults of
+// later files first, so this block compiles after the theme's and can read
+// its $body-bg.
+//
+// The docked sidebar takes the page colour. Without this Quarto paints it
+// #fff in both themes and computes its link colours against white, so in
+// dark mode the site title read near-white on white (1.04:1). Remove once the
+// synced theme sets $sidebar-bg itself.
+$sidebar-bg: $body-bg !default;
+
+/*-- scss:rules --*/
+// Block quotes and captions take the secondary text colour. Quarto dims the
+// body colour at compile time instead, which turns the neutral palette's warm
+// tints olive (light) and amber (dark). The synced theme maps figcaption to
+// the token; this covers the rest. Remove once the synced theme does.
+.blockquote, blockquote, caption, .table-caption, .figure-caption,
+.panel-caption, .subfigure-caption {
+  color: var(--color-content-secondary);
+}

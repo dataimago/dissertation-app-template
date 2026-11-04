@@ -1,10 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
+/* The fonts ship in @dataimago/css-neutral, one stylesheet per script
+   (unicode-range), so the browser downloads only the scripts a page uses. They
+   are served from this app, not from Google, and include Noto Sans Mono and
+   Noto Sans Math, which the Google request never loaded. */
+@import '@dataimago/css-neutral/fonts/latin/fonts.css';
+@import '@dataimago/css-neutral/fonts/latin-ext/fonts.css';
+@import '@dataimago/css-neutral/fonts/vietnamese/fonts.css';
+@import '@dataimago/css-neutral/fonts/greek/fonts.css';
+@import '@dataimago/css-neutral/fonts/greek-ext/fonts.css';
+@import '@dataimago/css-neutral/fonts/cyrillic/fonts.css';
+@import '@dataimago/css-neutral/fonts/cyrillic-ext/fonts.css';
+@import '@dataimago/css-neutral/fonts/math/fonts.css';
+@import '@dataimago/css-neutral/fonts/lang.css';
+@import '@dataimago/css-neutral/tokens.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import '@dataimago/css-neutral/tokens.css';
 
 html {
   -webkit-font-smoothing: antialiased;
