@@ -1,0 +1,25 @@
+{
+  "targets": [
+    {
+      "name": "wiki",
+      "pages": [{ "name": "specimen", "path": "/index.html" }],
+      "build": { "command": "cp .dataimago/specimen.md index.md && quarto render index.md", "static": "_site" },
+      "dark": "quarto-toggle",
+      "elements": [
+        "body",
+        "#title-block-header .title",
+        "main h2",
+        "main h3",
+        "main p",
+        "main p a",
+        "blockquote",
+        "div.sourceCode",
+        ".callout",
+        "table",
+        "caption",
+        "#quarto-sidebar",
+        "div.sidebar-item-container"
+      ]
+    }
+  ]
+}

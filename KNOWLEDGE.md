@@ -88,6 +88,27 @@ machine-checkable: a page without it is a guess.
   overwrites seeded pages too. This is a rule of this manual, not a field of
   your spec. `log.md` is only ever appended.
 
+## The site's look
+
+The published knowledge site takes its theme and fonts from the dataimago
+neutral design system, `@dataimago/css-neutral`: Noto Sans throughout, a
+light and a dark theme, contrast that meets WCAG AA. They are copies, made by
+`dataimago-sync` at the version `wiki/.dataimago/design.json` pins:
+`wiki/assets/neutral-light.scss`, `wiki/assets/neutral-dark.scss` and
+`wiki/assets/fonts/`. Each copied text file starts with a "do not edit" line
+naming that version. The fonts are served from your site, not from Google.
+
+- **Never edit the copies.** The `Design sync check` workflow fails if one
+  changes. A rule of your own goes in `wiki/assets/site.scss`, the site's own
+  layer over the theme.
+- **To upgrade**, change `version` in `wiki/.dataimago/design.json` to a newer
+  release, then from `wiki/` run
+  `npx -p @dataimago/css-neutral@<version> dataimago-sync` and commit what it
+  writes. Render the site and look before you push: a release can change how
+  pages look.
+- **To go your own way**, delete `wiki/.dataimago/design.json`. The check then
+  skips, the files are yours to edit, and nothing else depends on them.
+
 ## Sovereignty
 
 This knowledge base is yours. Nothing here is shared upstream without your
