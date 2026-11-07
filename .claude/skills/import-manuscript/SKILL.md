@@ -51,7 +51,7 @@ the reference for what "v1.0 looked like".
   into the chapters directory as **vendored** class files — set
   `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
   the spec said before (`shipped` means a registry class, `generated` the
-  framework's generic one; the author's own class is neither).
+  framework's default one; the author's own class is neither).
 
 ## 3. Place, as v1.0
 

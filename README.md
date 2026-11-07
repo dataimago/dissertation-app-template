@@ -70,9 +70,9 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 **Your institution's thesis format.** `thesis.classFile.type` in `dataimago-spec.yaml` records the choice you made at setup:
 
-- `shipped`: a ready-made class for your institution, from the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes). Ask your AI assistant to "set up my institution's thesis class". It copies the class into your repository, so your PDF builds from files you can see, and the class stays the same until you ask to update it.
-- `vendored`: your institution's own `.cls` file, which you add in place of `<chapters>/thesis.cls`.
-- `generated` (the default): your repository starts with the framework's generic `thesis.cls`, and your AI assistant adapts it to your institution's formatting guidelines (put them in `raw/thesis-formatting/`).
+- **`shipped`**: the registry has a class for your institution, and you use it as-is. The registry is the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes). Ask your AI assistant to "set up my institution's thesis class". It copies the class into your repository, so your PDF builds from files you can see, and the class stays the same until you ask to update it.
+- **`vendored`**: you provide your institution's own class file. Put it in place of `<chapters>/thesis.cls`.
+- **`generated`** (the default): you start from the framework's default `thesis.cls` and tailor it to your institution's formatting guidelines. Put the guidelines in `raw/thesis-formatting/`, and your AI assistant does the tailoring with you.
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
 

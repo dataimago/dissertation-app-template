@@ -14,5 +14,5 @@ As with `thesis.cls` (see the rpkg template's `THESIS-CLS-README.md`),
 generated-mode work happens **in this repo, with your AI, at edit time** —
 not during onboarding. One word differs: for `thesis.cls`, `shipped` means a
 ready-made class for your institution from the thesis-class registry, and the
-framework's generic `thesis.cls` is where `generated` starts. The spec field can change at any point by editing
-`dataimago-spec.yaml` directly.
+framework's default `thesis.cls` is where `generated` starts. The spec field
+can change at any point by editing `dataimago-spec.yaml` directly.

@@ -11,18 +11,18 @@ never bend formatting in non-conformant ways to clear an error.
 ## Steps
 1. Resolve the class via `vertical.dissertation.thesis.classFile.type` in
    `dataimago-spec.yaml`. The three modes are the thesis-class registry's
-   (`dataimago/dissertation-thesis-classes`):
-   - **`shipped`**: the registry has a class for the author's institution, used
-     as-is. Set it up as in "Setting up a shipped class" below.
-   - **`vendored`**: the author provides their institution's own `.cls`, which
-     replaces `thesis.cls` beside the chapters.
-   - **`generated`** (the default): no ready-made class. Start from the
-     framework's generic `thesis.cls` (the one the repo starts with) and adapt
-     it to the guidelines in `raw/thesis-formatting/`.
+   (`dataimago/dissertation-thesis-classes`). Put them to the author in these
+   words, which `THESIS-CLS-README.md` beside the chapters also uses:
+   - **`shipped`**: the registry has a class for your institution, and you use
+     it as-is. (Set it up as in "Setting up a shipped class" below.)
+   - **`vendored`**: you provide your institution's own class file. (It
+     replaces `thesis.cls` beside the chapters.)
+   - **`generated`** (the default): you start from the framework's default
+     `thesis.cls` and tailor it to your institution's formatting guidelines.
+     (The guidelines are in `raw/thesis-formatting/`.)
 
-   The framework's generic `thesis.cls` is where `generated` starts. It is not
-   what `shipped` means. `THESIS-CLS-README.md` beside the chapters explains
-   the modes to the author.
+   The framework's default `thesis.cls`, the one the repo starts with, is where
+   `generated` starts. It is not what `shipped` means.
 2. Build via `build-thesis.yml` (Quarto + XeLaTeX). Chapters: `thesis/chapters/`
    (content-only) or the R package's `ui/www/chapters/`. For deep diagnosis or
    class drafting, hand off to the `thesis-build-agent`.
@@ -48,7 +48,7 @@ it.
    `generated` instead: with their agreement, set `classFile.type: generated`
    and adapt the framework's `thesis.cls` to their guidelines. Never borrow
    another institution's class. (A repo set up before 2026-11-07 may say
-   `shipped` for the framework's generic class; that was the old wording, and
+   `shipped` for the framework's default class; that was the old wording, and
    under today's wording it is `generated`.)
 4. **Fetch the class.** If the committed `thesis.cls` is already the registry's
    file, skip to step 6. Otherwise fetch the entry's `path` and each file in
@@ -63,10 +63,12 @@ it.
    `classoption` to its `classOptions`, and `pdf-engine` to its `engine`.
 6. **Check the title page.** A registry class may bring its own front-matter
    commands, listed in its README (`classes/<id>/README.md` in the registry).
-   CU Boulder's `\author`, for example, takes two arguments (first name, last
-   name), which Quarto's default title block does not supply. Set them up with
-   `include-in-header` and render locally (`quarto render --to pdf`) until the
-   PDF builds.
+   The CU Boulder class, for example, defines a two-argument
+   `\author{first}{last}`, while Quarto's template writes `\author{...}` with
+   one argument. So the first `shipped` build may need front-matter changes
+   made outside the class: in `_quarto.yml` (for example `include-in-header`)
+   or the front-matter chapter, never in the class file itself. Render locally
+   (`quarto render --to pdf`) until the PDF builds.
 7. **Commit the files.** Commit the class, its companions and the config change
    on a branch and propose them as a pull request, naming the registry `id` and
    `version` in the commit message. The committed files are the author's pinned

@@ -23,12 +23,15 @@ formatting in ways that violate it to make an error go away.
      `available` class, say so plainly and offer `generated`. The full steps
      are in `.claude/skills/thesis-build/SKILL.md`, "Setting up a shipped
      class".
-   - `vendored`: the author provides their institution's own `.cls`.
-   - `generated` (the default): start from the framework's generic
-     `thesis.cls` and adapt it to the guidelines in `raw/thesis-formatting/`,
-     validating on a synthetic example.
+     The CU Boulder class's two-argument `\author{first}{last}` does not match
+     the one-argument `\author{...}` Quarto writes, so the first build may
+     need front-matter changes outside the class.
+   - `vendored`: the author provides their institution's own class file.
+   - `generated` (the default): start from the framework's default
+     `thesis.cls` and tailor it to the institution's formatting guidelines in
+     `raw/thesis-formatting/`, validating on a synthetic example.
 
-   The framework's generic `thesis.cls` is where `generated` starts, not what
+   The framework's default `thesis.cls` is where `generated` starts, not what
    `shipped` means. `THESIS-CLS-README.md` beside the chapters explains the
    modes to the author.
 2. Build (Quarto + XeLaTeX, per `build-thesis.yml`); fix errors minimally. The
