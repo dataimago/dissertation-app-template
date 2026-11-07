@@ -9,13 +9,70 @@ Produce the institution-formatted thesis PDF. Conform to the institution's spec;
 never bend formatting in non-conformant ways to clear an error.
 
 ## Steps
-1. Resolve the class via `thesis.classFile.type` in `dataimago-spec.yaml`:
-   `shipped` / `vendored` / `generated` (see `THESIS-CLS-README.md` beside the
-   chapters).
+1. Resolve the class via `vertical.dissertation.thesis.classFile.type` in
+   `dataimago-spec.yaml`. The three modes are the thesis-class registry's
+   (`dataimago/dissertation-thesis-classes`):
+   - **`shipped`**: the registry has a class for the author's institution, used
+     as-is. Set it up as in "Setting up a shipped class" below.
+   - **`vendored`**: the author provides their institution's own `.cls`, which
+     replaces `thesis.cls` beside the chapters.
+   - **`generated`** (the default): no ready-made class. Start from the
+     framework's generic `thesis.cls` (the one the repo starts with) and adapt
+     it to the guidelines in `raw/thesis-formatting/`.
+
+   The framework's generic `thesis.cls` is where `generated` starts. It is not
+   what `shipped` means. `THESIS-CLS-README.md` beside the chapters explains
+   the modes to the author.
 2. Build via `build-thesis.yml` (Quarto + XeLaTeX). Chapters: `thesis/chapters/`
    (content-only) or the R package's `ui/www/chapters/`. For deep diagnosis or
    class drafting, hand off to the `thesis-build-agent`.
 3. Verify against the institution checklist (margins, front matter, ToC, captions).
+
+## Setting up a shipped class
+
+"Beside the chapters" means the Quarto book's folder: `thesis/` in this repo
+(content-only), or the R package's `ui/www/`. In the R-package layout that
+folder is in the package's own repository, so ask the author before you change
+it.
+
+1. **Find the institution.** Read `vertical.dissertation.institution.name` from
+   `dataimago-spec.yaml`.
+2. **Look it up in the registry.** Fetch
+   `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`
+   and find the entry in `classes` whose `institution` is that name (ignore
+   case) and whose `status` is `available`. If the spec names it differently
+   (say, "CU Boulder" for "University of Colorado Boulder"), ask the author to
+   confirm the match before you use it.
+3. **No match? Say so and offer `generated`.** Tell the author plainly: "The
+   thesis-class registry has no ready-made class for <institution> yet." Offer
+   `generated` instead: with their agreement, set `classFile.type: generated`
+   and adapt the framework's `thesis.cls` to their guidelines. Never borrow
+   another institution's class. (A repo set up before 2026-11-07 may say
+   `shipped` for the framework's generic class; that was the old wording, and
+   under today's wording it is `generated`.)
+4. **Fetch the class.** If the committed `thesis.cls` is already the registry's
+   file, skip to step 6. Otherwise fetch the entry's `path` and each file in
+   `companions` from the same base,
+   `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/`,
+   and save each one beside the chapters under its own file name. For CU
+   Boulder, `classes/cu-boulder/thesis.cls` replaces `thesis.cls` and
+   `classes/cu-boulder/macros.tex` becomes `macros.tex`. Keep `classFile.path`
+   in the spec at `thesis.cls`.
+5. **Point the Quarto config at it.** In `_quarto.yml` beside the chapters,
+   under `format: pdf:`, set `documentclass` to the entry's `documentclass`,
+   `classoption` to its `classOptions`, and `pdf-engine` to its `engine`.
+6. **Check the title page.** A registry class may bring its own front-matter
+   commands, listed in its README (`classes/<id>/README.md` in the registry).
+   CU Boulder's `\author`, for example, takes two arguments (first name, last
+   name), which Quarto's default title block does not supply. Set them up with
+   `include-in-header` and render locally (`quarto render --to pdf`) until the
+   PDF builds.
+7. **Commit the files.** Commit the class, its companions and the config change
+   on a branch and propose them as a pull request, naming the registry `id` and
+   `version` in the commit message. The committed files are the author's pinned
+   copy: `build-thesis.yml` builds from them and never fetches from the
+   registry, so a later change there cannot change the author's PDF. Update the
+   class only when the author asks, by repeating these steps.
 
 ## Common build failures (from the dissertation-ai alpha, 2026-06-24)
 

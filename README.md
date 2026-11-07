@@ -68,6 +68,14 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 
 After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the generated files in sync.
 
+**Your institution's thesis format.** `thesis.classFile.type` in `dataimago-spec.yaml` records the choice you made at setup:
+
+- `shipped`: a ready-made class for your institution, from the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes). Ask your AI assistant to "set up my institution's thesis class". It copies the class into your repository, so your PDF builds from files you can see, and the class stays the same until you ask to update it.
+- `vendored`: your institution's own `.cls` file, which you add in place of `<chapters>/thesis.cls`.
+- `generated` (the default): your repository starts with the framework's generic `thesis.cls`, and your AI assistant adapts it to your institution's formatting guidelines (put them in `raw/thesis-formatting/`).
+
+`<chapters>/THESIS-CLS-README.md` says more about each one.
+
 ## Adding committee members + advisor
 
 Edit `dataimago-spec.yaml`'s `vertical.dissertation.advisors` block. The generator updates the signature page template + README.
