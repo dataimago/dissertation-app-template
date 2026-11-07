@@ -84,7 +84,10 @@ vertical:
         file: references.bib
         citationStyle: apa-7         # apa-7 | chicago | mla | harvard | custom
       classFile:
-        type: shipped                # shipped | vendored | generated
+        # shipped: the registry has a class for your institution (institution.name), and you use it as-is
+        # vendored: you provide your institution's own class file
+        # generated: you start from the framework's default thesis.cls and tailor it to your institution's formatting guidelines
+        type: generated              # shipped | vendored | generated
         path: thesis.cls
         guidelinesDocuments: []
       # D.2.1.h down-the-road fields:
