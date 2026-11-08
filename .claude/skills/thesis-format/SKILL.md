@@ -147,6 +147,12 @@ weakening a value to make it pass.
 Build the registry's synthetic example book with the profile, which shows how
 the profile lays a page out without touching the author's chapters:
 
+The example book picks its profile from an overlay named after it. In the scratch
+copy, first create `classes/dataimago-thesis/example/_quarto-<id>.yml` with two
+lines, `thesis:` and `  profile: <id>` (add `  institution: Example University` if the
+profile sets no `institution.name`; a synthetic name, never a real one). Without it
+the book is built with the house profile.
+
 ```sh
 sh classes/dataimago-thesis/example/render.sh <id> lualatex     # then xelatex
 ```
@@ -220,18 +226,19 @@ Continue only on an explicit yes. A yes covers this profile, not anything else.
 - Read the final file aloud to the author, line by line if they want. They may
   strike any line.
 
-**Prepare the contribution.** One new file in a branch of a fork of the
-registry, nothing else: `profiles/<id>.yaml`, plus the compiled
-`profiles/<id>.cfg` from Step 4. Do not touch `registry.json`, `docs/`, `classes/`
-or another profile. Show the author the commands and run each only with their
+**Prepare the contribution.** Three new files in a branch of a fork of the
+registry, nothing else: `profiles/<id>.yaml`, the compiled `profiles/<id>.cfg`
+from Step 4, and the two-line overlay
+`classes/dataimago-thesis/example/_quarto-<id>.yml` from Step 5. Do not touch
+`registry.json`, `docs/`, other files under `classes/`, or another profile. Show the author the commands and run each only with their
 go-ahead, in their own GitHub account:
 
 ```sh
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
 git clone https://github.com/<their-username>/dissertation-thesis-classes   # in a scratch folder
 git switch -c profile/<id>
-# copy in profiles/<id>.yaml and profiles/<id>.cfg
-git add profiles/<id>.yaml profiles/<id>.cfg && git commit -m "profile: <institution>"
+# copy in the three files
+git add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml && git commit -m "profile: <institution>"
 git push -u origin profile/<id>
 gh pr create --repo dataimago/dissertation-thesis-classes --title "profile: <institution>" --body-file <body>
 ```
