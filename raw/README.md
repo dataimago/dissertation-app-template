@@ -36,7 +36,7 @@ again whenever you add material.
 | `advisor/` | Writings by your advisor and committee members; shapes how your AI assistant models the prose your committee expects. |
 | `style/` | Exemplar dissertations or papers whose structure, voice, or formatting you want to emulate. |
 | `background/` | Reports, talks (as PDF), blog posts, course readings, methodological references that shape your thinking but aren't cited. |
-| `thesis-formatting/` | Your institution's formatting guidelines. Used to refine `thesis.cls` when `classFile.type` is `generated`. |
+| `thesis-formatting/` | Your institution's formatting guidelines. Used to refine `thesis.cls` when `classFile.type` is `generated`; `/thesis-format` turns it into a profile you check against the guide. |
 | `data/` | Data files. They are **listed and characterised from their headers only** — never opened further, never summarized in `wiki/`. |
 | `private/` | Anything with names, addresses, identifiers, or that you flag. **Gitignored; the AI is denied from reading it.** If `/ingest` put anything here, make this repository private before you push. |
 | `MANIFEST.md` | What you brought, where each item went, what was set aside and why. Written by `/ingest`. |
