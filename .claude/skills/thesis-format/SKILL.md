@@ -177,7 +177,7 @@ Then three lists, in this order, because the weakest evidence comes first:
 
 Ask the author to go through it against the guide and tell you every row that is
 wrong or that they want changed. Edit the profile, re-run Steps 4 and 5, and
-repeat until they say it is right. Only then commit it to a branch in their
+repeat until they say it is right. Keep the scratch copy until Step 7 is done or declined, then delete it (`rm -rf "$SCRATCH"`). Only then commit it to a branch in their
 repository (never `main`) and propose it as a pull request. The author merges.
 
 ## Step 7 (optional): contribute the profile back
