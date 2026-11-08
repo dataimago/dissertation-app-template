@@ -52,7 +52,7 @@ Never open `raw/private/`. Never edit a file under `raw/`. Never read
 1. Read `dataimago-spec.yaml`: `vertical.dissertation.institution.name` and
    `vertical.dissertation.thesis.classFile.guidelinesDocuments` (each entry's
    `title` and `description` say what a document covers).
-2. List `raw/thesis-formatting/`. If it is empty, ask the author for the guide
+2. List `raw/thesis-formatting/`. If it is empty or holds only a `.gitkeep` placeholder, ask the author for the guide
    and stop. If the guide defers to other documents (an accessibility page, a
    deposit service's instructions) that are not there, list them for the author
    and do not guess what they say. The fields they would settle go under
@@ -173,7 +173,8 @@ profile sets no `institution.name`; a synthetic name, never a real one). Without
 the book is built with the house profile.
 
 ```sh
-(cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> lualatex)    # then xelatex
+(cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> lualatex)
+(cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> xelatex)
 ```
 
 It needs `quarto`, a current TeX Live and the TeX Gyre fonts. Report whether
@@ -276,8 +277,9 @@ If the `id` already exists in the registry (the update case), replace only
 missing), and say in the pull-request body what changed and which guide version
 it follows. **The author opens the pull request.** Write the files and the body,
 and give the author the commands below to run in their own terminal, signed in as
-themselves. Run a command yourself only if they ask you to, one command at a time, and
-stop at the first failed check. Keep `$SCRATCH` until they have opened it:
+themselves. Your last step is writing `$SCRATCH/pr-body.md` and showing the commands:
+you do not run `git commit`, `git push` or `gh pr create`. Keep `$SCRATCH` until they
+say they have opened it:
 
 First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
 using a separate clone of the author's *fork*, never `$SCRATCH/registry`, and
