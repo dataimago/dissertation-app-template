@@ -216,7 +216,7 @@ one. The author merges. Never run `git add`, `commit` or `push` inside
 `$SCRATCH/registry`: it is a copy of the registry, not the author's repository.
 
 Do this before Step 7, while the scratch copy still holds the `.cfg`. Delete the scratch
-copy (`rm -rf "$SCRATCH"`) only after Step 7 is done or declined.
+copy (`rm -rf "$SCRATCH"`) only after Step 7 is done or declined (in Step 7 you delete it once the files are written to the author's folder).
 
 ## Step 7 (optional): contribute the profile back
 
@@ -275,35 +275,36 @@ from Step 4, and the two-line overlay
 If the `id` already exists in the registry (the update case), replace only
 `profiles/<id>.yaml` and `profiles/<id>.cfg` (add the overlay only if it is
 missing), and say in the pull-request body what changed and which guide version
-it follows. **The author opens the pull request.** Write the files and the body,
-and give the author the commands below to run in their own terminal, signed in as
-themselves. Your last step is writing `$SCRATCH/pr-body.md` and showing the commands:
-you do not run `git commit`, `git push` or `gh pr create`. Keep `$SCRATCH` until they
-say they have opened it:
+it follows.
 
-First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
-using a separate clone of the author's *fork*, never `$SCRATCH/registry`, and
-never a bare `cd` (every git command below names its directory with `-C`), so that no
-command can run in the author's own repository:
+**The author opens the pull request; you only prepare.** Ask the author for their GitHub
+username (never read it from `gh`) and for a folder outside their repository to keep the
+files in (suggest `~/thesis-format-<id>`). Write into it, and print its full path:
+`profiles/<id>.yaml`, `profiles/<id>.cfg`, the overlay at
+`classes/dataimago-thesis/example/_quarto-<id>.yml`, and `pr-body.md` (described below).
+Then show the author the commands below as text to copy, with `<CONTRIB>` replaced by that
+absolute path and `<their-username>`, `<id>` and `<institution>` filled in. They run
+them in their own terminal, signed in as themselves. **You do not run any of them** and
+you put none of them in a command of your own. Delete `$SCRATCH` once the files are
+written; the folder you printed is what the author keeps.
+
+For the author to run (a fresh clone of their fork, never your scratch copy and never
+their dissertation repository):
 
 ```sh
-FORK=$SCRATCH/fork
-# Fail closed: stop at the first mismatch.
-test "$(gh api user --jq .login)" = "<their-username>" || { echo "gh is not signed in as the author"; exit 1; }
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
-git clone https://github.com/<their-username>/dissertation-thesis-classes "$FORK"
-test "$(git -C "$FORK" remote get-url origin)" = "https://github.com/<their-username>/dissertation-thesis-classes" || exit 1
-git -C "$FORK" switch -c profile/<id>
-mkdir -p "$FORK/classes/dataimago-thesis/example"
-cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" "$FORK/profiles/"
-OVERLAY=classes/dataimago-thesis/example/_quarto-<id>.yml
-[ -e "$FORK/$OVERLAY" ] || cp "$SCRATCH/registry/$OVERLAY" "$FORK/$OVERLAY"   # a new profile only; never overwrite an existing overlay
-git -C "$FORK" add profiles/<id>.yaml profiles/<id>.cfg
-[ -e "$FORK/$OVERLAY" ] && git -C "$FORK" add "$OVERLAY"
-git -C "$FORK" commit -m "profile: <institution>"
-git -C "$FORK" push -u origin profile/<id>
+git clone https://github.com/<their-username>/dissertation-thesis-classes <CONTRIB>/fork
+git -C <CONTRIB>/fork remote get-url origin       # must read https://github.com/<their-username>/dissertation-thesis-classes
+git -C <CONTRIB>/fork switch -c profile/<id>
+mkdir -p <CONTRIB>/fork/classes/dataimago-thesis/example
+cp <CONTRIB>/profiles/<id>.yaml <CONTRIB>/profiles/<id>.cfg <CONTRIB>/fork/profiles/
+# new profile only (skip when the registry already has this overlay):
+cp <CONTRIB>/classes/dataimago-thesis/example/_quarto-<id>.yml <CONTRIB>/fork/classes/dataimago-thesis/example/
+git -C <CONTRIB>/fork add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml
+git -C <CONTRIB>/fork commit -m "profile: <institution>"
+git -C <CONTRIB>/fork push -u origin profile/<id>
 gh pr create --repo dataimago/dissertation-thesis-classes --head <their-username>:profile/<id> \
-  --title "profile: <institution>" --body-file "$SCRATCH/pr-body.md"
+  --title "profile: <institution>" --body-file <CONTRIB>/pr-body.md
 ```
 
 The pull-request body says: the institution, the guide's title, issuer, version
