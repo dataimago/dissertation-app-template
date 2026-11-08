@@ -77,8 +77,9 @@ ls "$SCRATCH/registry/profiles"          # profiles that already exist
 
 - **A profile for this institution already exists.** Tell the author, show it,
   and offer to check it against their guide's version instead of writing a new
-  one. A changed guide is a change to that profile, which the registry's
-  maintainer reviews like any other.
+  one, working on a copy in their repository. If the guide differs, the update is
+  a change to that one profile, which Step 7 can offer to the registry (the
+  update case); the maintainer reviews it like any other.
 - Read, in the scratch copy: `docs/house-class-spec.md` section 6 (the field
   tables), `profiles/profile.schema.json`, `profiles/house.yaml`, and
   `profiles/cu-boulder.yaml` (a worked example of sourcing a profile from a real
@@ -95,9 +96,12 @@ Read the whole guide. A PDF: read it page by page and keep the page numbers. A
 web page or text file with no page numbers: cite by section heading, as the CU
 profile does.
 
-Write `profiles/<id>.yaml` beside the chapters (`thesis/profiles/` in a
-content-only repository; `ui/www/profiles/` in the R package, where you ask the
-author first because it is the package's own repository). Start from the shape in
+Write `<id>.yaml` in a `profiles/` folder beside the chapters, chosen by
+`source` in `dataimago-spec.yaml`: content-only and referenced-repository layouts
+(`source.rPackage` null) use `thesis/profiles/<id>.yaml` in this repository;
+the R-package layout uses
+`packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`
+(`ui/www` by default), inside the package's own repository, so ask the author first. Start from the shape in
 spec section 6.3 and walk the field tables of section 6.4 in order, one section at
 a time: `institution` and `guide`, `geometry`, `type`, `spacing`, `headings`
 and `numbering`, `pagenumber`, `frontmatter`, `toc`, `appendices`, `landscape`,
@@ -107,8 +111,8 @@ and `numbering`, `pagenumber`, `frontmatter`, `toc`, `appendices`, `landscape`,
 |---|---|
 | states a value | the value, and a `sources` entry: `{section: "Margins", page: 5, quote: "1 inch on all edges"}`. Section or page alone is enough; a quote is at most one short line. |
 | states a value equal to the house value | you may leave the value out and keep the `sources` entry with a note "equals the house value", as the CU profile does for margins. |
-| shows a value only in a sample the author supplied | the value and `{inferred: true, from: "<sample file, page>", note: "<what was measured>"}` |
-| is silent, vague or contradicts itself | nothing; add the path to `unstated` (or, for a contradiction, put the two citations in the checklist's "Needs your decision" and leave the field out until the author chooses) |
+| shows a value only in a sample the institution published (a template or sample document, supplied by the author) | the value and `{inferred: true, from: "<sample file, page>", note: "<what was measured>"}` |
+| is silent, vague or contradicts itself, or shows a value only in the author's own thesis or drafts (those are never a source) | nothing; add the path to `unstated` (or, for a contradiction, put the two citations in the checklist's "Needs your decision" and leave the field out until the author chooses) |
 
 Also fill `guide:` (`title`, `issuer`, `version`, `date`, `url` if the guide is
 public, and `retrieved`: today's date, or the literal `unretrieved` if you did not
@@ -124,7 +128,7 @@ more specific document wins where they differ. Cite each value to the document i
 ## Step 4: validate
 
 Set `PROFILE_FILE` to the absolute path of the profile you wrote in Step 3
-(`$REPO_ROOT/thesis/profiles/<id>.yaml`, or the package's `ui/www/profiles/<id>.yaml`).
+(`$REPO_ROOT/thesis/profiles/<id>.yaml`, or the R-package path from Step 3).
 Run the checks in the scratch copy, in a subshell so your working directory stays in the
 author's repository:
 
@@ -252,11 +256,15 @@ Ask a second time: "Knowing that, do you want me to prepare it?" Do nothing belo
 - Read the final file aloud to the author, line by line if they want. They may
   strike any line.
 
-**Prepare the contribution.** Three new files in a branch of a fork of the
-registry, nothing else: `profiles/<id>.yaml`, the compiled `profiles/<id>.cfg`
+**Prepare the contribution.** If the `id` is new, three new files in a branch of
+a fork of the registry, nothing else: `profiles/<id>.yaml`, the compiled `profiles/<id>.cfg`
 from Step 4, and the two-line overlay
 `classes/dataimago-thesis/example/_quarto-<id>.yml` from Step 5. Do not touch
-`registry.json`, `docs/`, other files under `classes/`, or another profile. Show the author the commands and run each only with their
+`registry.json`, `docs/`, other files under `classes/`, or another profile.
+If the `id` already exists in the registry (the update case), replace only
+`profiles/<id>.yaml` and `profiles/<id>.cfg` (add the overlay only if it is
+missing), and say in the pull-request body what changed and which guide version
+it follows. Show the author the commands and run each only with their
 go-ahead, in their own GitHub account:
 
 First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
@@ -266,10 +274,11 @@ command can run in the author's own repository:
 
 ```sh
 FORK=$SCRATCH/fork
-gh api user --jq .login                    # must equal <their-username>, the name the author confirmed
+# Fail closed: stop at the first mismatch and give the author the commands to run themselves.
+test "$(gh api user --jq .login)" = "<their-username>" || { echo "gh is not signed in as the author"; exit 1; }
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
 git clone https://github.com/<their-username>/dissertation-thesis-classes "$FORK"
-git -C "$FORK" remote get-url origin       # must be exactly .../<their-username>/dissertation-thesis-classes
+test "$(git -C "$FORK" remote get-url origin)" = "https://github.com/<their-username>/dissertation-thesis-classes" || exit 1
 git -C "$FORK" switch -c profile/<id>
 mkdir -p "$FORK/classes/dataimago-thesis/example"
 cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" "$FORK/profiles/"
