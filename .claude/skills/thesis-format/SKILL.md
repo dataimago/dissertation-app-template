@@ -65,15 +65,24 @@ Never open `raw/private/`. Never edit a file under `raw/`. Never read
 The schema, the house profile and the checks live in the registry, which is
 another repository. **Ask first.** Tell the author: "I will copy the public
 registry into a temporary folder and install two small Python packages into a
-throwaway environment there. It is read-only, nothing from it is committed here, and I
-will delete it afterwards." Continue on their go-ahead.
+throwaway environment there. I will use that copy to run the checker, and to write a
+generated settings file and a two-line example file for your profile. None of it is committed to
+your repository, and I will delete the folder afterwards." Continue on their go-ahead.
 
 ```sh
 REPO_ROOT=$(git rev-parse --show-toplevel)   # the author's repository; never cd away from it in a way you do not undo
 SCRATCH=$(mktemp -d)
 git clone --depth 1 https://github.com/dataimago/dissertation-thesis-classes "$SCRATCH/registry"
 ls "$SCRATCH/registry/profiles"          # profiles that already exist
+for f in docs/house-class-spec.md profiles/profile.schema.json profiles/house.yaml profiles/cu-boulder.yaml \
+         classes/dataimago-thesis/thesis-profile.lua classes/dataimago-thesis/example/render.sh tools/check_profile.py; do
+  [ -e "$SCRATCH/registry/$f" ] || echo "MISSING: $f"
+done
 ```
+
+If any file is reported missing, stop. Tell the author that the house class and profiles
+are not available in the registry's default branch yet, name what is missing, and do not
+fill or validate a profile from memory or invent a schema.
 
 - **A profile for this institution already exists.** Tell the author, show it,
   and offer to check it against their guide's version instead of writing a new
@@ -198,8 +207,9 @@ repeat until they say it is right.
 Then offer to save the profile in their repository, and wait for their go-ahead.
 Show the exact commands first. The file is `thesis/profiles/<id>.yaml`, committed
 from this repository's root on a new branch (never `main`) and proposed as a
-pull request; in the R-package layout it is `ui/www/profiles/<id>.yaml`, committed
-inside the package's own repository (on its own branch and pull request), and
+pull request; in the R-package layout it is the Step 3 path
+(`packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`),
+committed inside the package's own repository (on its own branch and pull request), and
 the submodule pointer here is updated only after the author has merged that
 one. The author merges. Never run `git add`, `commit` or `push` inside
 `$SCRATCH/registry`: it is a copy of the registry, not the author's repository.
@@ -264,8 +274,10 @@ from Step 4, and the two-line overlay
 If the `id` already exists in the registry (the update case), replace only
 `profiles/<id>.yaml` and `profiles/<id>.cfg` (add the overlay only if it is
 missing), and say in the pull-request body what changed and which guide version
-it follows. Show the author the commands and run each only with their
-go-ahead, in their own GitHub account:
+it follows. **The author opens the pull request.** Write the files and the body,
+and give the author the commands below to run in their own terminal, signed in as
+themselves. Run a command yourself only if they ask you to, one command at a time, and
+stop at the first failed check. Keep `$SCRATCH` until they have opened it:
 
 First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
 using a separate clone of the author's *fork*, never `$SCRATCH/registry`, and
@@ -274,7 +286,7 @@ command can run in the author's own repository:
 
 ```sh
 FORK=$SCRATCH/fork
-# Fail closed: stop at the first mismatch and give the author the commands to run themselves.
+# Fail closed: stop at the first mismatch.
 test "$(gh api user --jq .login)" = "<their-username>" || { echo "gh is not signed in as the author"; exit 1; }
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
 git clone https://github.com/<their-username>/dissertation-thesis-classes "$FORK"
@@ -282,8 +294,10 @@ test "$(git -C "$FORK" remote get-url origin)" = "https://github.com/<their-user
 git -C "$FORK" switch -c profile/<id>
 mkdir -p "$FORK/classes/dataimago-thesis/example"
 cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" "$FORK/profiles/"
-cp "$SCRATCH/registry/classes/dataimago-thesis/example/_quarto-<id>.yml" "$FORK/classes/dataimago-thesis/example/"
-git -C "$FORK" add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml
+OVERLAY=classes/dataimago-thesis/example/_quarto-<id>.yml
+[ -e "$FORK/$OVERLAY" ] || cp "$SCRATCH/registry/$OVERLAY" "$FORK/$OVERLAY"   # a new profile only; never overwrite an existing overlay
+git -C "$FORK" add profiles/<id>.yaml profiles/<id>.cfg
+[ -e "$FORK/$OVERLAY" ] && git -C "$FORK" add "$OVERLAY"
 git -C "$FORK" commit -m "profile: <institution>"
 git -C "$FORK" push -u origin profile/<id>
 gh pr create --repo dataimago/dissertation-thesis-classes --head <their-username>:profile/<id> \
