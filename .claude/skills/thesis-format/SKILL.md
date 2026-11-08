@@ -43,9 +43,10 @@ Never open `raw/private/`. Never edit a file under `raw/`. Never read
 6. A profile `extends: house`. It never extends another profile.
 7. **Do not change the spec or the schema.** If the guide asks for something the
    schema cannot express (the CU profile's underlined links are an example),
-   cite the guide in `sources`, set the nearest allowed value or leave the field
-   out, and put the gap on the checklist under "Cannot be expressed" so the
-   author and the registry's maintainer see it.
+   leave the field out of the profile and list its path under `unstated`. Do not
+   substitute a nearby allowed value. Put the guide's citation, and what the guide
+   requires, only on the checklist's "Cannot be expressed" list, so the author and the
+   registry's maintainer see the gap.
 
 ## Step 1: find the guide and the institution
 
@@ -64,17 +65,21 @@ Never open `raw/private/`. Never edit a file under `raw/`. Never read
 
 The schema, the house profile and the checks live in the registry, which is
 another repository. **Ask first.** Tell the author: "I will copy the public
-registry into a temporary folder and install two small Python packages into a
-throwaway environment there. I will use that copy to run the checker, and to write a
-generated settings file and a two-line example file for your profile. None of it is committed to
-your repository, and I will delete the folder afterwards." Continue on their go-ahead.
+registry (`https://github.com/dataimago/dissertation-thesis-classes`) into a temporary folder
+and install two small Python packages (`jsonschema`, `pyyaml`) into a throwaway environment
+there. I will run the registry's checker and `texlua` (or `quarto`) on your profile, write a
+generated settings file and a two-line example file, and build the registry's sample book
+with your profile twice, once with LuaLaTeX and once with XeLaTeX. That build needs Quarto, a
+current TeX Live and the TeX Gyre fonts, and it can take several minutes. Nothing from the
+copy is committed to your repository, and I will delete the folder afterwards." Continue only
+on an explicit yes. Without it, run none of this, including `render.sh`.
 
 ```sh
 REPO_ROOT=$(git rev-parse --show-toplevel)   # the author's repository; never cd away from it in a way you do not undo
 SCRATCH=$(mktemp -d)
 git clone --depth 1 https://github.com/dataimago/dissertation-thesis-classes "$SCRATCH/registry"
 ls "$SCRATCH/registry/profiles"          # profiles that already exist
-for f in docs/house-class-spec.md profiles/profile.schema.json profiles/house.yaml profiles/cu-boulder.yaml \
+for f in docs/house-class-spec.md profiles/profile.schema.json profiles/house.yaml \
          classes/dataimago-thesis/thesis-profile.lua classes/dataimago-thesis/example/render.sh tools/check_profile.py; do
   [ -e "$SCRATCH/registry/$f" ] || echo "MISSING: $f"
 done
@@ -90,10 +95,11 @@ fill or validate a profile from memory or invent a schema.
   a change to that one profile, which Step 7 can offer to the registry (the
   update case); the maintainer reviews it like any other.
 - Read, in the scratch copy: `docs/house-class-spec.md` section 6 (the field
-  tables), `profiles/profile.schema.json`, `profiles/house.yaml`, and
+  tables), `profiles/profile.schema.json`, `profiles/house.yaml`, and, if it is there,
   `profiles/cu-boulder.yaml` (a worked example of sourcing a profile from a real
   guide: section-name citations, `inferred` values, the `unstated` list,
-  `guide.retrieved` and `guide.url`). Note 6 under the CU example in spec section 6.6 explains why
+  `guide.retrieved` and `guide.url`). If it is not there, tell the author there is no
+  worked example and go on; it is not needed. Note 6 under the CU example in spec section 6.6 explains why
   a field the guide is silent on goes under `unstated` and is not assumed.
 - Checking needs `python3` with `jsonschema` and `pyyaml`
   (`python3 -m venv "$SCRATCH/venv" && "$SCRATCH/venv/bin/pip" install jsonschema==4.23.0 pyyaml==6.0.2`, the pins in the registry's `tools/requirements.txt`; the rest of that file is for the PDF checks)
@@ -177,8 +183,9 @@ the book is built with the house profile.
 (cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> xelatex)
 ```
 
-It needs `quarto`, a current TeX Live and the TeX Gyre fonts. Report whether
-each build passed. If a tool is missing, say the build did not run. Show the
+Run these only after the author's yes in Step 2. They need `quarto`, a current TeX
+Live and the TeX Gyre fonts. If any is missing, skip this step and tell the author the
+build did not run; never report it as passed. Otherwise report whether each build passed. Show the
 author the first pages of the PDF (title, abstract, contents, a chapter opening)
 so they can compare them with the guide's sample pages. Building the author's own
 chapters with a profile belongs to `thesis-build`, once that skill supports
@@ -206,14 +213,47 @@ wrong or that they want changed. Edit the profile, re-run Steps 4 and 5, and
 repeat until they say it is right.
 
 Then offer to save the profile in their repository, and wait for their go-ahead.
-Show the exact commands first. The file is `thesis/profiles/<id>.yaml`, committed
-from this repository's root on a new branch (never `main`) and proposed as a
-pull request; in the R-package layout it is the Step 3 path
-(`packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`),
-committed inside the package's own repository (on its own branch and pull request), and
-the submodule pointer here is updated only after the author has merged that
-one. The author merges. Never run `git add`, `commit` or `push` inside
-`$SCRATCH/registry`: it is a copy of the registry, not the author's repository.
+**The author runs these commands after that go-ahead. You do not run any of them.**
+The AI never runs `git add`, `git commit`, `git push` or `gh pr create` in the
+dissertation repository, in the package repository or in the scratch clone. Show the
+commands as text with `<id>` and the paths filled in.
+
+Content-only or referenced-repository layout (`source.rPackage` null), from the
+repository root:
+
+```sh
+git switch -c profile/<id>
+git add thesis/profiles/<id>.yaml
+git commit -m "thesis-format: <institution> profile"
+git push -u origin profile/<id>
+gh pr create --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
+```
+
+R-package layout: first the profile inside the package's own repository (the folder is
+the Step 3 path's parent, `packages/r-packages/<source.rPackage.name>/`), as its own branch and
+pull request:
+
+```sh
+git -C packages/r-packages/<name> switch -c profile/<id>
+git -C packages/r-packages/<name> add <quartoRoot>/profiles/<id>.yaml
+git -C packages/r-packages/<name> commit -m "thesis-format: <institution> profile"
+git -C packages/r-packages/<name> push -u origin profile/<id>
+gh pr create --repo <package owner>/<package repo> --head profile/<id> --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
+```
+
+After the author has merged that pull request, update the submodule pointer here:
+
+```sh
+git -C packages/r-packages/<name> switch main && git -C packages/r-packages/<name> pull
+git switch -c profile/<id>-pointer
+git add packages/r-packages/<name>
+git commit -m "Update <name> to include the <institution> profile"
+git push -u origin profile/<id>-pointer
+gh pr create --title "Update <name> pointer" --body "Points at the merged profile."
+```
+
+The author merges. Never run any git command that writes inside `$SCRATCH/registry`: it
+is a copy of the registry, not the author's repository.
 
 Do this before Step 7, while the scratch copy still holds the `.cfg`. Delete the scratch
 copy (`rm -rf "$SCRATCH"`) only after Step 7 is done or declined (in Step 7 you delete it once the files are written to the author's folder).
