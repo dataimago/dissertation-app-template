@@ -216,6 +216,26 @@ and page citations. No part of your writing, and no names. It is published under
 the registry's MIT license, and once merged it is public. Do you want that?"
 Continue only on an explicit yes. A yes covers this profile, not anything else.
 
+**Then tell the author what happens next, before anything leaves their machine.**
+
+1. The registry's CI checks the profile, but GitHub withholds the automated
+   reviewer's access from pull requests that come from forks, on purpose. So a
+   maintainer (or the maintainer's agent) checks that you consented and that the
+   file holds facts only, then re-pushes your commits to a branch in the
+   registry repository and opens a same-repository pull request that credits
+   you. That one gets the normal automated review and a maintainer's review.
+   The maintainer may also add the sample-page snapshots the checks need, which
+   require a full TeX Live.
+2. Your fork pull request is then closed with a link to the new one.
+3. You may be asked questions on the new pull request. You can withdraw at any
+   time before it is merged by saying so on either pull request.
+4. After it merges, the profile is public and the registry can offer it to the next author at your
+   institution.
+
+Ask a second time: "Knowing that, do you want me to prepare it?" Do nothing below without a second explicit yes.
+
+**Gate.** Prepare a contribution only if Step 4 produced `profiles/<id>.cfg` and passed `check_profile.py`. If it did not (no `texlua` or `quarto`, or a failed check), stop and say the registry offer cannot be prepared until the generator and the check have run.
+
 **Check the file before the author sees it, and again with them.**
 
 - Nothing from the manuscript: no title, abstract text, chapter names, quotes
@@ -240,24 +260,25 @@ from Step 4, and the two-line overlay
 go-ahead, in their own GitHub account:
 
 First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
-using a separate clone of the author's *fork* (its `origin` must be the fork, not
-`dataimago/dissertation-thesis-classes`), never `$SCRATCH/registry`:
+using a separate clone of the author's *fork*, never `$SCRATCH/registry`, and
+never a bare `cd` (every git command below names its directory with `-C`), so that no
+command can run in the author's own repository:
 
 ```sh
+FORK=$SCRATCH/fork
+gh api user --jq .login                    # must equal <their-username>, the name the author confirmed
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
-git clone https://github.com/<their-username>/dissertation-thesis-classes "$SCRATCH/fork"
-cd "$SCRATCH/fork"
-git remote get-url origin                 # must name <their-username>, not dataimago
-git switch -c profile/<id>
-mkdir -p classes/dataimago-thesis/example
-cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" profiles/
-cp "$SCRATCH/registry/classes/dataimago-thesis/example/_quarto-<id>.yml" classes/dataimago-thesis/example/
-git add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml
-git commit -m "profile: <institution>"
-git push -u origin profile/<id>
+git clone https://github.com/<their-username>/dissertation-thesis-classes "$FORK"
+git -C "$FORK" remote get-url origin       # must be exactly .../<their-username>/dissertation-thesis-classes
+git -C "$FORK" switch -c profile/<id>
+mkdir -p "$FORK/classes/dataimago-thesis/example"
+cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" "$FORK/profiles/"
+cp "$SCRATCH/registry/classes/dataimago-thesis/example/_quarto-<id>.yml" "$FORK/classes/dataimago-thesis/example/"
+git -C "$FORK" add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml
+git -C "$FORK" commit -m "profile: <institution>"
+git -C "$FORK" push -u origin profile/<id>
 gh pr create --repo dataimago/dissertation-thesis-classes --head <their-username>:profile/<id> \
   --title "profile: <institution>" --body-file "$SCRATCH/pr-body.md"
-cd "$REPO_ROOT"
 ```
 
 The pull-request body says: the institution, the guide's title, issuer, version
@@ -265,22 +286,6 @@ and date; "Contributed with the author's consent"; the number of inferred and
 unstated fields; the validation and build results from Steps 4 and 5; and that
 it holds facts about the guide only. It contains no names but the author's GitHub username,
 which is how they are credited.
-
-**Tell the author what happens next, before they open it.**
-
-1. The registry's CI checks the profile, but GitHub withholds the automated
-   reviewer's access from pull requests that come from forks, on purpose. So a
-   maintainer (or the maintainer's agent) checks that you consented and that the
-   file holds facts only, then re-pushes your commits to a branch in the
-   registry repository and opens a same-repository pull request that credits
-   you. That one gets the normal automated review and a maintainer's review.
-   The maintainer may also add the sample-page snapshots the checks need, which
-   require a full TeX Live.
-2. Your fork pull request is then closed with a link to the new one.
-3. You may be asked questions on the new pull request. You can withdraw at any
-   time before it is merged by saying so on either pull request.
-4. After it merges, the profile is public and the registry can offer it to the next author at your
-   institution.
 
 Do not merge, close or edit anything in the registry yourself, and do not push to
 the registry repository: authors cannot, and an agent acting for them must not.
