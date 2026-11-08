@@ -177,8 +177,19 @@ Then three lists, in this order, because the weakest evidence comes first:
 
 Ask the author to go through it against the guide and tell you every row that is
 wrong or that they want changed. Edit the profile, re-run Steps 4 and 5, and
-repeat until they say it is right. Keep the scratch copy until Step 7 is done or declined, then delete it (`rm -rf "$SCRATCH"`). Only then commit it to a branch in their
-repository (never `main`) and propose it as a pull request. The author merges.
+repeat until they say it is right.
+
+Then offer to save the profile in their repository, and wait for their go-ahead.
+Show the exact commands first. The file is `thesis/profiles/<id>.yaml`, committed
+from this repository's root on a new branch (never `main`) and proposed as a
+pull request; in the R-package layout it is `ui/www/profiles/<id>.yaml`, committed
+inside the package's own repository (on its own branch and pull request), and
+the submodule pointer here is updated only after the author has merged that
+one. The author merges. Never run `git add`, `commit` or `push` inside
+`$SCRATCH/registry`: it is a copy of the registry, not the author's repository.
+
+Do this before Step 7, while the scratch copy still holds the `.cfg`. Delete the scratch
+copy (`rm -rf "$SCRATCH"`) only after Step 7 is done or declined.
 
 ## Step 7 (optional): contribute the profile back
 
