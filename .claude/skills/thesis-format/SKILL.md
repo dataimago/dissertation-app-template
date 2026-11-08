@@ -1,6 +1,6 @@
 ---
 name: thesis-format
-description: Turn the author's institutional formatting guide (raw/thesis-formatting/) into a thesis-class profile, field by field, each value cited to the guide's page or section, with what the guide leaves unstated listed and never guessed; validate it, build the registry's sample book with it, and give the author a checklist to confirm against the guide. Optionally, with the author's explicit consent, prepare the profile to contribute to the thesis-class registry. Use for "turn my formatting guide into a profile", "my school's format is not in the registry", or "share my profile".
+description: Turn the author's institutional formatting guide (raw/thesis-formatting/) into a thesis-class profile, field by field, each value cited to the guide's page or section, with what the guide leaves unstated listed and never guessed; validate it, build the registry's sample book with it, and give the author a checklist to confirm against the guide. Optionally, with the author's explicit consent, prepare the profile to contribute to the thesis-class registry. Use for "turn my formatting guide into a profile" or "share my profile with the registry". It does not change how this repository builds the author's own PDF (that is `thesis-build`).
 ---
 
 # /thesis-format: from a formatting guide to a checked profile
@@ -62,8 +62,11 @@ Never open `raw/private/`. Never edit a file under `raw/`. Never read
 
 ## Step 2: get the registry's tools, outside this repository
 
-The schema, the house profile and the checks live in the registry. Work in a
-scratch copy; nothing from it is committed here.
+The schema, the house profile and the checks live in the registry, which is
+another repository. **Ask first.** Tell the author: "I will copy the public
+registry into a temporary folder and install two small Python packages into a
+throwaway environment there. It is read-only, nothing from it is committed here, and I
+will delete it afterwards." Continue on their go-ahead.
 
 ```sh
 SCRATCH=$(mktemp -d)
@@ -124,9 +127,14 @@ In the scratch copy:
 ```sh
 cp <profile>.yaml "$SCRATCH/registry/profiles/<id>.yaml"
 cd "$SCRATCH/registry"
-texlua classes/dataimago-thesis/thesis-profile.lua profiles <id>     # or: quarto pandoc lua ... (writes profiles/<id>.cfg)
+texlua classes/dataimago-thesis/thesis-profile.lua profiles <id>     # writes profiles/<id>.cfg
 "$SCRATCH/venv/bin/python" tools/check_profile.py <id>
 ```
+
+If `texlua` is missing but `quarto` is installed, use
+`quarto pandoc lua classes/dataimago-thesis/thesis-profile.lua profiles <id>`
+for the first command. If neither is installed, say that the `.cfg` was not
+generated and the drift check did not run.
 
 `check_profile.py` runs the schema, the P1 rule (every value that differs from
 the house value has a `sources` entry), the inferred-needs-`from`-and-`note` rule,
