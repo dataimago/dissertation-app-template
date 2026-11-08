@@ -69,6 +69,7 @@ throwaway environment there. It is read-only, nothing from it is committed here,
 will delete it afterwards." Continue on their go-ahead.
 
 ```sh
+REPO_ROOT=$(git rev-parse --show-toplevel)   # the author's repository; never cd away from it in a way you do not undo
 SCRATCH=$(mktemp -d)
 git clone --depth 1 https://github.com/dataimago/dissertation-thesis-classes "$SCRATCH/registry"
 ls "$SCRATCH/registry/profiles"          # profiles that already exist
@@ -122,14 +123,19 @@ more specific document wins where they differ. Cite each value to the document i
 
 ## Step 4: validate
 
-In the scratch copy:
+Set `PROFILE_FILE` to the absolute path of the profile you wrote in Step 3
+(`$REPO_ROOT/thesis/profiles/<id>.yaml`, or the package's `ui/www/profiles/<id>.yaml`).
+Run the checks in the scratch copy, in a subshell so your working directory stays in the
+author's repository:
 
 ```sh
-cp <profile>.yaml "$SCRATCH/registry/profiles/<id>.yaml"
-cd "$SCRATCH/registry"
-texlua classes/dataimago-thesis/thesis-profile.lua profiles <id>     # writes profiles/<id>.cfg
-"$SCRATCH/venv/bin/python" tools/check_profile.py <id>
+cp "$PROFILE_FILE" "$SCRATCH/registry/profiles/<id>.yaml"
+(cd "$SCRATCH/registry" \
+  && texlua classes/dataimago-thesis/thesis-profile.lua profiles <id> \
+  && "$SCRATCH/venv/bin/python" tools/check_profile.py <id>)         # the first command writes profiles/<id>.cfg
 ```
+
+After you edit the profile (Step 6), copy it over again from `$PROFILE_FILE` and re-run.
 
 If `texlua` is missing but `quarto` is installed, use
 `quarto pandoc lua classes/dataimago-thesis/thesis-profile.lua profiles <id>`
@@ -154,7 +160,7 @@ profile sets no `institution.name`; a synthetic name, never a real one). Without
 the book is built with the house profile.
 
 ```sh
-sh classes/dataimago-thesis/example/render.sh <id> lualatex     # then xelatex
+(cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> lualatex)    # then xelatex
 ```
 
 It needs `quarto`, a current TeX Live and the TeX Gyre fonts. Report whether
@@ -233,14 +239,25 @@ from Step 4, and the two-line overlay
 `registry.json`, `docs/`, other files under `classes/`, or another profile. Show the author the commands and run each only with their
 go-ahead, in their own GitHub account:
 
+First write the pull-request body (described below) to `$SCRATCH/pr-body.md`. Then,
+using a separate clone of the author's *fork* (its `origin` must be the fork, not
+`dataimago/dissertation-thesis-classes`), never `$SCRATCH/registry`:
+
 ```sh
 gh repo fork dataimago/dissertation-thesis-classes --clone=false
-git clone https://github.com/<their-username>/dissertation-thesis-classes   # in a scratch folder
+git clone https://github.com/<their-username>/dissertation-thesis-classes "$SCRATCH/fork"
+cd "$SCRATCH/fork"
+git remote get-url origin                 # must name <their-username>, not dataimago
 git switch -c profile/<id>
-# copy in the three files
-git add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml && git commit -m "profile: <institution>"
+mkdir -p classes/dataimago-thesis/example
+cp "$SCRATCH/registry/profiles/<id>.yaml" "$SCRATCH/registry/profiles/<id>.cfg" profiles/
+cp "$SCRATCH/registry/classes/dataimago-thesis/example/_quarto-<id>.yml" classes/dataimago-thesis/example/
+git add profiles/<id>.yaml profiles/<id>.cfg classes/dataimago-thesis/example/_quarto-<id>.yml
+git commit -m "profile: <institution>"
 git push -u origin profile/<id>
-gh pr create --repo dataimago/dissertation-thesis-classes --title "profile: <institution>" --body-file <body>
+gh pr create --repo dataimago/dissertation-thesis-classes --head <their-username>:profile/<id> \
+  --title "profile: <institution>" --body-file "$SCRATCH/pr-body.md"
+cd "$REPO_ROOT"
 ```
 
 The pull-request body says: the institution, the guide's title, issuer, version
