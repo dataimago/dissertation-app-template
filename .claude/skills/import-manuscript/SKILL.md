@@ -44,14 +44,20 @@ the reference for what "v1.0 looked like".
   R-free `build-thesis.yml` does not demand Rscript (the same
   `escapeExecutableFences` convention the provisioning hub uses); in the
   R-package layout leave them executable.
-- **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`,
+- **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`
+  (the book folder's `figures/`; on the referenced-repository path, where §3
+  creates `thesis/`, convert into a scratch folder and place figures with the
+  bibliography after §3),
   then split on level-1 headings.
 - Copy the `.bib` file(s) to `references.bib` beside the chapters (merge if
-  several; keep keys), figures into `figures/`, and the author's `.cls`/`.sty`
-  into the chapters directory as **vendored** class files — set
-  `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
-  the spec said before (`shipped` means a registry class, `generated` the
-  framework's default one; the author's own class is neither).
+  several; keep keys), figures into `figures/` beside the chapters (both deferred
+  to §3 on the referenced-repository path, onto `thesis/references.bib` and
+  `thesis/figures/`), and note any `.cls`/`.sty` among
+  the sources for the §3 proposal. Copy nothing of them yet, and do not switch
+  `_quarto.yml`: only if the author agrees in §3 do they go into the book folder
+  beside `_quarto.yml` (never under `chapters/`). An author's own class means **vendored** mode (`shipped` is a
+  registry profile, `generated` the house profile adapted; the author's own class
+  is neither), but switching is the author's decision: §3 ends with a proposal.
 
 ## 3. Place, as v1.0
 
@@ -59,18 +65,52 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
 `source.referencedRepo`, a local `source.rPackage`):
 
 - `no-r` → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
-  `index.qmd`, `thesis.cls`); knitr chunks escaped for the R-free build.
+  `index.qmd`, and the house bundle `thesis-class/`, `profiles/`, `_environment`;
+  on the older layout, `thesis.cls` and `dataimago.sty` instead, see below); knitr
+  chunks escaped for the R-free build.
 - `extension` **with** `referencedRepo` (the author's whole dissertation is an
   existing repository; `rPackage` is null, there is no submodule and no local
   `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
-  `references.bib`, `thesis.cls`, `dataimago.sty`, `THESIS-CLS-README.md` from
-  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), apply the two
-  rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
-  ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
-  The app's `build-thesis.yml` is already here and inert until `thesis/`
-  exists. The referenced repository is read, never written. On this path the
+  `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). **Ask first:** tell
+  the author you will clone that public template into a temporary folder and copy
+  `_quarto.yml`, `index.qmd`, `THESIS-CLS-README.md`, `thesis-class/`, `profiles/` and
+  `_environment` into `thesis/` here (the template's `references.bib` only if §2 found
+  no bibliography among the sources), then wait for a yes. Run this from
+  the repository root; it changes no directory and stops if a file is missing:
+  ```sh
+  SCRATCH="$(mktemp -d)"
+  git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
+  W="$SCRATCH/rpkg/ui/www"
+  for f in _quarto.yml index.qmd references.bib THESIS-CLS-README.md thesis-class profiles _environment; do
+    [ -e "$W/$f" ] || { echo "missing in the template: $f (stop and tell the author)"; exit 1; }
+  done
+  mkdir -p thesis
+  cp -a "$W/_quarto.yml" "$W/index.qmd" "$W/THESIS-CLS-README.md" \
+        "$W/thesis-class" "$W/profiles" "$W/_environment" thesis/
+  # the bibliography: the author's own if §2 found one (written next, not merged
+  # with the template's); the template's only when §2 found none
+  [ -n "$AUTHOR_BIB_FOUND" ] || cp "$W/references.bib" thesis/
+  # the two rewrites the hub applies, in place under this repository's thesis/
+  perl -pi -e 's{output-dir: \.\./\.\./docs}{output-dir: ../docs}' thesis/_quarto.yml
+  perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' thesis/index.qmd   # the book file only, never thesis-class/
+  ```
+  Set `AUTHOR_BIB_FOUND=1` before the block when §2 found a `.bib`. Then write the
+  author's bibliography onto `thesis/references.bib` (merging only the author's own
+  `.bib` files with each other, never with the template's) and their figures into
+  `thesis/figures/`. The same fence escape applies to each `thesis/chapters/*.qmd`
+  as you write it (§2).
+  The copied `_quarto.yml` and `index.qmd` are template scaffolding, not the author's
+  book: treat every `thesis:` value in them (and any `PLACEHOLDER-*`, `{{...}}` or
+  stand-in such as "Your University") as unset. Add to the §3 front-matter proposal
+  below, and apply only after its yes: the real `thesis:` values (manuscript, then
+  spec), wrapping the template's `index.qmd` landing text in
+  `::: {.content-visible when-format="html"}` so it does not print, and creating
+  `chapters/00-front-matter.qmd` and then listing it in `chapters:` right after
+  `index.qmd`. The app's `build-thesis.yml` is already here and inert
+  until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
   repository, and an author who wants executable chapters moves to the
@@ -80,8 +120,61 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   left executable. One rule per path: escape only under app `thesis/`, keep
   executable only under `ui/www/` — never both on the same files.
 
+Last, decide the class. **First check the layout**: does the book folder have
+`thesis-class/`?
+
+**House layout** (`thesis-class/` present), and **only if a `.cls` was found among
+the sources (§2)**: name the `.cls` to the author and **propose** the switch to
+vendored mode, then wait for a yes. The proposal lists exactly what would change:
+copy the `.cls`/`.sty` into the book folder beside `_quarto.yml` (not `chapters/`,
+where LaTeX would not find them); in `_quarto.yml` set `documentclass` to the `.cls`
+file name without its extension, drop the house `template-partials`, `filters` and
+`thesis:` block, set `pdf-engine` to the engine the class's own header or README
+names (ask if it names none) and leave `classoption` empty unless the class
+documents required options; set `dataimago-spec.yaml` `thesis.classFile.type:
+vendored` and `path` to the `.cls` file name; and the folders `_environment`,
+`thesis-class/` and `profiles/` would be removed (nothing is deleted before the yes;
+in the R-package layout they live in the package repository, so ask before touching
+it). If the author says no, the house class stays and the `.cls` is only a
+reference (`raw/` is not touched). A yes overrides the "keep the provisioned
+`_quarto.yml`" lines above.
+
+**Older layout** (no `thesis-class/`: a repository set up before the house class,
+with `thesis.cls`, `dataimago.sty`, `documentclass: thesis`). The house-class
+front-matter slots below do not apply; the old class does not read them.
+- If a `.cls` was found among the sources, offer the author a choice and wait: use
+  their own class (vendored), or move to the house class. Vendored here means: copy
+  their `.cls`/`.sty` beside `_quarto.yml`, set `documentclass` to the `.cls` file name
+  without its extension and `pdf-engine` to the engine the class names (ask if it
+  names none), remove `classoption` and the `\usepackage{dataimago}` header unless
+  their class documents them, set `thesis.classFile.type: vendored` and `path` to the
+  `.cls` file name, and, last and only once `documentclass` names their class,
+  remove `thesis.cls` and `dataimago.sty`. Nothing changes before the yes. The move
+  is `/thesis-build`, "Moving an older repository to the house class"; propose it,
+  never do it here.
+- If no `.cls` was found (or the author declines both), keep `thesis.cls`,
+  `dataimago.sty` and `_quarto.yml` as they are, and tell the author the move to the
+  house class is available (`/thesis-build`, "Moving an older repository to the
+  house class"): propose it, never do it here.
+
+Otherwise, when the house bundle is present and the house class stays, the book has
+fixed front-matter slots the house class requires: the abstract in `index.qmd`'s
+`abstract:` field, acknowledgments and dedication in `.acknowledgments` /
+`.dedication` divs in `00-front-matter.qmd`, and the `thesis:` block of `_quarto.yml`
+(institution, department, degree, advisors, committee). These are placements of the
+v1.0 text, not edits to it, and this skill runs under `raw/manuscript/LOCKED.md`, so
+**propose them before writing anything**: list each placement (what, from where in
+the manuscript, to where) and each `thesis:` value with its source (the manuscript's
+own title page first, the spec only where the manuscript is silent (a placeholder such as `PLACEHOLDER-*`, `{{...}}` or "Your University" counts as unset and is not a source); if they
+disagree, the manuscript wins), ask the author for what neither gives, and wait for
+a yes. Only then write them. Keep values already in `_quarto.yml`; a change to a
+non-empty one is part of the same proposal.
+
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
-stubs; front matter to `00-front-matter.qmd`,
+stubs; front matter to `00-front-matter.qmd` (on the house class, the abstract
+and the other slots go where the proposal above put them once the author agreed;
+on the older layout, leave the abstract and front matter where `thesis.cls`
+already reads them),
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
 `derivedFrom: raw/manuscript/<source file>`, `importedAt: <date>`.

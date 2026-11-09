@@ -1,6 +1,6 @@
 ---
 name: thesis-format
-description: Turn the author's institutional formatting guide (raw/thesis-formatting/) into a thesis-class profile, field by field, each value cited to the guide's page or section, with what the guide leaves unstated listed and never guessed; validate it, build the registry's sample book with it, and give the author a checklist to confirm against the guide. Optionally, with the author's explicit consent, prepare the profile to contribute to the thesis-class registry. Use for "turn my formatting guide into a profile" or "share my profile with the registry". It does not change how this repository builds the author's own PDF (that is `thesis-build`).
+description: Turn the author's institutional formatting guide (raw/thesis-formatting/) into a thesis-class profile, field by field, each value cited to the guide's page or section, with what the guide leaves unstated listed and never guessed; validate it, build the registry's sample book with it, and give the author a checklist to confirm against the guide. Optionally, with the author's explicit consent, prepare the profile to contribute to the thesis-class registry. Use for "turn my formatting guide into a profile" or "share my profile with the registry". The profile is kept beside the chapters, where the author's own PDF build can use it (`thesis-build` selects it once the author chooses).
 ---
 
 # /thesis-format: from a formatting guide to a checked profile
@@ -119,13 +119,17 @@ for a text or HTML copy and stop rather than inventing page citations. A
 web page or text file with no page numbers: cite by section heading, as the CU
 profile does.
 
-Write `<id>.yaml` in a `profiles/` folder beside the chapters, chosen by
+Write `<id>.yaml` in the `profiles/` folder beside the chapters (the folder that holds the book's `_quarto.yml`; the registry's own `profiles/` has the same shape), chosen by
 `source` in `dataimago-spec.yaml`: content-only and referenced-repository layouts
 (`source.rPackage` null) use `thesis/profiles/<id>.yaml` in this repository;
 the R-package layout uses
 `packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`
-(`ui/www` by default), inside the package's own repository, so ask the author first. Start from the shape in
-spec section 6.3 and walk the field tables of section 6.4 in order, one section at
+(`ui/www` by default), inside the package's own repository, so ask the author first. Start a **new** file with `id: <id>`, `extends: house` and the shape in spec
+section 6.3; do not copy `profiles/house.yaml` into it. A copy would pre-fill every
+house default as if the guide had chosen it, and `check_profile.py` rejects a field
+that is both set and listed under `unstated`. Read `profiles/house.yaml` (the
+vendored house profile in that folder, or the registry copy in `$SCRATCH` if the
+folder has none) only as the baseline you compare the guide against. Walk the field tables of section 6.4 in order, one section at
 a time: `institution` and `guide`, `geometry`, `type`, `spacing`, `headings`
 and `numbering`, `pagenumber`, `frontmatter`, `toc`, `appendices`, `landscape`,
 `floats`, `bibliography`, `submission`, `accessibility`, `limits`. For each field:
@@ -164,10 +168,29 @@ cp "$PROFILE_FILE" "$SCRATCH/registry/profiles/<id>.yaml"
 
 After you edit the profile (Step 6), copy it over again from `$PROFILE_FILE` and re-run.
 
-If `texlua` is missing but `quarto` is installed, use
+The author's PDF build reads the compiled `.cfg`, not the `.yaml`, so compile it
+next to the profile whenever the profile changes. There are two `.cfg` files, on
+purpose: the scratch one above is compiled by the registry's current generator and
+is what `check_profile.py` checks and what Step 7 offers the registry (whose
+maintainer regenerates it with `main`'s generator anyway); the one beside the
+author's profile is compiled by the generator vendored with the author's class, is
+the one the author's PDF reads. Step 5's sample build and `check_profile.py` check
+only the scratch `.cfg`; the book-folder `.cfg` is checked when `thesis-build`
+renders the author's own book after they set `profile: <id>`, so do not report it
+as build-checked before then. Both come from the same `.yaml`, which is what
+`check_profile.py` validated. Use the generator that was
+vendored with the class, so the `.cfg` matches the class that will read it:
+`texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` (or
+`quarto pandoc lua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` if `texlua` is missing). If the book folder has no
+`thesis-class/` (the older layout), create `<book folder>/profiles/` if it is missing, copy `$SCRATCH/registry/profiles/<id>.cfg` to
+`<book folder>/profiles/<id>.cfg`, and tell the author the build cannot use it until the repository moves to the house class
+(`thesis-build`, "Moving an older repository to the house class").
+
+For the scratch copy, if `texlua` is missing but `quarto` is installed, use
 `quarto pandoc lua classes/dataimago-thesis/thesis-profile.lua profiles <id>`
 for the first command. If neither is installed, say that the `.cfg` was not
-generated and the drift check did not run.
+generated and the drift check did not run, and leave `<id>.cfg` out of the
+`git add` commands you show the author.
 
 `check_profile.py` runs the schema, the P1 rule (every value that differs from
 the house value has a `sources` entry), the inferred-needs-`from`-and-`note` rule,
@@ -198,9 +221,13 @@ PDFs are `$SCRATCH/registry/classes/dataimago-thesis/example/_build/<id>-lualate
 `.../<id>-xelatex/thesis.pdf`; read the first pages with the Read tool (`pages: "1-8"`), or
 `pdftotext -layout -f 1 -l 8 <pdf> -`, and show the author the title page, abstract, contents
 and a chapter opening
-so they can compare them with the guide's sample pages. Building the author's own
-chapters with a profile belongs to `thesis-build`, once that skill supports
-profiles; do not change `thesis-build` from here.
+so they can compare them with the guide's sample pages. To build the author's own
+chapters with the profile on the house class, the author changes `profile:` to `<id>` in the `thesis:` block of the book's `_quarto.yml`
+(`thesis-build`, "Building a `generated` profile"); suggest it, and leave the decision
+and the edit to them. On the older layout (no `thesis-class/`, no `thesis:` block)
+there is no such block to change: the profile is used only after the move to the
+house class (`thesis-build`, "Moving an older repository to the house class"), which
+proposes `profile: <id>` as part of the move.
 
 ## Step 6: the checklist for the author
 
@@ -231,12 +258,15 @@ The AI never runs `git add`, `git commit`, `git push` or `gh pr create` in the
 dissertation repository, in the package repository or in the scratch clone. Show the
 commands as text with `<id>` and the paths filled in.
 
+If Step 4 did not write `<id>.cfg` (no `texlua` or `quarto`), drop the `.cfg` path
+from the `git add` lines below; `git add` of a missing file fails.
+
 Content-only or referenced-repository layout (`source.rPackage` null), from the
 repository root:
 
 ```sh
 git switch -c profile/<id>
-git add thesis/profiles/<id>.yaml
+git add thesis/profiles/<id>.yaml thesis/profiles/<id>.cfg
 git commit -m "thesis-format: <institution> profile"
 git push -u origin profile/<id>
 gh pr create --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
@@ -250,7 +280,7 @@ pull request:
 
 ```sh
 git -C packages/r-packages/<name> switch -c profile/<id>
-git -C packages/r-packages/<name> add <quartoRoot>/profiles/<id>.yaml
+git -C packages/r-packages/<name> add <quartoRoot>/profiles/<id>.yaml <quartoRoot>/profiles/<id>.cfg
 git -C packages/r-packages/<name> commit -m "thesis-format: <institution> profile"
 git -C packages/r-packages/<name> push -u origin profile/<id>
 gh pr create --repo <package owner>/<package repo> --head profile/<id> --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."

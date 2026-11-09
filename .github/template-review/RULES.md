@@ -37,12 +37,20 @@ purpose, so Cursor's own Bugbot never applies them to an author's dissertation.
 
 - The three `thesis.classFile.type` modes (`shipped` / `vendored` / `generated`),
   the lookup key `vertical.dissertation.institution.name`, and the shipped steps
-  must match `dataimago/dissertation-thesis-classes` (`registry.json`,
-  `docs/discovery-contract.md`). A house class (`dataimago-thesis.cls` with
-  institution profiles) is coming (that repo's PR #3, `docs/house-class-spec.md`);
-  do not flag its absence, but flag guidance that contradicts it.
-- CI builds from committed files only: a build step that fetches a class at build
-  time is a defect.
+  must match `dataimago/dissertation-thesis-classes` (`registry.json` at
+  `schemaVersion` 2, `docs/discovery-contract.md`, `docs/house-class-spec.md`):
+  an institution is found in `profiles` (`mode: shipped`, `status: available`),
+  the profile's `class` is resolved in `classes`, and both halves are fetched:
+  the class `path` + `companions` (under `classes/<class>/`) and the profile's
+  `cfg` + `yaml` (under `profiles/`). `shipped` never names the `house` profile;
+  `generated` starts from it; `vendored` is the author's own class. The profile
+  path beside the chapters is `<book folder>/profiles/<id>.yaml` + `.cfg`, the
+  same in `thesis-build`, `thesis-format`, `AGENTS.md` and the README. Flag
+  guidance that contradicts the registry, or still describes the version-1 shape
+  (a class per institution).
+- CI builds from committed files only: a build step that fetches a class or
+  profile at build time is a defect. The build engine is LuaLaTeX (the class's
+  `engine`), with XeLaTeX only as the untagged fallback.
 
 ## P1 — spec
 

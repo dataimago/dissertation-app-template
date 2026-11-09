@@ -10,9 +10,9 @@ under. Your `dataimago-spec.yaml` selects how it is sourced
 | `vendored` | Replace `STYLE.md` wholesale with your own style guide (or point `writingStyle.path` at it). |
 | `generated` | Upload exemplar prose you admire (they land in `raw/` via `context.styleExemplars`), then ask your AI assistant to distill a personal `STYLE.md` from them and approve the result before adopting it. |
 
-As with `thesis.cls` (see the rpkg template's `THESIS-CLS-README.md`),
+As with the thesis profile (see the rpkg template's `THESIS-CLS-README.md`),
 generated-mode work happens **in this repo, with your AI, at edit time** —
-not during onboarding. One word differs: for `thesis.cls`, `shipped` means a
-ready-made class for your institution from the thesis-class registry, and the
-framework's default `thesis.cls` is where `generated` starts. The spec field
+not during onboarding. One word differs: for the thesis class, `shipped` means a
+ready-made profile for your institution from the thesis-class registry, and the
+registry's `house` profile is where `generated` starts. The spec field
 can change at any point by editing `dataimago-spec.yaml` directly.
