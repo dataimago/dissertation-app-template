@@ -60,7 +60,15 @@ to the house class" below.
 
 1. **Find the institution.** Read `vertical.dissertation.institution.name` from
    `dataimago-spec.yaml`.
-2. **Look it up in the registry.** Fetch
+2. **Check the layout first.** The book folder is `thesis/` for content-only, or
+   the R package's `ui/www/`. **If `<book folder>/thesis-class/sync.py` does not
+   exist, stop here:** the book is on the older layout (`thesis.cls`,
+   `documentclass: thesis`, no `thesis:` block, and possibly
+   `classFile.type: shipped` in the old wording), and the steps below would rewrite
+   `_quarto.yml` into a shape its class cannot read. Run none of steps 3–10. Offer
+   "Moving an older repository to the house class" below and wait for the author's
+   yes; set up the profile after the move.
+3. **Look it up in the registry.** Fetch
    `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`.
    Check `schemaVersion`: this skill reads version 2. If it is anything else,
    stop and tell the author this skill needs updating; do not guess. In
@@ -69,32 +77,27 @@ to the house class" below.
    profile with id `house`. If the spec names the institution differently (say,
    "CU Boulder" for "University of Colorado Boulder"), ask the author to
    confirm the match before you use it.
-3. **No match? Say so and offer `generated`.** Tell the author plainly: "The
+4. **No match? Say so and offer `generated`.** Tell the author plainly: "The
    thesis-class registry has no ready-made profile for <institution> yet." Offer
    `generated` instead: with their agreement, set `classFile.type: generated`
    and adapt the `house` profile with the `thesis-format` skill. Never borrow
    another institution's profile. (A repo set up before 2026-11-07 may say
    `shipped` for the framework's old default class; that was the old wording,
    and under today's wording it is `generated`.)
-4. **Resolve the class.** The matched profile's `class` is an `id` in the
+5. **Resolve the class.** The matched profile's `class` is an `id` in the
    registry's `classes` (today `dataimago-thesis`; it must be `available`). The
    class's `path` and `companions` (under `classes/<class>/`) are the class
    bundle; the profile's `cfg` and `yaml` (under `profiles/`) are the other half.
    They live in different directories of the registry; fetch both.
-5. **Fetch them.** Run
+6. **Fetch them.** Run
    `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
-   from the repository root (the book folder is `thesis/` for content-only, or the R package's `ui/www/`). It fetches the
+   from the repository root. It fetches the
    class `path` and every `companions` file into `thesis-class/` and the
    profile's `yaml` and `cfg` into `profiles/`, all from one registry commit,
-   and records that commit in `thesis-class/registry-source.json`.
-   **If `<book folder>/thesis-class/sync.py` does not exist, stop here:** the book
-   is on the older layout (`thesis.cls`, `documentclass: thesis`, no `thesis:`
-   block), and steps 6–9 would rewrite `_quarto.yml` into a shape its class cannot
-   read. Do not run steps 6–9. Offer "Moving an older repository to the house
-   class" below and wait for the author's yes; set up the profile after the move.
-   Do not copy files by hand: a partial copy is the usual cause of a build that finds
+   and records that commit in `thesis-class/registry-source.json`. Do not copy
+   files by hand: a partial copy is the usual cause of a build that finds
    the class but not the profile.
-6. **Point the book at it.** In `_quarto.yml`, under the existing `thesis:` block, change `profile: house` to `profile: <id>` and
+7. **Point the book at it.** In `_quarto.yml`, under the existing `thesis:` block, change `profile: house` to `profile: <id>` and
    check `format: pdf:` against the class entry: `documentclass`
    (`dataimago-thesis`), and `pdf-engine` (the entry's `engine`, `lualatex`;
    `engineFallback` is `xelatex`, untagged). The profile's `classOptions` is
@@ -104,14 +107,14 @@ to the house class" below.
    spec where the manuscript is silent, and ask the author for what neither gives.
    Keep every value already there; to change a non-empty one, show the change and
    ask first.
-7. **Read what the profile does not say.** Open `profiles/<id>.yaml`. Fields the
+8. **Read what the profile does not say.** Open `profiles/<id>.yaml`. Fields the
    institution's guide does not state are listed under `unstated` and keep the
    house value, and `sources` cites the rest. Tell the author what is unstated;
    never say the guide is fully met without reading both lists.
-8. **Check the PDF.** Render locally (`quarto render --to pdf` in the book
+9. **Check the PDF.** Render locally (`quarto render --to pdf` in the book
    folder; it needs a current TeX Live with TeX Gyre, `luamml`, `tagpdf`,
    `latex-lab`) until the PDF builds. Check it against the profile's `sources`
-   (what the guide states) and show the author the `unstated` list from step 7.
+   (what the guide states) and show the author the `unstated` list from step 8.
    Front-matter content has fixed
    places: the abstract is `abstract:` in `index.qmd`, acknowledgments, dedication
    and the like are `.acknowledgments` / `.dedication` divs in
@@ -122,7 +125,7 @@ to the house class" below.
    against the locked manuscript and wait again.
    Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
-9. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
+10. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request: in this repository for
    content-only (`thesis/...` paths); in the R-package layout, first in the
    package's own repository and then the submodule-pointer pull request here, with
@@ -132,7 +135,7 @@ to the house class" below.
    pull request yourself: show the author the commands. The committed files are the
    author's pinned copy: `build-thesis.yml` builds from them and never fetches from
    the registry, so a later change there cannot change the author's PDF. Update the
-   copy only when the author asks, by repeating step 5.
+   copy only when the author asks, by repeating step 6.
 
 ## Building a `generated` profile
 
@@ -228,13 +231,13 @@ to see the real `! LaTeX Error`.
   author the files it reports, then, after a yes, `python3 <book folder>/thesis-class/sync.py sync`
   (no `--ref`, no `--profile`). It rewrites only the class files and the registry
   profiles listed in `registry-source.json`, at the commit recorded there; it deletes
-  nothing, and a profile the author wrote (not in that list) is never touched. `--profile <id>` is only for an explicit shipped setup or update (step 5). A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
+  nothing, and a profile the author wrote (not in that list) is never touched. `--profile <id>` is only for an explicit shipped setup or update (step 6). A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 6 and wait for a yes.
 - **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
   a profile with no compiled `.cfg`. Compile it:
   `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>`.
 - **`The ... is missing` naming a `thesis.*` key** — a required title-page field
   (`thesis.degree.name`, `department`, `institution`, `advisors`, `committee`) or
-  `abstract:` is empty. Fill it by the rules of "Setting up a shipped profile" step 6:
+  `abstract:` is empty. Fill it by the rules of "Setting up a shipped profile" step 7:
   from the manuscript's own title page and abstract first, then the spec, and ask the
   author for anything neither gives. Never invent a value or an abstract. Moving the
   abstract text into `index.qmd` is a move: name it and wait for a yes (and again

@@ -44,10 +44,15 @@ the reference for what "v1.0 looked like".
   R-free `build-thesis.yml` does not demand Rscript (the same
   `escapeExecutableFences` convention the provisioning hub uses); in the
   R-package layout leave them executable.
-- **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`,
+- **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`
+  (the book folder's `figures/`; on the referenced-repository path, where §3
+  creates `thesis/`, convert into a scratch folder and place figures with the
+  bibliography after §3),
   then split on level-1 headings.
 - Copy the `.bib` file(s) to `references.bib` beside the chapters (merge if
-  several; keep keys), figures into `figures/`, and note any `.cls`/`.sty` among
+  several; keep keys), figures into `figures/` beside the chapters (both deferred
+  to §3 on the referenced-repository path, onto `thesis/references.bib` and
+  `thesis/figures/`), and note any `.cls`/`.sty` among
   the sources (they are placed in §3, in the book folder beside `_quarto.yml`, not
   under `chapters/`). An author's own class means **vendored** mode (`shipped` is a
   registry profile, `generated` the house profile adapted; the author's own class
@@ -90,8 +95,8 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' thesis/index.qmd   # the book file only, never thesis-class/
   ```
   The same fence escape applies to each `thesis/chapters/*.qmd` as you write it
-  (§2). If §2's `.bib` copy had no `thesis/` to go to yet, do it now, onto
-  `thesis/references.bib`. The app's `build-thesis.yml` is already here and inert
+  (§2). If §2's `.bib` and figures had no `thesis/` to go to yet, place them now,
+  onto `thesis/references.bib` and `thesis/figures/`. The app's `build-thesis.yml` is already here and inert
   until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
@@ -139,7 +144,10 @@ a yes. Only then write them. Keep values already in `_quarto.yml`; a change to a
 non-empty one is part of the same proposal.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
-stubs; front matter to `00-front-matter.qmd` (abstract: see the house-class slots above),
+stubs; front matter to `00-front-matter.qmd` (on the house class, the abstract
+and the other slots go where the proposal above put them once the author agreed;
+on the older layout, leave the abstract and front matter where `thesis.cls`
+already reads them),
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
 `derivedFrom: raw/manuscript/<source file>`, `importedAt: <date>`.
