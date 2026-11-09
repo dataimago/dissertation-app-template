@@ -139,7 +139,7 @@ of "Steps" above. A routine build never runs these steps.
    If `raw/manuscript/LOCKED.md` exists, that is a second gate: show each move
    against the locked manuscript and wait again.
    Make changes there and in `_quarto.yml`, never
-   in the vendored class files: using them as-is is what `shipped` means.
+   in the house class files in `thesis-class/` or the shipped profile: using them as-is is what `shipped` means.
 10. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request: in this repository for
    content-only (`thesis/...` paths); in the R-package layout, first in the
