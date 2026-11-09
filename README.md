@@ -18,8 +18,8 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 **2. Install what you need to build the PDF locally.** You only need these to preview/build the thesis on your own machine (you can also just push and let the build run for you — step 5):
 
 - [Quarto](https://quarto.org/docs/get-started/) — the document engine.
-- [TinyTeX](https://yihui.org/tinytex/) for the LaTeX/PDF step: `quarto install tinytex`.
-- The fonts the default thesis class uses — the **Noto Sans** family (Noto Sans, Noto Sans Math). Install them from your OS font manager if a build complains a font is missing. Noto Sans Math must be **version 3 or later**: get it from [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Sans+Math). Linux distributions ship version 2.001, and with it LaTeX silently sets your equations in a different font (Latin Modern Math) without any error.
+- A current **TeX Live** (2026 or newer) for the LaTeX/PDF step, with the TeX Gyre fonts, `luamml`, `tagpdf` and `latex-lab`: for example [MacTeX](https://tug.org/mactex/) or Homebrew's `texlive` on a Mac, or TeX Live from [tug.org](https://tug.org/texlive/). The thesis is built with LuaLaTeX and comes out as a tagged (accessible) PDF.
+- The fonts: the house thesis class sets the thesis in **TeX Gyre** (a Times-style family that comes with TeX Live), so there is nothing to install separately. If a build complains a font is missing, your TeX Live lacks `tex-gyre` and `tex-gyre-math`.
 - **R** *only if your dissertation includes an R package* (the no-R path needs none).
 
 **3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder with your AI. In Claude Code, run **`/ingest`**; in any other tool (Codex, opencode, Cursor, ChatGPT with folder access), ask it: *"Read `.claude/skills/ingest/SKILL.md` and follow it."* Either way it is the same procedure. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
@@ -48,7 +48,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 ### Common problems
 
 - **`packages/r-packages/.../` is empty after cloning** — you cloned without `--recursive`. Run `git submodule update --init --recursive`.
-- **`tlmgr: command not found` or a missing-font error when building** — see step 2 (install TinyTeX + the Noto fonts).
+- **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts), and check that `<chapters>/thesis-class/` and `<chapters>/_environment` are still there.
 - **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` for R-package dissertations, `thesis/**` for content-only ones).
 
 ## Editing your dissertation
@@ -59,7 +59,8 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 |---|---|
 | Thesis chapter content | `<chapters>/chapters/*.qmd` |
 | Bibliography | `<chapters>/references.bib` |
-| Thesis class file (formatting) | `<chapters>/thesis.cls` (or see `THESIS-CLS-README.md`) |
+| Thesis formatting (margins, fonts, spacing, front pages) | a profile in `<chapters>/profiles/` (see `THESIS-CLS-README.md`); the class in `<chapters>/thesis-class/` is copied from the registry, not edited |
+| Title page details (degree, department, committee) | the `thesis:` block in `<chapters>/_quarto.yml` |
 | Methodology R code | `packages/r-packages/<your package>/R/` (R-package dissertations only) |
 | Your sources and materials | `raw/` — then run `/ingest` |
 | Your knowledge base | `wiki/` — the AI maintains it from `raw/`; you own it (see `KNOWLEDGE.md`) |
@@ -70,13 +71,13 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 **Your institution's thesis format.** `thesis.classFile.type` in `dataimago-spec.yaml` records the choice you made at setup:
 
-- **`shipped`**: the registry has a class for your institution, and you use it as-is. The registry is the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes). Ask your AI assistant to "set up my institution's thesis class". It copies the class into your repository, so your PDF builds from files you can see, and the class stays the same until you ask to update it.
-- **`vendored`**: you provide your institution's own class file. Put it in place of `<chapters>/thesis.cls`.
-- **`generated`** (the default): you start from the framework's default `thesis.cls` and tailor it to your institution's formatting guidelines. Put the guidelines in `raw/thesis-formatting/`, and your AI assistant does the tailoring with you.
+- **`shipped`**: the registry has a profile for your institution, and you use it as-is. The registry is the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes): one house class plus a small profile of formatting rules per institution. Ask your AI assistant to "set up my institution's thesis profile". It copies the class and your institution's profile into your repository, so your PDF builds from files you can see, and they stay the same until you ask to update them.
+- **`vendored`**: you provide your institution's own class file. Put it in `<chapters>/` and point `_quarto.yml` at it; the house class is then not used.
+- **`generated`** (the default): you start from the registry's `house` profile and adapt it to your institution's formatting guidelines. Put the guidelines in `raw/thesis-formatting/`, and your AI assistant does the adapting with you (`/thesis-format`).
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
 
-**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* To make this repository's own PDF match your institution's format, use `/thesis-build`; "my school isn't in the registry" is still the `generated` mode. `/thesis-format` only drafts a profile for the registry's house class, for you to check and optionally offer to the registry; it does not change `thesis-build` yet, and it will ask before copying the public registry and before any long TeX build. A profile is a list of formatting facts about your institution's guide. It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`): each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile and builds the registry's sample book with it, and you confirm every value against the guide. This does not change how your own PDF is built: that still follows the mode above and `thesis-build`, until that skill builds from profiles. You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent.
+**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`), starting from the `house` profile: each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile, builds the registry's sample book with it and saves the profile next to your chapters (`<chapters>/profiles/<id>.yaml`); you confirm every value against the guide. To make your own PDF follow it, set `thesis.profile: <id>` in `<chapters>/_quarto.yml` (`/thesis-build` helps). You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent. To make this repository's own PDF match a profile the registry already has, use `/thesis-build`; "my school isn't in the registry" is the `generated` mode.
 
 ## Adding committee members + advisor
 

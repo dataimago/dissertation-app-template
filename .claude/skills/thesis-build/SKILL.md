@@ -9,72 +9,149 @@ Produce the institution-formatted thesis PDF. Conform to the institution's spec;
 never bend formatting in non-conformant ways to clear an error.
 
 ## Steps
-1. Resolve the class via `vertical.dissertation.thesis.classFile.type` in
-   `dataimago-spec.yaml`. The three modes are the thesis-class registry's
-   (`dataimago/dissertation-thesis-classes`). Put them to the author in these
-   words, which `THESIS-CLS-README.md` beside the chapters also uses:
-   - **`shipped`**: the registry has a class for your institution, and you use
-     it as-is. (Set it up as in "Setting up a shipped class" below.)
-   - **`vendored`**: you provide your institution's own class file. (It
-     replaces `thesis.cls` beside the chapters.)
-   - **`generated`** (the default): you start from the framework's default
-     `thesis.cls` and tailor it to your institution's formatting guidelines.
-     (The guidelines are in `raw/thesis-formatting/`.)
+1. Resolve how the class is chosen via `vertical.dissertation.thesis.classFile.type`
+   in `dataimago-spec.yaml`. The registry (`dataimago/dissertation-thesis-classes`)
+   holds one house class, `dataimago-thesis`, and a **profile** per institution:
+   the profile holds the institution's formatting rules, the class applies them.
+   Put the three modes to the author in these words, which `THESIS-CLS-README.md`
+   beside the chapters also uses:
+   - **`shipped`**: the registry has a profile for your institution, and you use
+     it as-is. (Set it up as in "Setting up a shipped profile" below.)
+   - **`vendored`**: you provide your institution's own class file. (It goes
+     beside the chapters, and the house class is then not used.)
+   - **`generated`** (the default): you start from the registry's `house`
+     profile and adapt it to your institution's formatting guidelines. (The
+     guidelines are in `raw/thesis-formatting/`; the `thesis-format` skill does
+     the adapting.)
 
-   The framework's default `thesis.cls`, the one the repo starts with, is where
-   `generated` starts. It is not what `shipped` means.
-2. Build via `build-thesis.yml` (Quarto + XeLaTeX). Chapters: `thesis/chapters/`
-   (content-only) or the R package's `ui/www/chapters/`. For deep diagnosis or
-   class drafting, hand off to the `thesis-build-agent`.
+   The `house` profile is where `generated` starts. It is not what `shipped`
+   means: `shipped` always names an institution's profile.
+2. Build via `build-thesis.yml` (Quarto + LuaLaTeX, tagged PDF; XeLaTeX is
+   supported but untagged). Chapters: `thesis/chapters/` (content-only) or the R
+   package's `ui/www/chapters/`. For deep diagnosis or profile drafting, hand
+   off to the `thesis-build-agent`.
 3. Verify against the institution checklist (margins, front matter, ToC, captions).
 
-## Setting up a shipped class
+## Where things are
 
 "Beside the chapters" means the Quarto book's folder: `thesis/` in this repo
 (content-only), or the R package's `ui/www/`. In the R-package layout that
 folder is in the package's own repository, so ask the author before you change
-it.
+it. There:
+
+- `thesis-class/`: the house class and its Quarto partials and filter, copied
+  from the registry. `registry-source.json` records the registry commit;
+  `sync.py` checks and updates the copy; never hand-edit the other files.
+- `profiles/<id>.yaml` and `profiles/<id>.cfg`: a profile and its compiled form.
+  `thesis.profile: <id>` in `_quarto.yml` selects one.
+- `_environment`: puts both folders on LaTeX's search path.
+- `_quarto.yml`: `documentclass: dataimago-thesis`, `pdf-engine: lualatex`, the
+  `template-partials` and `filters`, and a `thesis:` block (profile, institution,
+  degree, department, advisors, committee).
+
+If the folder has no `thesis-class/` (a repository set up before the house class
+carries `thesis.cls` and `dataimago.sty` instead), it is on the older layout and
+keeps building as it did. Moving it over is a change to the author's repository,
+so propose it and wait for their agreement: follow "Moving an older repository
+to the house class" below.
+
+## Setting up a shipped profile
 
 1. **Find the institution.** Read `vertical.dissertation.institution.name` from
    `dataimago-spec.yaml`.
 2. **Look it up in the registry.** Fetch
-   `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`
-   and find the entry in `classes` whose `institution` is that name (ignore
-   case) and whose `status` is `available`. If the spec names it differently
-   (say, "CU Boulder" for "University of Colorado Boulder"), ask the author to
+   `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`.
+   Check `schemaVersion`: this skill reads version 2. If it is anything else,
+   stop and tell the author this skill needs updating; do not guess. In
+   `profiles`, find the entry whose `institution` is that name (ignore case)
+   and whose `mode` is `shipped` and `status` is `available`. Never pick the
+   profile with id `house`. If the spec names the institution differently (say,
+   "CU Boulder" for "University of Colorado Boulder"), ask the author to
    confirm the match before you use it.
 3. **No match? Say so and offer `generated`.** Tell the author plainly: "The
-   thesis-class registry has no ready-made class for <institution> yet." Offer
+   thesis-class registry has no ready-made profile for <institution> yet." Offer
    `generated` instead: with their agreement, set `classFile.type: generated`
-   and adapt the framework's `thesis.cls` to their guidelines. Never borrow
-   another institution's class. (A repo set up before 2026-11-07 may say
-   `shipped` for the framework's default class; that was the old wording, and
-   under today's wording it is `generated`.)
-4. **Fetch the class.** If the committed `thesis.cls` is already the registry's
-   file, skip to step 6. Otherwise fetch the entry's `path` and each file in
-   `companions` from the same base,
-   `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/`,
-   and save each one beside the chapters under its own file name. For CU
-   Boulder, `classes/cu-boulder/thesis.cls` replaces `thesis.cls` and
-   `classes/cu-boulder/macros.tex` becomes `macros.tex`. Keep `classFile.path`
-   in the spec at `thesis.cls`.
-5. **Point the Quarto config at it.** In `_quarto.yml` beside the chapters,
-   under `format: pdf:`, set `documentclass` to the entry's `documentclass`,
-   `classoption` to its `classOptions`, and `pdf-engine` to its `engine`.
-6. **Check the title page.** A registry class may bring its own front-matter
-   commands, listed in its README (`classes/<id>/README.md` in the registry).
-   The CU Boulder class, for example, defines a two-argument
-   `\author{first}{last}`, while Quarto's template writes `\author{...}` with
-   one argument. So the first `shipped` build may need front-matter changes
-   made outside the class: in `_quarto.yml` (for example `include-in-header`)
-   or the front-matter chapter, never in the class file itself. Render locally
-   (`quarto render --to pdf`) until the PDF builds.
-7. **Commit the files.** Commit the class, its companions and the config change
-   on a branch and propose them as a pull request, naming the registry `id` and
-   `version` in the commit message. The committed files are the author's pinned
-   copy: `build-thesis.yml` builds from them and never fetches from the
-   registry, so a later change there cannot change the author's PDF. Update the
-   class only when the author asks, by repeating these steps.
+   and adapt the `house` profile with the `thesis-format` skill. Never borrow
+   another institution's profile. (A repo set up before 2026-11-07 may say
+   `shipped` for the framework's old default class; that was the old wording,
+   and under today's wording it is `generated`.)
+4. **Resolve the class.** The matched profile's `class` is an `id` in the
+   registry's `classes` (today `dataimago-thesis`; it must be `available`). The
+   class's `path` and `companions` (under `classes/<class>/`) are the class
+   bundle; the profile's `cfg` and `yaml` (under `profiles/`) are the other half.
+   They live in different directories of the registry; fetch both.
+5. **Fetch them.** From the book folder, run
+   `python3 thesis-class/sync.py sync --ref main --profile <id>`. It fetches the
+   class `path` and every `companions` file into `thesis-class/` and the
+   profile's `yaml` and `cfg` into `profiles/`, all from one registry commit,
+   and records that commit in `thesis-class/registry-source.json`. If
+   `sync.py` is missing, the folder is on the older layout (see above). Do not
+   copy files by hand: a partial copy is the usual cause of a build that finds
+   the class but not the profile.
+6. **Point the book at it.** In `_quarto.yml` set `thesis.profile: <id>` and
+   check `format: pdf:` against the class entry: `documentclass`
+   (`dataimago-thesis`), and `pdf-engine` (the entry's `engine`, `lualatex`;
+   `engineFallback` is `xelatex`, untagged). The profile's `classOptions` is
+   `profile=<id>`; `thesis.profile` already sends it, so do not repeat it under
+   `classoption`. Fill the `thesis:` block from the spec (institution, degree,
+   department, advisors, committee); ask the author for what the spec lacks.
+7. **Read what the profile does not say.** Open `profiles/<id>.yaml`. Fields the
+   institution's guide does not state are listed under `unstated` and keep the
+   house value, and `sources` cites the rest. Tell the author what is unstated;
+   never say the guide is fully met without reading both lists.
+8. **Check the PDF.** Render locally (`quarto render --to pdf` in the book
+   folder; it needs a current TeX Live with TeX Gyre, `luamml`, `tagpdf`,
+   `latex-lab`) until the PDF builds. Compare it with the class's example in the
+   registry (`classes/dataimago-thesis/example/`). Front-matter content has fixed
+   places: the abstract is `abstract:` in `index.qmd`, acknowledgments, dedication
+   and the like are `.acknowledgments` / `.dedication` divs in
+   `chapters/00-front-matter.qmd`. Make changes there and in `_quarto.yml`, never
+   in the vendored class files: using them as-is is what `shipped` means.
+9. **Commit the files.** Commit `thesis-class/`, `profiles/` and `_quarto.yml`
+   on a branch and propose them as a pull request, naming the profile `id`, the
+   class `version` and the registry commit in the message. Do not push or open the
+   pull request yourself: show the author the commands. The committed files are the
+   author's pinned copy: `build-thesis.yml` builds from them and never fetches from
+   the registry, so a later change there cannot change the author's PDF. Update the
+   copy only when the author asks, by repeating step 5.
+
+## Building a `generated` profile
+
+`generated` does not mean writing or adapting a class. The `house` profile is
+the starting point. Run the `thesis-format` skill: it copies
+`profiles/house.yaml` to `profiles/<id>.yaml` beside the chapters, fills it
+from the guide in `raw/thesis-formatting/` (each value cited, the rest listed
+under `unstated`), compiles it (`texlua thesis-class/thesis-profile.lua profiles
+<id>`), and gives the author a checklist. Then set `thesis.profile: <id>` in
+`_quarto.yml` and build. Until the author has a guide, the `house` profile builds
+as it is.
+
+## Moving an older repository to the house class
+
+A repository set up before the house class has `thesis.cls`, `dataimago.sty`,
+`documentclass: thesis` and `pdf-engine: xelatex` in `_quarto.yml`, and a
+`build-thesis.yml` that installs Noto fonts. Moving it is one pull request, and
+the author agrees first:
+
+1. From `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), copy
+   `thesis-class/`, `profiles/` and `_environment` into the book folder.
+2. In `_quarto.yml` take the template's `lang`, `thesis:` block (fill it from
+   the spec) and `format: pdf:` settings; remove `mainfont`, `sansfont`,
+   `mathfont`, `classoption` and the `\usepackage{dataimago}` header. The
+   profile owns those.
+3. Move the abstract to `abstract:` in `index.qmd`, and acknowledgments and
+   dedication to `.acknowledgments` and `.dedication` divs in
+   `chapters/00-front-matter.qmd` (words stay the author's; move, do not edit).
+   An `index.qmd` landing text that should not print goes inside
+   `::: {.content-visible when-format="html"}`.
+4. Replace `build-thesis.yml` with the template's (LuaLaTeX, TeX Live, font
+   check; the content-only version is this repo's own `build-thesis.yml`).
+5. Delete `thesis.cls` and `dataimago.sty` (or keep them if the author is on
+   `vendored`).
+6. Render until the PDF builds.
+
+`classFile.path` in the spec names the old file; leave it unless the author
+asks. It is not read by the build.
 
 ## Common build failures (from the dissertation-ai alpha, 2026-06-24)
 
@@ -82,22 +159,31 @@ The visible CI error is often just `Emergency stop` — dump the `.log`
 (`tail -120 <chapters dir>/index.log`) or render locally (`quarto render --to pdf`)
 to see the real `! LaTeX Error`.
 
-- **`tlmgr: command not found`** — `quarto install tinytex` doesn't put `tlmgr`
-  on PATH. Use `r-lib/actions/setup-tinytex@v2`, and `apt-get install` the fonts
-  the class needs (e.g. `fonts-noto-core fonts-noto-extra`).
-- **Equations come out in Latin Modern Math although `mathfont` is Noto Sans Math** —
-  no error, just the wrong font (`pdffonts docs/thesis.pdf` lists `LatinModernMath`).
-  The installed Noto Sans Math is 2.001, which has no OpenType MATH table; Linux
-  distributions ship that version. Install 3.000 from google/fonts, as
-  `build-thesis.yml` does, whose last step fails the run on this fallback.
+- **`dataimago-thesis.cls` or `<id>.cfg` not found** — `_environment` is missing
+  or the folder was copied piecemeal. The class is in `thesis-class/` and the
+  compiled profile in `profiles/`; `_environment` puts both on `TEXINPUTS`.
+  Restore them with `python3 thesis-class/sync.py sync`.
+- **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
+  a profile with no compiled `.cfg`. Compile it:
+  `texlua thesis-class/thesis-profile.lua profiles <id>`.
+- **`The ... is missing` naming a `thesis.*` key** — a required title-page field
+  (`thesis.degree.name`, `department`, `institution`, `advisors`, `committee`) or
+  `abstract:` is empty. Fill it in `_quarto.yml` / `index.qmd`.
+- **Equations come out in Latin Modern Math** — no error, just the wrong font
+  (`pdffonts docs/thesis.pdf` lists `LatinModernMath`). The profile's math font
+  (TeX Gyre Termes Math) was not found, or has no OpenType MATH table.
+  `build-thesis.yml` installs TeX Live with TeX Gyre, and its last step
+  (`thesis-class/check-pdf-fonts.sh`) fails the run on this fallback.
+- **A warning that `mainfont`, `geometry`, `fontsize`, ... "is ignored"** — the
+  profile owns those; change the named profile field instead.
 - **`Emergency stop … no legal \end found`, last package loaded is the .sty** —
-  a support `.sty` was pulled in via Quarto `include-in-header:` file injection,
+  (a `vendored` class's support `.sty`) pulled in via Quarto `include-in-header:` file injection,
   which inlines the file's `\endinput` and truncates `index.tex`. Load it as a
   package instead: `include-in-header: { text: "\\usepackage{<pkg>}" }`.
-- **`Environment abstract undefined`** — `\renewenvironment{abstract}` on a class
+- **`Environment abstract undefined`** — in a `vendored` class: `\renewenvironment{abstract}` on a class
   that `\LoadClass{book}`. Use `\newenvironment`, or base on `report`.
-- **`Option clash for package geometry`** — the class loads `geometry` and the
-  Quarto `geometry:` key reloads it. Drop one.
+- **`Option clash for package geometry`** — in a `vendored` class: it loads `geometry` and the
+  Quarto `geometry:` key reloads it. Drop one. (The house class drops the key itself.)
 - **`validation failed … book:bibliography / book:csl`** — `bibliography`/`csl`
   are top-level keys, not `book:` children; a referenced `*.csl` must exist.
 - **`Book contents must include a home page`** — list `index.qmd` first.
@@ -105,7 +191,11 @@ to see the real `! LaTeX Error`.
   artifact: `git add -f docs/thesis.pdf`.
 
 ## Guardrails
-- Only class machinery may be contributed back to the registry, only with
-  consent — never the manuscript prose.
+- Only class machinery and profiles may be contributed back to the registry,
+  only with consent — never the manuscript prose.
+- Never hand-edit the vendored class files (`python3 thesis-class/sync.py check`
+  lists differences from the registry); institution rules go in a profile.
+- Build from committed files only; do not make `build-thesis.yml` fetch from the
+  registry.
 - If `raw/manuscript/LOCKED.md` exists, the chapters are v1.0 of a finished work:
   fix the build, never rewrite the text.

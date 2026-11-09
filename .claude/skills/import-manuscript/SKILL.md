@@ -50,8 +50,8 @@ the reference for what "v1.0 looked like".
   several; keep keys), figures into `figures/`, and the author's `.cls`/`.sty`
   into the chapters directory as **vendored** class files — set
   `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
-  the spec said before (`shipped` means a registry class, `generated` the
-  framework's default one; the author's own class is neither).
+  the spec said before (`shipped` means a registry profile, `generated` the
+  house profile adapted; the author's own class is neither). A vendored class replaces the house class: in `_quarto.yml` point `documentclass`, `classoption` and `pdf-engine` at it and drop the house `template-partials`, `filters` and `thesis:` block (`THESIS-CLS-README.md`, "Which mode are you in?").
 
 ## 3. Place, as v1.0
 
@@ -59,13 +59,14 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
 `source.referencedRepo`, a local `source.rPackage`):
 
 - `no-r` → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
-  `index.qmd`, `thesis.cls`); knitr chunks escaped for the R-free build.
+  `index.qmd`, `thesis-class/`, `profiles/`); knitr chunks escaped for the R-free build.
 - `extension` **with** `referencedRepo` (the author's whole dissertation is an
   existing repository; `rPackage` is null, there is no submodule and no local
   `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
-  `references.bib`, `thesis.cls`, `dataimago.sty`, `THESIS-CLS-README.md` from
+  `references.bib`, `_environment`, `THESIS-CLS-README.md`, every file of
+  `thesis-class/` and `profiles/` from
   `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), apply the two
   rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
   ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
