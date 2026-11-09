@@ -87,9 +87,10 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   [ -e thesis/references.bib ] || cp "$W/references.bib" thesis/   # never over the author's bibliography
   # the two rewrites the hub applies, in place under this repository's thesis/
   perl -pi -e 's{output-dir: \.\./\.\./docs}{output-dir: ../docs}' thesis/_quarto.yml
-  find thesis -name '*.qmd' -exec perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' {} +
+  perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' thesis/index.qmd   # the book file only, never thesis-class/
   ```
-  If §2's `.bib` copy had no `thesis/` to go to yet, do it now, onto
+  The same fence escape applies to each `thesis/chapters/*.qmd` as you write it
+  (§2). If §2's `.bib` copy had no `thesis/` to go to yet, do it now, onto
   `thesis/references.bib`. The app's `build-thesis.yml` is already here and inert
   until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
@@ -125,15 +126,17 @@ class is available and where it is described (`/thesis-build`, "Moving an older
 repository to the house class"): propose it, never do it here.
 
 Otherwise, when the house bundle is present and the house class stays, the book has
-fixed front-matter slots the house class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
-and dedication in `.acknowledgments` / `.dedication` divs in `00-front-matter.qmd`, and
-fill the `thesis:` block of `_quarto.yml` from the manuscript's own title page first
-(institution, department, degree, advisors, committee); use the spec only where the
-manuscript is silent, and ask the author for what neither gives. If they disagree, the
-manuscript wins. Keep values already in `_quarto.yml`; ask before changing a
-non-empty one. These are placements of the v1.0 text, not edits to it; if
-`raw/manuscript/LOCKED.md` exists, name each placement and wait for the author's
-yes.
+fixed front-matter slots the house class requires: the abstract in `index.qmd`'s
+`abstract:` field, acknowledgments and dedication in `.acknowledgments` /
+`.dedication` divs in `00-front-matter.qmd`, and the `thesis:` block of `_quarto.yml`
+(institution, department, degree, advisors, committee). These are placements of the
+v1.0 text, not edits to it, and this skill runs under `raw/manuscript/LOCKED.md`, so
+**propose them before writing anything**: list each placement (what, from where in
+the manuscript, to where) and each `thesis:` value with its source (the manuscript's
+own title page first, the spec only where the manuscript is silent; if they
+disagree, the manuscript wins), ask the author for what neither gives, and wait for
+a yes. Only then write them. Keep values already in `_quarto.yml`; a change to a
+non-empty one is part of the same proposal.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
 stubs; front matter to `00-front-matter.qmd` (abstract: see the house-class slots above),
