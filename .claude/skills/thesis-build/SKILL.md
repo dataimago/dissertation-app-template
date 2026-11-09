@@ -264,8 +264,10 @@ package, then the submodule pointer here).
    cp "$S/rpkg/.github/workflows/build-thesis.yml" packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml
    ```
    Do not skip it: a house-class book with the old workflow does not build.
-6. **Delete the old class, last, and only once the book points at the new one:**
+6. **Delete the old class, last, and only once the book points at the new one**
+   (from the repository root; set `BOOK` again, since this may be a new shell):
    ```sh
+   BOOK=<book folder>
    grep -q '^ *documentclass: *dataimago-thesis' "$BOOK/_quarto.yml" \
      && rm "$BOOK/thesis.cls" "$BOOK/dataimago.sty" \
      || echo "documentclass is not dataimago-thesis yet: thesis.cls kept"
