@@ -30,8 +30,9 @@ formatting in ways that violate it to make an error go away.
      `generated`). A routine build or log diagnosis never fetches: if
      `thesis-class/registry-source.json` exists and `_quarto.yml` already names
      the profile, build from the committed files, and repair a broken copy with
-     `sync.py sync --profile <id>` at the recorded commit, never `--ref main`.
-     Then change `profile:` to
+     `sync.py sync --profile <id>` at the recorded commit, never `--ref main`, and
+     never edit `profile:` in `_quarto.yml` while diagnosing. In an explicit setup
+     or update only, after the author confirmed the registry match, change `profile:` to
      `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
      `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
      fallback), and prepare the files for commit (show the author the git commands; do not run them). If the institution has no available
@@ -66,8 +67,8 @@ formatting in ways that violate it to make an error go away.
   check` shows what differs from the registry.
 - Build from committed class files only. Never make `build-thesis.yml` fetch
   from the registry: the committed copy pins the author's class version.
-- Prepare files and print commands; do not push or open pull requests on the
-  author's behalf.
+- Edit the working tree only; never run `git add`, `commit`, `push` or
+  `gh pr create`. Show the author the commands.
 - Keep changes surgical; don't restructure the manuscript to dodge a LaTeX error.
 - If `raw/manuscript/LOCKED.md` exists, the derivative chapters are v1.0 of a
   finished work: fix the build, never rewrite the text.

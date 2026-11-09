@@ -68,7 +68,8 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
   `dataimago/dissertation-rpkg-template`'s `ui/www/` (public): `git clone --depth 1
   https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"`, then `cp -a`
-  those files and `ui/www/thesis-class`, `ui/www/profiles`, `ui/www/_environment` into
+  `$SCRATCH/rpkg/ui/www/` `_quarto.yml`, `index.qmd`, `references.bib`, `THESIS-CLS-README.md`,
+  `thesis-class`, `profiles` and `_environment` into
   `thesis/` (stop and tell the author if any is missing), apply the two
   rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
   ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.

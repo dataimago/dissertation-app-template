@@ -194,7 +194,7 @@ to see the real `! LaTeX Error`.
 - **`dataimago-thesis.cls` or `<id>.cfg` not found** — `_environment` is missing
   or the folder was copied piecemeal. The class is in `thesis-class/` and the
   compiled profile in `profiles/`; `_environment` puts both on `TEXINPUTS`.
-  Restore them with `python3 thesis-class/sync.py sync --profile <id>` (at the recorded commit; add `--ref main` for a newer profile).
+  Restore them with `python3 thesis-class/sync.py sync --profile <id>` at the recorded commit, to repair. A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
 - **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
   a profile with no compiled `.cfg`. Compile it:
   `texlua thesis-class/thesis-profile.lua profiles <id>`.
