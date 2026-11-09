@@ -219,9 +219,12 @@ PDFs are `$SCRATCH/registry/classes/dataimago-thesis/example/_build/<id>-lualate
 `pdftotext -layout -f 1 -l 8 <pdf> -`, and show the author the title page, abstract, contents
 and a chapter opening
 so they can compare them with the guide's sample pages. To build the author's own
-chapters with the profile, the author changes `profile:` to `<id>` in the `thesis:` block of the book's `_quarto.yml`
+chapters with the profile on the house class, the author changes `profile:` to `<id>` in the `thesis:` block of the book's `_quarto.yml`
 (`thesis-build`, "Building a `generated` profile"); suggest it, and leave the decision
-and the edit to them.
+and the edit to them. On the older layout (no `thesis-class/`, no `thesis:` block)
+there is no such block to change: the profile is used only after the move to the
+house class (`thesis-build`, "Moving an older repository to the house class"), which
+proposes `profile: <id>` as part of the move.
 
 ## Step 6: the checklist for the author
 

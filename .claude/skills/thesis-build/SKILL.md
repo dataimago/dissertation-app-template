@@ -140,7 +140,13 @@ to the house class" below.
 ## Building a `generated` profile
 
 `generated` does not mean writing or adapting a class. The `house` profile is
-the starting point. Run the `thesis-format` skill: it writes a new
+the starting point. **Check the layout first**, as in "Setting up a shipped profile"
+step 2: if `<book folder>/thesis-class/sync.py` does not exist, the book is on the
+older layout (`thesis.cls`, no `thesis:` block), the profile cannot be used yet,
+and nothing below applies. Build the book as it is, offer "Moving an older
+repository to the house class" and wait for a yes; never add a `thesis:` block or
+change `documentclass` without that move. On the house class, run the
+`thesis-format` skill: it writes a new
 `profiles/<id>.yaml` beside the chapters (`extends: house`, plus only the values
 the guide in `raw/thesis-formatting/` states, each cited; what the guide leaves out
 is listed under `unstated` and keeps the house value), compiles it (`texlua <book folder>/thesis-class/thesis-profile.lua
@@ -187,9 +193,12 @@ cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRA
    `template-partials` and `filters`. Do **not** copy `output-dir`: keep the book's
    own (`../docs` for content-only `thesis/`; the template's `../../docs` is the R
    package's), since `build-thesis.yml` publishes `docs/thesis.pdf`.
-   Fill only empty `thesis:` keys (the manuscript's title page first, then the
-   spec, then ask the author); keep values already in `_quarto.yml` and ask before
-   changing a non-empty one; remove `mainfont`, `sansfont`,
+   Copy only keys that are missing; ask before changing any key that already has
+   a value. Fill empty `thesis:` keys from the manuscript's title page first, then
+   the spec, then ask the author. For `thesis.profile`: if `profiles/` holds a
+   profile of the author's other than `house` (for example one `thesis-format`
+   wrote before the move), propose `profile: <id>` (show it, wait for a yes)
+   instead of the template's `house`; remove `mainfont`, `sansfont`,
    `mathfont`, `classoption` and the `\usepackage{dataimago}` header. The
    profile owns those.
 3. Move the abstract to `abstract:` in `index.qmd`, and acknowledgments and
