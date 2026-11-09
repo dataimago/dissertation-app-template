@@ -161,7 +161,7 @@ yes (name the `.cls` and the list first), copy the `.cls`/`.sty` beside `_quarto
 in `_quarto.yml` set `documentclass` to the `.cls` file name without its extension,
 drop the house `template-partials`, `filters` and `thesis:` block, set `pdf-engine` to
 the engine the class names (ask if it names none), and leave `classoption` empty unless
-the class documents required options; set `thesis.classFile.type: vendored` and `path`
+the class documents required options; set `thesis.classFile.type: vendored` and `path` to the `.cls` file name (it sits beside `_quarto.yml`)
 in `dataimago-spec.yaml`; then remove `_environment`, `thesis-class/` and `profiles/`.
 Nothing is deleted before the yes, and in the R-package layout ask before touching the
 package.
@@ -170,59 +170,87 @@ package.
 
 A repository set up before the house class has `thesis.cls`, `dataimago.sty`,
 `documentclass: thesis` and `pdf-engine: xelatex` in `_quarto.yml`, and a
-`build-thesis.yml` that installs Noto fonts. Moving it is one pull request, and
-the author agrees first, and the agreement names the file moves in step 3 (if
-`raw/manuscript/LOCKED.md` exists, show each proposed move of the working
-chapters' front matter and stop until the author confirms it). It is for books
-that used the old default `thesis.cls` (`shipped` in the old wording, or
-`generated`), not for `vendored` ones: a vendored author keeps their class and
-does not move.
+`build-thesis.yml` that installs Noto fonts. The move is for books that used the
+old default `thesis.cls` (`shipped` in the old wording, or `generated`), not for
+`vendored` ones: a vendored author keeps their class and does not move. The book
+folder is `thesis/` for content-only, or
+`packages/r-packages/<source.rPackage.name>/<quartoRoot>/` (`ui/www/` by default)
+for an R package. The move is one pull request (two in the R-package layout: the
+package, then the submodule pointer here).
 
-1. Copy the house bundle from `dataimago/dissertation-rpkg-template`'s `ui/www/`
-   (public) into the book folder:
+1. **Propose the whole move and wait for a yes.** Change nothing before it. Show
+   the author, in one message:
+   - the public repositories you will clone into a temporary folder:
+     `dataimago/dissertation-rpkg-template`, and for content-only also
+     `dataimago/dissertation-app-template` (for its `build-thesis.yml`);
+   - what you will copy into the book folder: `thesis-class/`, `_environment`,
+     `THESIS-CLS-README.md` (replacing the old one), and `profiles/` merged in
+     without overwriting any profile already there;
+   - every `_quarto.yml` change: `documentclass: thesis` becomes
+     `dataimago-thesis`, `pdf-engine: xelatex` becomes `lualatex`; add the
+     template's `lang`, `template-partials` and `filters`; remove `mainfont`,
+     `sansfont`, `mathfont`, `classoption` and the `\usepackage{dataimago}`
+     header (the profile owns those); add a `thesis:` block with the values you
+     propose and their sources (the manuscript's title page first, then the
+     spec; ask for what neither gives), and `profile:` set to the author's own
+     profile if `profiles/` holds one other than `house`, otherwise `house`; and
+     add `chapters/00-front-matter.qmd` to `chapters:` right after `index.qmd` if
+     it is not listed. Keep the book's own `output-dir` (`../docs` for
+     content-only; the template's `../../docs` is the R package's);
+   - each front-matter move: the abstract into `index.qmd`'s `abstract:`, and
+     acknowledgments and dedication into `.acknowledgments` / `.dedication` divs
+     in `chapters/00-front-matter.qmd` (created if it does not exist);
+   - the workflow replaced, and, last, `thesis.cls` and `dataimago.sty` deleted;
+   - in the R-package layout, that all of this happens in the package's own
+     repository.
+
+   If `raw/manuscript/LOCKED.md` exists, also show each front-matter move against
+   the locked manuscript and wait for that confirmation too.
+2. **Copy the bundle.** From the repository root (it changes no directory and
+   stops if a template file is missing):
    ```sh
-SCRATCH="$(mktemp -d)"
-git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
-cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRATCH/rpkg/ui/www/_environment" <book folder>/
-```
-   Stop and tell the author if any of those paths is missing; never assemble the
-   folder from guesses.
-2. In `_quarto.yml`, from the step 1 clone's `"$SCRATCH/rpkg/ui/www/_quarto.yml"`, copy
-   `lang`, the `thesis:` block's keys, and under `format: pdf:` the keys
-   `documentclass` (`dataimago-thesis`), `pdf-engine` (`lualatex`),
-   `template-partials` and `filters`. Do **not** copy `output-dir`: keep the book's
-   own (`../docs` for content-only `thesis/`; the template's `../../docs` is the R
-   package's), since `build-thesis.yml` publishes `docs/thesis.pdf`.
-   Copy only keys that are missing; ask before changing any key that already has
-   a value. Fill empty `thesis:` keys from the manuscript's title page first, then
-   the spec, then ask the author. For `thesis.profile`: if `profiles/` holds a
-   profile of the author's other than `house` (for example one `thesis-format`
-   wrote before the move), propose `profile: <id>` (show it, wait for a yes)
-   instead of the template's `house`; remove `mainfont`, `sansfont`,
-   `mathfont`, `classoption` and the `\usepackage{dataimago}` header. The
-   profile owns those.
-3. Move the abstract to `abstract:` in `index.qmd`, and acknowledgments and
-   dedication to `.acknowledgments` and `.dedication` divs in
-   `chapters/00-front-matter.qmd` (words stay the author's; move, do not edit).
-   An `index.qmd` landing text that should not print goes inside
+   SCRATCH="$(mktemp -d)"
+   git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
+   W="$SCRATCH/rpkg/ui/www"
+   BOOK=<book folder>
+   for f in thesis-class profiles _environment THESIS-CLS-README.md; do
+     [ -e "$W/$f" ] || { echo "missing in the template: $f (stop and tell the author)"; exit 1; }
+   done
+   cp -a "$W/thesis-class" "$W/_environment" "$W/THESIS-CLS-README.md" "$BOOK/"
+   mkdir -p "$BOOK/profiles"
+   for f in "$W"/profiles/*; do              # never over a profile already there
+     [ -e "$BOOK/profiles/${f##*/}" ] || cp -a "$f" "$BOOK/profiles/"
+   done
+   ```
+3. **Edit `_quarto.yml`** exactly as agreed in step 1. The `format: pdf:` keys
+   listed there are replaced (that is the move); the `thesis:` values are the
+   ones the author agreed to.
+4. **Move the front matter** as agreed: create `chapters/00-front-matter.qmd` if it
+   does not exist and list it in `chapters:`. The words stay the author's; move,
+   do not edit. An `index.qmd` landing text that should not print goes inside
    `::: {.content-visible when-format="html"}`.
-4. Replace `build-thesis.yml` with the one for the layout. Content-only: `git clone --depth 1
-   https://github.com/dataimago/dissertation-app-template "$SCRATCH/app"` and `cp
-   "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/`. R package
-   (ask before touching the package repository): `cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml"
-   packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml` (the
-   step 1 clone; never onto this repository's own `.github/workflows/`). In words: content-only, this
-   template's `.github/workflows/build-thesis.yml` from
-   `dataimago/dissertation-app-template` (an unmigrated repo's own copy is the old
-   one); R package, the package's
-   `.github/workflows/build-thesis.yml` from `dataimago/dissertation-rpkg-template`
-   (it has the R setup; never copy this repo's workflow into the package). Also
-   copy `THESIS-CLS-README.md` from the template's `ui/www/`, so the old
-   class-per-institution README does not stay beside the house class.
-5. Delete `thesis.cls` and `dataimago.sty` (named in the agreement; the working tree
-   changes, and you show the author the `git` commands, never running `git add`,
-   `commit`, `push` or `gh pr create`).
-6. Render until the PDF builds.
+5. **Replace `build-thesis.yml`.** Content-only (this repository):
+   ```sh
+   git clone --depth 1 https://github.com/dataimago/dissertation-app-template "$SCRATCH/app"
+   cp "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/build-thesis.yml
+   ```
+   R package (the package's own workflow, which has the R setup; never this
+   repository's):
+   ```sh
+   cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml" packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml
+   ```
+6. **Delete the old class, last, and only once the book points at the new one:**
+   ```sh
+   grep -q '^ *documentclass: *dataimago-thesis' "$BOOK/_quarto.yml" \
+     && rm "$BOOK/thesis.cls" "$BOOK/dataimago.sty" \
+     || echo "documentclass is not dataimago-thesis yet: thesis.cls kept"
+   ```
+7. **Render** until the PDF builds (`quarto render --to pdf` in the book folder),
+   then prepare the commit: show the author the `git` commands, never running
+   `git add`, `commit`, `push` or `gh pr create`. Content-only: one branch and pull
+   request here. R package: first in the package's repository, then the
+   submodule-pointer pull request here, with the commands of `thesis-format`
+   Step 6.
 
 `classFile.path` in the spec names the old file; leave it unless the author
 asks. It is not read by the build.
