@@ -51,7 +51,14 @@ formatting in ways that violate it to make an error go away.
      Read the profile's `unstated` list and tell the author what the guide
      does not say.
    - `vendored`: the author provides their institution's own class file; the
-     house class is not used.
+     house class is not used. Switching a house-class book to it follows
+     `thesis-build`, "Switching to `vendored`": name the `.cls` and the full list
+     first and wait for a yes (the `.cls`/`.sty` go beside `_quarto.yml`; drop
+     `template-partials`, `filters` and the `thesis:` block; `documentclass` is the
+     `.cls` file name without its extension; `pdf-engine` the engine the class
+     names; `classFile.type: vendored` and `path` the `.cls` file name; only after
+     the yes remove `_environment`, `thesis-class/` and `profiles/`; in the
+     R-package layout ask before touching the package).
    - `generated` (the default): build the profile `_quarto.yml` names (`house`
      until the author adapts one). Run the `thesis-format` skill only when the
      author asks to adapt their formatting guide (it needs the guide in

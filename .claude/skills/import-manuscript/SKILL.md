@@ -77,8 +77,8 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). **Ask first:** tell
   the author you will clone that public template into a temporary folder and copy
   `_quarto.yml`, `index.qmd`, `THESIS-CLS-README.md`, `thesis-class/`, `profiles/` and
-  `_environment` into `thesis/` here (and `references.bib` only if `thesis/` has none
-  yet, so the bibliography copied in §2 is kept), then wait for a yes. Run this from
+  `_environment` into `thesis/` here (the template's `references.bib` only if §2 found
+  no bibliography among the sources), then wait for a yes. Run this from
   the repository root; it changes no directory and stops if a file is missing:
   ```sh
   SCRATCH="$(mktemp -d)"
@@ -90,14 +90,24 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   mkdir -p thesis
   cp -a "$W/_quarto.yml" "$W/index.qmd" "$W/THESIS-CLS-README.md" \
         "$W/thesis-class" "$W/profiles" "$W/_environment" thesis/
-  [ -e thesis/references.bib ] || cp "$W/references.bib" thesis/   # never over the author's bibliography
+  # the bibliography: the author's own if §2 found one (written next, not merged
+  # with the template's); the template's only when §2 found none
+  [ -n "$AUTHOR_BIB_FOUND" ] || cp "$W/references.bib" thesis/
   # the two rewrites the hub applies, in place under this repository's thesis/
   perl -pi -e 's{output-dir: \.\./\.\./docs}{output-dir: ../docs}' thesis/_quarto.yml
   perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' thesis/index.qmd   # the book file only, never thesis-class/
   ```
-  The same fence escape applies to each `thesis/chapters/*.qmd` as you write it
-  (§2). If §2's `.bib` and figures had no `thesis/` to go to yet, place them now,
-  onto `thesis/references.bib` and `thesis/figures/`. The app's `build-thesis.yml` is already here and inert
+  Set `AUTHOR_BIB_FOUND=1` before the block when §2 found a `.bib`. Then write the
+  author's bibliography onto `thesis/references.bib` (merging only the author's own
+  `.bib` files with each other, never with the template's) and their figures into
+  `thesis/figures/`. The same fence escape applies to each `thesis/chapters/*.qmd`
+  as you write it (§2).
+  The copied `_quarto.yml` and `index.qmd` are template scaffolding, not the author's
+  book: treat every `thesis:` value in them (and any `PLACEHOLDER-*` or `{{...}}`) as
+  empty, and propose real values from the manuscript, then the spec, in the §3
+  front-matter proposal; wrap the template's `index.qmd` landing text in
+  `::: {.content-visible when-format="html"}` so it does not print; and list
+  `chapters/00-front-matter.qmd` in `chapters:` right after `index.qmd`. The app's `build-thesis.yml` is already here and inert
   until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
