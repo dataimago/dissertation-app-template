@@ -24,8 +24,8 @@ formatting in ways that violate it to make an error go away.
      `path` and `companions` (under `classes/<class>/`) and the profile's `cfg`
      and `yaml` (under `profiles/`), which are in different directories. In the
      book folder, `python3 thesis-class/sync.py sync --ref main --profile <id>`
-     does the fetch and records the registry commit. Then set `thesis.profile:
-     <id>` in `_quarto.yml` (it sends `profile=<id>` to the class), keep
+     does the fetch and records the registry commit. Then change `profile:` to
+     `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
      `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
      fallback), and prepare the files for commit (show the author the git commands; do not run them). If the institution has no available
      profile, say so plainly and offer `generated`. The full steps are in

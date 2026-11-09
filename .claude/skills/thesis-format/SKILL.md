@@ -209,7 +209,7 @@ PDFs are `$SCRATCH/registry/classes/dataimago-thesis/example/_build/<id>-lualate
 `pdftotext -layout -f 1 -l 8 <pdf> -`, and show the author the title page, abstract, contents
 and a chapter opening
 so they can compare them with the guide's sample pages. To build the author's own
-chapters with the profile, the author sets `thesis.profile: <id>` in the book's `_quarto.yml`
+chapters with the profile, the author changes `profile:` to `<id>` in the `thesis:` block of the book's `_quarto.yml`
 (`thesis-build`, "Building a `generated` profile"); suggest it, and leave the decision
 and the edit to them.
 

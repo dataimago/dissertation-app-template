@@ -88,7 +88,7 @@ to the house class" below.
    `sync.py` is missing, the folder is on the older layout (see above). Do not
    copy files by hand: a partial copy is the usual cause of a build that finds
    the class but not the profile.
-6. **Point the book at it.** In `_quarto.yml` set `thesis.profile: <id>` and
+6. **Point the book at it.** In `_quarto.yml`, under the existing `thesis:` block, change `profile: house` to `profile: <id>` and
    check `format: pdf:` against the class entry: `documentclass`
    (`dataimago-thesis`), and `pdf-engine` (the entry's `engine`, `lualatex`;
    `engineFallback` is `xelatex`, untagged). The profile's `classOptions` is
@@ -122,7 +122,7 @@ the starting point. Run the `thesis-format` skill: it copies
 `profiles/house.yaml` to `profiles/<id>.yaml` beside the chapters, fills it
 from the guide in `raw/thesis-formatting/` (each value cited, the rest listed
 under `unstated`), compiles it (`texlua thesis-class/thesis-profile.lua profiles
-<id>`), and gives the author a checklist. Then propose setting `thesis.profile: <id>` in
+<id>`), and gives the author a checklist. Then propose changing `profile:` to `<id>` in the `thesis:` block of
 `_quarto.yml` (show the change) and build once the author says yes. Until the author has a guide, the `house` profile builds
 as it is.
 
