@@ -220,6 +220,11 @@ package, then the submodule pointer here).
    - each front-matter move: the abstract into `index.qmd`'s `abstract:`, and
      acknowledgments and dedication into `.acknowledgments` / `.dedication` divs
      in `chapters/00-front-matter.qmd` (created if it does not exist);
+   - in `dataimago-spec.yaml`, if `thesis.classFile.type` is `shipped` in the old
+     wording (the book was on the old default `thesis.cls`, not an institution
+     profile), set it to `generated`: after the move the book runs on the `house`
+     profile or the author's own, which is what `generated` means. Setting up a
+     real shipped profile is a separate job, only when the author asks;
    - the workflow replaced, and, last, `thesis.cls` and `dataimago.sty` deleted;
    - in the R-package layout, that all of this happens in the package's own
      repository.
@@ -293,7 +298,8 @@ package, then the submodule pointer here).
    Step 6.
 
 `classFile.path` in the spec names the old file; leave it unless the author
-asks. It is not read by the build.
+asks. It is not read by the build. `classFile.type` is the one spec field the move
+changes, and only from the old-wording `shipped` to `generated`, as agreed in step 1.
 
 ## Common build failures (from the dissertation-ai alpha, 2026-06-24)
 
