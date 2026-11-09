@@ -86,9 +86,13 @@ to the house class" below.
    from the repository root (the book folder is `thesis/` for content-only, or the R package's `ui/www/`). It fetches the
    class `path` and every `companions` file into `thesis-class/` and the
    profile's `yaml` and `cfg` into `profiles/`, all from one registry commit,
-   and records that commit in `thesis-class/registry-source.json`. If
-   `sync.py` is missing, the folder is on the older layout (see above). Do not
-   copy files by hand: a partial copy is the usual cause of a build that finds
+   and records that commit in `thesis-class/registry-source.json`.
+   **If `<book folder>/thesis-class/sync.py` does not exist, stop here:** the book
+   is on the older layout (`thesis.cls`, `documentclass: thesis`, no `thesis:`
+   block), and steps 6–9 would rewrite `_quarto.yml` into a shape its class cannot
+   read. Do not run steps 6–9. Offer "Moving an older repository to the house
+   class" below and wait for the author's yes; set up the profile after the move.
+   Do not copy files by hand: a partial copy is the usual cause of a build that finds
    the class but not the profile.
 6. **Point the book at it.** In `_quarto.yml`, under the existing `thesis:` block, change `profile: house` to `profile: <id>` and
    check `format: pdf:` against the class entry: `documentclass`
@@ -106,13 +110,16 @@ to the house class" below.
    never say the guide is fully met without reading both lists.
 8. **Check the PDF.** Render locally (`quarto render --to pdf` in the book
    folder; it needs a current TeX Live with TeX Gyre, `luamml`, `tagpdf`,
-   `latex-lab`) until the PDF builds. Compare it with the class's example in the
-   registry (`classes/dataimago-thesis/example/`). Front-matter content has fixed
+   `latex-lab`) until the PDF builds. Check it against the profile's `sources`
+   (what the guide states) and show the author the `unstated` list from step 7.
+   Front-matter content has fixed
    places: the abstract is `abstract:` in `index.qmd`, acknowledgments, dedication
    and the like are `.acknowledgments` / `.dedication` divs in
    `chapters/00-front-matter.qmd`. Moving text into those places is a move, not
-   an edit: name each move first, and if `raw/manuscript/LOCKED.md` exists show
-   each one and wait for the author's yes, as in "Moving an older repository".
+   an edit, and it waits for the author: name each move (what, from where, to
+   where) and wait for a yes before making it, as in "Moving an older repository".
+   If `raw/manuscript/LOCKED.md` exists, that is a second gate: show each move
+   against the locked manuscript and wait again.
    Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
 9. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
@@ -126,10 +133,10 @@ to the house class" below.
 ## Building a `generated` profile
 
 `generated` does not mean writing or adapting a class. The `house` profile is
-the starting point. Run the `thesis-format` skill: it copies
-`profiles/house.yaml` to `profiles/<id>.yaml` beside the chapters, fills it
-from the guide in `raw/thesis-formatting/` (each value cited, the rest listed
-under `unstated`), compiles it (`texlua <book folder>/thesis-class/thesis-profile.lua
+the starting point. Run the `thesis-format` skill: it writes a new
+`profiles/<id>.yaml` beside the chapters (`extends: house`, plus only the values
+the guide in `raw/thesis-formatting/` states, each cited; what the guide leaves out
+is listed under `unstated` and keeps the house value), compiles it (`texlua <book folder>/thesis-class/thesis-profile.lua
 <book folder>/profiles <id>`), and gives the author a checklist. Then propose changing `profile:` to `<id>` in the `thesis:` block of
 `_quarto.yml` (show the change) and build once the author says yes. Until the author has a guide, the `house` profile builds
 as it is.

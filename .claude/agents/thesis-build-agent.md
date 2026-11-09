@@ -25,8 +25,11 @@ formatting in ways that violate it to make an error go away.
      and `yaml` (under `profiles/`), which are in different directories. From the
      repository root, `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
      (the book folder is `thesis/` for content-only, or the R package's `ui/www/`)
-     does the fetch and records the registry commit. Do this only for an
-     explicit setup or update the author asked for, and only after you found
+     does the fetch and records the registry commit. If
+     `<book folder>/thesis-class/sync.py` does not exist, the book is on the older
+     layout: stop, do not touch `_quarto.yml`, and offer the move to the house
+     class (`thesis-build`, "Moving an older repository") and wait for a yes. Do
+     this only for an explicit setup or update the author asked for, and only after you found
      an available, non-`house` profile (if none, stop here and offer
      `generated`). A routine build or log diagnosis never fetches: if
      `thesis-class/registry-source.json` exists and `_quarto.yml` already names

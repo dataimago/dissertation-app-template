@@ -124,8 +124,12 @@ Write `<id>.yaml` in the `profiles/` folder beside the chapters (the folder that
 (`source.rPackage` null) use `thesis/profiles/<id>.yaml` in this repository;
 the R-package layout uses
 `packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`
-(`ui/www` by default), inside the package's own repository, so ask the author first. Start from a copy of `profiles/house.yaml` (the vendored house profile in that folder, or the registry copy in `$SCRATCH` if the folder has none) and the shape in
-spec section 6.3 and walk the field tables of section 6.4 in order, one section at
+(`ui/www` by default), inside the package's own repository, so ask the author first. Start a **new** file with `id: <id>`, `extends: house` and the shape in spec
+section 6.3; do not copy `profiles/house.yaml` into it. A copy would pre-fill every
+house default as if the guide had chosen it, and `check_profile.py` rejects a field
+that is both set and listed under `unstated`. Read `profiles/house.yaml` (the
+vendored house profile in that folder, or the registry copy in `$SCRATCH` if the
+folder has none) only as the baseline you compare the guide against. Walk the field tables of section 6.4 in order, one section at
 a time: `institution` and `guide`, `geometry`, `type`, `spacing`, `headings`
 and `numbering`, `pagenumber`, `frontmatter`, `toc`, `appendices`, `landscape`,
 `floats`, `bibliography`, `submission`, `accessibility`, `limits`. For each field:
@@ -165,7 +169,13 @@ cp "$PROFILE_FILE" "$SCRATCH/registry/profiles/<id>.yaml"
 After you edit the profile (Step 6), copy it over again from `$PROFILE_FILE` and re-run.
 
 The author's PDF build reads the compiled `.cfg`, not the `.yaml`, so compile it
-next to the profile whenever the profile changes. Use the generator that was
+next to the profile whenever the profile changes. There are two `.cfg` files, on
+purpose: the scratch one above is compiled by the registry's current generator and
+is what `check_profile.py` checks and what Step 7 offers the registry (whose
+maintainer regenerates it with `main`'s generator anyway); the one beside the
+author's profile is compiled by the generator vendored with the author's class, is
+the one the author's PDF reads and is checked by building that PDF in Step 5. Both
+come from the same `.yaml`, which is what `check_profile.py` validated. Use the generator that was
 vendored with the class, so the `.cfg` matches the class that will read it:
 `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` (or
 `quarto pandoc lua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` if `texlua` is missing). If the book folder has no

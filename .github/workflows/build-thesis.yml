@@ -140,7 +140,7 @@ jobs:
           if ! grep -q '^ *documentclass: *dataimago-thesis' thesis/_quarto.yml; then
             echo "Not the house class (a vendored class, or the older thesis.cls layout): the font check does not apply."
           elif [ ! -f thesis/thesis-class/check-pdf-fonts.sh ]; then
-            echo "::error::_quarto.yml uses the house class but thesis/thesis-class/check-pdf-fonts.sh is missing. Restore thesis-class/ from the commit in thesis-class/registry-source.json (python3 thesis/thesis-class/sync.py sync)."
+            echo "::error::_quarto.yml uses the house class but thesis/thesis-class/check-pdf-fonts.sh is missing. Restore it at the pinned commit with: python3 thesis/thesis-class/sync.py sync (no --ref and no --profile: it restores every vendored file and profile at the commit recorded in thesis/thesis-class/registry-source.json; --ref would update, not repair)."
             exit 1
           else
             sh thesis/thesis-class/check-pdf-fonts.sh thesis docs/thesis.pdf
