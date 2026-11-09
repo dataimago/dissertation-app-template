@@ -13,7 +13,7 @@ name: Grok 4.6 PR Review
 # repository is created from (GitHub create-from-template copies all files), so
 # BOTH jobs are guarded with `github.repository == 'dataimago/dissertation-app-template'`
 # (the same idiom ci.yml uses, inverted) and never run in an author's repo. The
-# rules live under .github/template-review/, NOT .github/template-review/RULES.md, so Cursor's
+# rules live under .github/template-review/, NOT .cursor/BUGBOT.md, so Cursor's
 # own Bugbot does not apply maintainer rules to an author's dissertation.
 #
 # TOKEN ISOLATION — TWO JOBS, NOT ONE (this is the load-bearing part). The
