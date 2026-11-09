@@ -48,7 +48,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 ### Common problems
 
 - **`packages/r-packages/.../` is empty after cloning** — you cloned without `--recursive`. Run `git submodule update --init --recursive`.
-- **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts), and check that the folder holding `_quarto.yml` (`ui/www/` or `thesis/`) still has `thesis-class/`, `profiles/` (with the `.cfg` of the profile `_quarto.yml` names) and `_environment`.
+- **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts). On the house class (`documentclass: dataimago-thesis` in `_quarto.yml`), check that the folder holding `_quarto.yml` (`ui/www/` or `thesis/`) still has `thesis-class/`, `profiles/` (with the `.cfg` of the profile `_quarto.yml` names) and `_environment`. On your own class (`vendored`), check that the `.cls` sits beside `_quarto.yml` and that `documentclass` is its file name without `.cls`.
 - **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` for R-package dissertations, `thesis/**` for content-only ones).
 
 ## Editing your dissertation

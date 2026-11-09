@@ -196,9 +196,10 @@ cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRA
    `::: {.content-visible when-format="html"}`.
 4. Replace `build-thesis.yml` with the one for the layout. Content-only: `git clone --depth 1
    https://github.com/dataimago/dissertation-app-template "$SCRATCH/app"` and `cp
-   "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/`. R package:
-   `cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml"` (the step 1 clone) over the
-   package's. In words: content-only, this
+   "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/`. R package
+   (ask before touching the package repository): `cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml"
+   packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml` (the
+   step 1 clone; never onto this repository's own `.github/workflows/`). In words: content-only, this
    template's `.github/workflows/build-thesis.yml` from
    `dataimago/dissertation-app-template` (an unmigrated repo's own copy is the old
    one); R package, the package's
@@ -233,7 +234,11 @@ to see the real `! LaTeX Error`.
   `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>`.
 - **`The ... is missing` naming a `thesis.*` key** — a required title-page field
   (`thesis.degree.name`, `department`, `institution`, `advisors`, `committee`) or
-  `abstract:` is empty. Fill it in `_quarto.yml` / `index.qmd`.
+  `abstract:` is empty. Fill it by the rules of "Setting up a shipped profile" step 6:
+  from the manuscript's own title page and abstract first, then the spec, and ask the
+  author for anything neither gives. Never invent a value or an abstract. Moving the
+  abstract text into `index.qmd` is a move: name it and wait for a yes (and again
+  under `raw/manuscript/LOCKED.md`).
 - **Equations come out in Latin Modern Math** — no error, just the wrong font
   (`pdffonts docs/thesis.pdf` lists `LatinModernMath`). The profile's math font
   (TeX Gyre Termes Math) was not found, or has no OpenType MATH table.

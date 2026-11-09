@@ -16,45 +16,49 @@ formatting in ways that violate it to make an error go away.
    `schemaVersion` 2) holds one house class, `dataimago-thesis`, and a profile
    per institution; the modes are:
    - `shipped`: the registry has a profile for the author's institution, used
-     as-is. Look up `vertical.dissertation.institution.name` in the `profiles`
-     of the public `registry.json`
-     (`https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`),
-     taking the entry with `mode: shipped` and `status: available` (never the
-     `house` profile). Resolve its `class` in `classes`; fetch the class's
-     `path` and `companions` (under `classes/<class>/`) and the profile's `cfg`
-     and `yaml` (under `profiles/`), which are in different directories. From the
-     repository root, `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
-     (the book folder is `thesis/` for content-only, or the R package's `ui/www/`)
-     does the fetch and records the registry commit. If
-     `<book folder>/thesis-class/sync.py` does not exist, the book is on the older
-     layout: stop, do not touch `_quarto.yml`, and offer the move to the house
-     class (`thesis-build`, "Moving an older repository") and wait for a yes. Do
-     this only for an explicit setup or update the author asked for, and only after you found
-     an available, non-`house` profile (if none, stop here and offer
-     `generated`). A routine build or log diagnosis never fetches: if
-     `thesis-class/registry-source.json` exists and `_quarto.yml` already names
-     the profile, build from the committed files, and repair a broken copy with
-     `python3 <book folder>/thesis-class/sync.py check`, then, after the author's yes,
-     `python3 <book folder>/thesis-class/sync.py sync` (no `--ref`, no `--profile`: it
-     rewrites only the class files and the registry profiles listed in
-     `registry-source.json`, deletes nothing, and never touches a profile the author
-     wrote), never `--ref main`, and
-     never edit `profile:` in `_quarto.yml` while diagnosing. In an explicit setup
-     or update only, after the author confirmed the registry match, change `profile:` to
-     `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
-     `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
-     fallback), and prepare the files for commit (show the author the git commands; do not run them). If the institution has no available
-     profile, say so plainly and offer `generated`. The full steps are in
-     `.claude/skills/thesis-build/SKILL.md`, "Setting up a shipped profile".
+     as-is. **Decide which job this is first.**
+     - *A build or a log diagnosis* (the usual case) never fetches and never
+       edits `profile:` in `_quarto.yml`. If `<book folder>/thesis-class/registry-source.json`
+       exists and `thesis.profile` names the shipped profile, build from the
+       committed files. To repair a broken copy, run
+       `python3 <book folder>/thesis-class/sync.py check`, show the author the
+       files it reports, and after a yes run `python3 <book folder>/thesis-class/sync.py sync`
+       (no `--ref`, no `--profile`: it rewrites only the class files and the
+       registry profiles listed in `registry-source.json`, deletes nothing, and
+       never touches a profile the author wrote). If `registry-source.json` is
+       missing or `thesis.profile` is still `house`, say the shipped profile is not
+       set up yet and offer "Setting up a shipped profile"; go on only after a yes.
+     - *Setup or update*, only after that yes or when the author asked for it. The
+       book folder is `thesis/` for content-only, or the R package's `ui/www/`. If
+       `<book folder>/thesis-class/sync.py` does not exist, the book is on the
+       older layout: stop, do not touch `_quarto.yml`, offer the move to the house
+       class (`thesis-build`, "Moving an older repository") and wait for a yes.
+       Otherwise look up `vertical.dissertation.institution.name` in the
+       `profiles` of the public `registry.json`
+       (`https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`),
+       taking the entry with `mode: shipped` and `status: available` (never the
+       `house` profile); if there is none, say so plainly and offer `generated`.
+       Confirm the match with the author. Then, from the repository root,
+       `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
+       fetches the class bundle (`path` + `companions`, under `classes/<class>/`)
+       and the profile's `cfg` + `yaml` (under `profiles/`) and records the
+       registry commit. Change `profile:` to `<id>` in the `thesis:` block of
+       `_quarto.yml` (it sends `profile=<id>` to the class), keep
+       `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
+       fallback), and prepare the files for commit (show the author the git
+       commands; do not run them). The full steps are in
+       `.claude/skills/thesis-build/SKILL.md`, "Setting up a shipped profile".
      Read the profile's `unstated` list and tell the author what the guide
      does not say.
    - `vendored`: the author provides their institution's own class file; the
      house class is not used.
-   - `generated` (the default): run the `thesis-format` skill. It writes a new
-     `profiles/<id>.yaml` with `extends: house` and only the values the
-     guidelines in `raw/thesis-formatting/` state, each cited, with the rest
-     under `unstated` (it reads `profiles/house.yaml` as the baseline and never
-     copies it in); compile it with `texlua <book folder>/thesis-class/thesis-profile.lua
+   - `generated` (the default): build the profile `_quarto.yml` names (`house`
+     until the author adapts one). Run the `thesis-format` skill only when the
+     author asks to adapt their formatting guide (it needs the guide in
+     `raw/thesis-formatting/`). It writes a new `profiles/<id>.yaml` with
+     `extends: house` and only the values the guide states, each cited, with the
+     rest under `unstated` (it reads `profiles/house.yaml` as the baseline and
+     never copies it in); compile it with `texlua <book folder>/thesis-class/thesis-profile.lua
      <book folder>/profiles <id>`, and validate by building. Do not write or adapt a class.
 
    The `house` profile is where `generated` starts, not what `shipped` means.
