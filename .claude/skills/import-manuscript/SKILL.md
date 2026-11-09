@@ -83,14 +83,24 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
 
 Last, **only if a `.cls` was imported (§2)**, and only after the house
 `_quarto.yml` and bundle above were kept or fetched (so nothing overwrites it):
-copy the `.cls`/`.sty` into the book folder, and in that `_quarto.yml` point
-`documentclass`, `classoption` and `pdf-engine` at the author's class and drop the
-house `template-partials`, `filters` and `thesis:` block and `_environment` unless the
-class uses them (`THESIS-CLS-README.md`, "Which mode are you in?"). This overrides the
-"keep the provisioned `_quarto.yml`" lines above for a vendored class.
+copy the `.cls`/`.sty` into the book folder itself (beside `_quarto.yml`, not into
+`chapters/`, where LaTeX would not find them), and in that `_quarto.yml`: set
+`documentclass` to the `.cls` file name without its extension; always drop the house
+`template-partials`, `filters` and `thesis:` block, and delete `_environment` and the
+`thesis-class/` and `profiles/` folders (the house class is not used); set `pdf-engine`
+to the engine the class's own header or README names (ask the author if it names none);
+leave `classoption` empty unless the class documents required options. This overrides
+the "keep the provisioned `_quarto.yml`" lines above for a vendored class.
+
+Otherwise (the house class stays), the book has fixed front-matter slots the house
+class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
+and dedication in `.acknowledgments` / `.dedication` divs in `00-front-matter.qmd`, and
+fill the `thesis:` block of `_quarto.yml` from the spec (`institution.department`,
+`advisors`, ...), asking the author for what the spec lacks. These are placements of the
+v1.0 text, not edits to it.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
-stubs; front matter to `00-front-matter.qmd`,
+stubs; front matter to `00-front-matter.qmd` (abstract: see the house-class slots above),
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
 `derivedFrom: raw/manuscript/<source file>`, `importedAt: <date>`.

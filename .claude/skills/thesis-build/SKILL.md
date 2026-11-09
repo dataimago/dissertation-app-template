@@ -131,7 +131,12 @@ as it is.
 A repository set up before the house class has `thesis.cls`, `dataimago.sty`,
 `documentclass: thesis` and `pdf-engine: xelatex` in `_quarto.yml`, and a
 `build-thesis.yml` that installs Noto fonts. Moving it is one pull request, and
-the author agrees first:
+the author agrees first, and the agreement names the file moves in step 3 (if
+`raw/manuscript/LOCKED.md` exists, show each proposed move of the working
+chapters' front matter and stop until the author confirms it). It is for books
+that used the old default `thesis.cls` (`shipped` in the old wording, or
+`generated`), not for `vendored` ones: a vendored author keeps their class and
+does not move.
 
 1. From `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), copy
    `thesis-class/`, `profiles/` and `_environment` into the book folder.
@@ -145,13 +150,14 @@ the author agrees first:
    An `index.qmd` landing text that should not print goes inside
    `::: {.content-visible when-format="html"}`.
 4. Replace `build-thesis.yml` with the one for the layout: content-only, this
-   repo's own `.github/workflows/build-thesis.yml`; R package, the package's
+   template's `.github/workflows/build-thesis.yml` from
+   `dataimago/dissertation-app-template` (an unmigrated repo's own copy is the old
+   one); R package, the package's
    `.github/workflows/build-thesis.yml` from `dataimago/dissertation-rpkg-template`
    (it has the R setup; never copy this repo's workflow into the package). Also
    copy `THESIS-CLS-README.md` from the template's `ui/www/`, so the old
    class-per-institution README does not stay beside the house class.
-5. Delete `thesis.cls` and `dataimago.sty` (or keep them if the author is on
-   `vendored`).
+5. Delete `thesis.cls` and `dataimago.sty`.
 6. Render until the PDF builds.
 
 `classFile.path` in the spec names the old file; leave it unless the author

@@ -132,7 +132,12 @@ jobs:
       # Last, so the author still gets the PDF: LaTeX falls back to another
       # font without an error, so check the fonts the PDF embeds (the profile's
       # main and math fonts, all embedded, no Latin Modern Math fallback).
-      # Skipped for a vendored class of the author's own (no thesis-class/).
+      # Skipped unless _quarto.yml uses the house class (a vendored class has its own fonts).
       - name: Check the PDF's fonts
-        if: hashFiles('thesis/_quarto.yml') != '' && hashFiles('thesis/thesis-class/check-pdf-fonts.sh') != ''
-        run: sh thesis/thesis-class/check-pdf-fonts.sh thesis docs/thesis.pdf
+        if: hashFiles('thesis/_quarto.yml') != ''
+        run: |
+          if grep -q '^ *documentclass: *dataimago-thesis' thesis/_quarto.yml && [ -f thesis/thesis-class/check-pdf-fonts.sh ]; then
+            sh thesis/thesis-class/check-pdf-fonts.sh thesis docs/thesis.pdf
+          else
+            echo "Not the house class (a vendored class of your own): the font check does not apply."
+          fi

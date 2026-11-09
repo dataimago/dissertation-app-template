@@ -88,7 +88,7 @@ vertical:
         # vendored: you provide your institution's own class file
         # generated: you start from the registry's house profile and tailor it to your institution's formatting guidelines
         type: generated              # shipped | vendored | generated
-        path: thesis.cls
+        path: thesis.cls            # only meaningful for vendored (the author's own .cls); the build reads _quarto.yml and thesis-class/
         guidelinesDocuments: []
       # D.2.1.h down-the-road fields:
       embargo:
