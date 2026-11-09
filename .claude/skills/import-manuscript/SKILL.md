@@ -51,7 +51,7 @@ the reference for what "v1.0 looked like".
   into the chapters directory as **vendored** class files — set
   `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
   the spec said before (`shipped` means a registry profile, `generated` the
-  house profile adapted; the author's own class is neither). A vendored class replaces the house class. Do this as a last step of §3, after the house `_quarto.yml` and bundle have been kept or fetched (so a fetch cannot undo it), and only when a `.cls` was imported: in `_quarto.yml` point `documentclass`, `classoption` and `pdf-engine` at it and drop the house `template-partials`, `filters` and `thesis:` block (`THESIS-CLS-README.md`, "Which mode are you in?").
+  house profile adapted; the author's own class is neither). A vendored class replaces the house class; §3 ends with the step that rewires the book to it.
 
 ## 3. Place, as v1.0
 
@@ -80,6 +80,14 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
   left executable. One rule per path: escape only under app `thesis/`, keep
   executable only under `ui/www/` — never both on the same files.
+
+Last, **only if a `.cls` was imported (§2)**, and only after the house
+`_quarto.yml` and bundle above were kept or fetched (so nothing overwrites it):
+copy the `.cls`/`.sty` into the book folder, and in that `_quarto.yml` point
+`documentclass`, `classoption` and `pdf-engine` at the author's class and drop the
+house `template-partials`, `filters` and `thesis:` block and `_environment` unless the
+class uses them (`THESIS-CLS-README.md`, "Which mode are you in?"). This overrides the
+"keep the provisioned `_quarto.yml`" lines above for a vendored class.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
 stubs; front matter to `00-front-matter.qmd`,

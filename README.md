@@ -48,7 +48,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 ### Common problems
 
 - **`packages/r-packages/.../` is empty after cloning** — you cloned without `--recursive`. Run `git submodule update --init --recursive`.
-- **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts), and check that `<chapters>/thesis-class/` and `<chapters>/_environment` are still there.
+- **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts), and check that `<chapters>/thesis-class/`, `<chapters>/profiles/` (with the `.cfg` of the profile `_quarto.yml` names) and `<chapters>/_environment` are still there.
 - **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` for R-package dissertations, `thesis/**` for content-only ones).
 
 ## Editing your dissertation
@@ -77,7 +77,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
 
-**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`), starting from the `house` profile: each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile, builds the registry's sample book with it and saves the profile next to your chapters (`<chapters>/profiles/<id>.yaml`); you confirm every value against the guide. To make your own PDF follow it, set `thesis.profile: <id>` in `<chapters>/_quarto.yml` (`/thesis-build` helps). You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent. To make this repository's own PDF match a profile the registry already has, use `/thesis-build`; "my school isn't in the registry" is the `generated` mode.
+**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`), starting from the `house` profile: each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile, builds the registry's sample book with it and saves the profile next to your chapters (`<chapters>/profiles/<id>.yaml`, and its compiled `<id>.cfg`, which the PDF build reads); you confirm every value against the guide. To make your own PDF follow it, set `thesis.profile: <id>` in `<chapters>/_quarto.yml` (`/thesis-build` helps). You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent. To make this repository's own PDF match a profile the registry already has, use `/thesis-build`; "my school isn't in the registry" is the `generated` mode.
 
 ## Adding committee members + advisor
 

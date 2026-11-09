@@ -144,8 +144,12 @@ the author agrees first:
    `chapters/00-front-matter.qmd` (words stay the author's; move, do not edit).
    An `index.qmd` landing text that should not print goes inside
    `::: {.content-visible when-format="html"}`.
-4. Replace `build-thesis.yml` with the template's (LuaLaTeX, TeX Live, font
-   check; the content-only version is this repo's own `build-thesis.yml`).
+4. Replace `build-thesis.yml` with the one for the layout: content-only, this
+   repo's own `.github/workflows/build-thesis.yml`; R package, the package's
+   `.github/workflows/build-thesis.yml` from `dataimago/dissertation-rpkg-template`
+   (it has the R setup; never copy this repo's workflow into the package). Also
+   copy `THESIS-CLS-README.md` from the template's `ui/www/`, so the old
+   class-per-institution README does not stay beside the house class.
 5. Delete `thesis.cls` and `dataimago.sty` (or keep them if the author is on
    `vendored`).
 6. Render until the PDF builds.
