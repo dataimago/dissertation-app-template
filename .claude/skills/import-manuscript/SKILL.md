@@ -47,11 +47,11 @@ the reference for what "v1.0 looked like".
 - **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`,
   then split on level-1 headings.
 - Copy the `.bib` file(s) to `references.bib` beside the chapters (merge if
-  several; keep keys), figures into `figures/`, and the author's `.cls`/`.sty`
-  into the chapters directory as **vendored** class files — set
-  `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
-  the spec said before (`shipped` means a registry profile, `generated` the
-  house profile adapted; the author's own class is neither). A vendored class replaces the house class; §3 ends with the step that rewires the book to it.
+  several; keep keys), figures into `figures/`, and note any `.cls`/`.sty` among
+  the sources (they are placed in §3, in the book folder beside `_quarto.yml`, not
+  under `chapters/`). An author's own class means **vendored** mode (`shipped` is a
+  registry profile, `generated` the house profile adapted; the author's own class
+  is neither), but switching is the author's decision: §3 ends with a proposal.
 
 ## 3. Place, as v1.0
 
@@ -81,16 +81,21 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   left executable. One rule per path: escape only under app `thesis/`, keep
   executable only under `ui/www/` — never both on the same files.
 
-Last, **only if a `.cls` was imported (§2)**, and only after the house
-`_quarto.yml` and bundle above were kept or fetched (so nothing overwrites it):
-copy the `.cls`/`.sty` into the book folder itself (beside `_quarto.yml`, not into
-`chapters/`, where LaTeX would not find them), and in that `_quarto.yml`: set
-`documentclass` to the `.cls` file name without its extension; always drop the house
-`template-partials`, `filters` and `thesis:` block, and delete `_environment` and the
-`thesis-class/` and `profiles/` folders (the house class is not used); set `pdf-engine`
-to the engine the class's own header or README names (ask the author if it names none);
-leave `classoption` empty unless the class documents required options. This overrides
-the "keep the provisioned `_quarto.yml`" lines above for a vendored class.
+Last, **only if a `.cls` was found among the sources (§2)**, and only after the
+house `_quarto.yml` and bundle above were kept or fetched: name the `.cls` to the
+author and **propose** the switch to vendored mode, then wait for a yes. The proposal
+lists exactly what would change: copy the `.cls`/`.sty` into the book folder beside
+`_quarto.yml` (not `chapters/`, where LaTeX would not find them); in `_quarto.yml` set
+`documentclass` to the `.cls` file name without its extension, drop the house
+`template-partials`, `filters` and `thesis:` block, set `pdf-engine` to the engine the
+class's own header or README names (ask if it names none) and leave `classoption`
+empty unless the class documents required options; set `dataimago-spec.yaml`
+`thesis.classFile.type: vendored` and `path` to the `.cls` file name; and the folders
+`_environment`, `thesis-class/` and `profiles/` would be removed (nothing is deleted
+before the yes; in the R-package layout they live in the package repository, so ask
+before touching it). If the author says no, the house class stays and the `.cls` is
+only a reference (`raw/` is not touched). A yes overrides the "keep the provisioned
+`_quarto.yml`" lines above.
 
 Otherwise (the house class stays), the book has fixed front-matter slots the house
 class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
