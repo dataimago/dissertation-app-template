@@ -255,6 +255,9 @@ The AI never runs `git add`, `git commit`, `git push` or `gh pr create` in the
 dissertation repository, in the package repository or in the scratch clone. Show the
 commands as text with `<id>` and the paths filled in.
 
+If Step 4 did not write `<id>.cfg` (no `texlua` or `quarto`), drop the `.cfg` path
+from the `git add` lines below; `git add` of a missing file fails.
+
 Content-only or referenced-repository layout (`source.rPackage` null), from the
 repository root:
 

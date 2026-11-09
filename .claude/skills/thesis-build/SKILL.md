@@ -27,11 +27,23 @@ never bend formatting in non-conformant ways to clear an error.
 
    The `house` profile is where `generated` starts. It is not what `shipped`
    means: `shipped` always names an institution's profile.
-2. Build via `build-thesis.yml` (Quarto + LuaLaTeX, tagged PDF; XeLaTeX is
+2. **Decide which job this is before doing anything.** A build or a log
+   diagnosis (the usual "build my thesis") builds from the committed files: it
+   never fetches from the registry, never runs `sync.py sync --ref main`, never
+   edits `profile:` in `_quarto.yml`, and never starts `thesis-format`. For
+   `shipped`, if `<book folder>/thesis-class/registry-source.json` exists and
+   `thesis.profile` already names the shipped profile, just build; if not, tell the
+   author the shipped profile is not set up yet, offer "Setting up a shipped
+   profile", and go on only after a yes. For `generated`, build the profile
+   `_quarto.yml` names (`house` until the author adapts one); offer
+   `thesis-format` only if the author asked to adapt their guide, and run it after
+   a yes. Setup, update and adapting a guide happen only on the author's explicit
+   request.
+3. Build via `build-thesis.yml` (Quarto + LuaLaTeX, tagged PDF; XeLaTeX is
    supported but untagged). Chapters: `thesis/chapters/` (content-only) or the R
    package's `ui/www/chapters/`. For deep diagnosis or profile drafting, hand
    off to the `thesis-build-agent`.
-3. Verify against the institution checklist (margins, front matter, ToC, captions).
+4. Verify against the institution checklist (margins, front matter, ToC, captions).
 
 ## Where things are
 
@@ -57,6 +69,9 @@ so propose it and wait for their agreement: follow "Moving an older repository
 to the house class" below.
 
 ## Setting up a shipped profile
+
+Only on the author's explicit request, or after their yes to the offer in step 2
+of "Steps" above. A routine build never runs these steps.
 
 1. **Find the institution.** Read `vertical.dissertation.institution.name` from
    `dataimago-spec.yaml`.
@@ -145,8 +160,10 @@ step 2: if `<book folder>/thesis-class/sync.py` does not exist, the book is on t
 older layout (`thesis.cls`, no `thesis:` block), the profile cannot be used yet,
 and nothing below applies. Build the book as it is, offer "Moving an older
 repository to the house class" and wait for a yes; never add a `thesis:` block or
-change `documentclass` without that move. On the house class, run the
-`thesis-format` skill: it writes a new
+change `documentclass` without that move. On the house class, a build uses the
+profile `_quarto.yml` names; adapting a guide is a separate job, only when the
+author asks (or says yes when you offer it). Then run the `thesis-format` skill:
+it writes a new
 `profiles/<id>.yaml` beside the chapters (`extends: house`, plus only the values
 the guide in `raw/thesis-formatting/` states, each cited; what the guide leaves out
 is listed under `unstated` and keeps the house value), compiles it (`texlua <book folder>/thesis-class/thesis-profile.lua
