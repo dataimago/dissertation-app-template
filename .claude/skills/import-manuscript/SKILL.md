@@ -53,8 +53,9 @@ the reference for what "v1.0 looked like".
   several; keep keys), figures into `figures/` beside the chapters (both deferred
   to §3 on the referenced-repository path, onto `thesis/references.bib` and
   `thesis/figures/`), and note any `.cls`/`.sty` among
-  the sources (they are placed in §3, in the book folder beside `_quarto.yml`, not
-  under `chapters/`). An author's own class means **vendored** mode (`shipped` is a
+  the sources for the §3 proposal. Copy nothing of them yet, and do not switch
+  `_quarto.yml`: only if the author agrees in §3 do they go into the book folder
+  beside `_quarto.yml` (never under `chapters/`). An author's own class means **vendored** mode (`shipped` is a
   registry profile, `generated` the house profile adapted; the author's own class
   is neither), but switching is the author's decision: §3 ends with a proposal.
 

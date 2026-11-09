@@ -246,16 +246,24 @@ package, then the submodule pointer here).
    does not exist and list it in `chapters:`. The words stay the author's; move,
    do not edit. An `index.qmd` landing text that should not print goes inside
    `::: {.content-visible when-format="html"}`.
-5. **Replace `build-thesis.yml`.** Content-only (this repository):
+5. **Replace `build-thesis.yml`.** This step stands on its own (a fresh clone, so
+   it does not depend on step 2's shell). From the repository root, content-only
+   (this repository's workflow):
    ```sh
-   git clone --depth 1 https://github.com/dataimago/dissertation-app-template "$SCRATCH/app"
-   cp "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/build-thesis.yml
+   S="$(mktemp -d)"
+   git clone --depth 1 https://github.com/dataimago/dissertation-app-template "$S/app"
+   [ -f "$S/app/.github/workflows/build-thesis.yml" ] || { echo "missing in the template: build-thesis.yml (stop and tell the author)"; exit 1; }
+   cp "$S/app/.github/workflows/build-thesis.yml" .github/workflows/build-thesis.yml
    ```
    R package (the package's own workflow, which has the R setup; never this
    repository's):
    ```sh
-   cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml" packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml
+   S="$(mktemp -d)"
+   git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$S/rpkg"
+   [ -f "$S/rpkg/.github/workflows/build-thesis.yml" ] || { echo "missing in the template: build-thesis.yml (stop and tell the author)"; exit 1; }
+   cp "$S/rpkg/.github/workflows/build-thesis.yml" packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml
    ```
+   Do not skip it: a house-class book with the old workflow does not build.
 6. **Delete the old class, last, and only once the book points at the new one:**
    ```sh
    grep -q '^ *documentclass: *dataimago-thesis' "$BOOK/_quarto.yml" \
@@ -302,7 +310,11 @@ to see the real `! LaTeX Error`.
   `build-thesis.yml` installs TeX Live with TeX Gyre, and its last step
   (`thesis-class/check-pdf-fonts.sh`) fails the run on this fallback.
 - **A warning that `mainfont`, `geometry`, `fontsize`, ... "is ignored"** — the
-  profile owns those; change the named profile field instead.
+  profile owns those, so the `_quarto.yml` key has no effect. Propose removing that
+  key from `_quarto.yml` and do it after a yes; the build is unchanged either way.
+  Do not edit the profile to clear the warning: a `shipped` profile is used as-is,
+  and changing an author's `generated` profile is `thesis-format`'s job, offered
+  and run only after a yes.
 - **`Emergency stop … no legal \end found`, last package loaded is the .sty** —
   (a `vendored` class's support `.sty`) pulled in via Quarto `include-in-header:` file injection,
   which inlines the file's `\endinput` and truncates `index.tex`. Load it as a
