@@ -107,28 +107,42 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   left executable. One rule per path: escape only under app `thesis/`, keep
   executable only under `ui/www/` — never both on the same files.
 
-Last, **only if a `.cls` was found among the sources (§2)**, and only after the
-house `_quarto.yml` and bundle above were kept or fetched: name the `.cls` to the
-author and **propose** the switch to vendored mode, then wait for a yes. The proposal
-lists exactly what would change: copy the `.cls`/`.sty` into the book folder beside
-`_quarto.yml` (not `chapters/`, where LaTeX would not find them); in `_quarto.yml` set
-`documentclass` to the `.cls` file name without its extension, drop the house
-`template-partials`, `filters` and `thesis:` block, set `pdf-engine` to the engine the
-class's own header or README names (ask if it names none) and leave `classoption`
-empty unless the class documents required options; set `dataimago-spec.yaml`
-`thesis.classFile.type: vendored` and `path` to the `.cls` file name; and the folders
-`_environment`, `thesis-class/` and `profiles/` would be removed (nothing is deleted
-before the yes; in the R-package layout they live in the package repository, so ask
-before touching it). If the author says no, the house class stays and the `.cls` is
-only a reference (`raw/` is not touched). A yes overrides the "keep the provisioned
+Last, decide the class. **First check the layout**: does the book folder have
+`thesis-class/`?
+
+**House layout** (`thesis-class/` present), and **only if a `.cls` was found among
+the sources (§2)**: name the `.cls` to the author and **propose** the switch to
+vendored mode, then wait for a yes. The proposal lists exactly what would change:
+copy the `.cls`/`.sty` into the book folder beside `_quarto.yml` (not `chapters/`,
+where LaTeX would not find them); in `_quarto.yml` set `documentclass` to the `.cls`
+file name without its extension, drop the house `template-partials`, `filters` and
+`thesis:` block, set `pdf-engine` to the engine the class's own header or README
+names (ask if it names none) and leave `classoption` empty unless the class
+documents required options; set `dataimago-spec.yaml` `thesis.classFile.type:
+vendored` and `path` to the `.cls` file name; and the folders `_environment`,
+`thesis-class/` and `profiles/` would be removed (nothing is deleted before the yes;
+in the R-package layout they live in the package repository, so ask before touching
+it). If the author says no, the house class stays and the `.cls` is only a
+reference (`raw/` is not touched). A yes overrides the "keep the provisioned
 `_quarto.yml`" lines above.
 
-**Older layout.** If the book folder has no `thesis-class/` (a repository set up
-before the house class: `thesis.cls`, `dataimago.sty`, `documentclass: thesis`), keep
-`thesis.cls`, `dataimago.sty` and `_quarto.yml` as they are and skip the house-class
-slots below; the old class does not read them. Tell the author the move to the house
-class is available and where it is described (`/thesis-build`, "Moving an older
-repository to the house class"): propose it, never do it here.
+**Older layout** (no `thesis-class/`: a repository set up before the house class,
+with `thesis.cls`, `dataimago.sty`, `documentclass: thesis`). The house-class
+front-matter slots below do not apply; the old class does not read them.
+- If a `.cls` was found among the sources, offer the author a choice and wait: use
+  their own class (vendored), or move to the house class. Vendored here means: copy
+  their `.cls`/`.sty` beside `_quarto.yml`, set `documentclass` to the `.cls` file name
+  without its extension and `pdf-engine` to the engine the class names (ask if it
+  names none), remove `classoption` and the `\usepackage{dataimago}` header unless
+  their class documents them, set `thesis.classFile.type: vendored` and `path` to the
+  `.cls` file name, and, last and only once `documentclass` names their class,
+  remove `thesis.cls` and `dataimago.sty`. Nothing changes before the yes. The move
+  is `/thesis-build`, "Moving an older repository to the house class"; propose it,
+  never do it here.
+- If no `.cls` was found (or the author declines both), keep `thesis.cls`,
+  `dataimago.sty` and `_quarto.yml` as they are, and tell the author the move to the
+  house class is available (`/thesis-build`, "Moving an older repository to the
+  house class"): propose it, never do it here.
 
 Otherwise, when the house bundle is present and the house class stays, the book has
 fixed front-matter slots the house class requires: the abstract in `index.qmd`'s
