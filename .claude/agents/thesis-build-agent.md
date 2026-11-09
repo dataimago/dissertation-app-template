@@ -34,7 +34,8 @@ formatting in ways that violate it to make an error go away.
      `generated`). A routine build or log diagnosis never fetches: if
      `thesis-class/registry-source.json` exists and `_quarto.yml` already names
      the profile, build from the committed files, and repair a broken copy with
-     `sync.py sync --profile <id>` at the recorded commit, never `--ref main`, and
+     `python3 <book folder>/thesis-class/sync.py sync` (no `--ref`, no `--profile`:
+     it restores every vendored file and profile at the recorded commit), never `--ref main`, and
      never edit `profile:` in `_quarto.yml` while diagnosing. In an explicit setup
      or update only, after the author confirmed the registry match, change `profile:` to
      `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
@@ -46,10 +47,11 @@ formatting in ways that violate it to make an error go away.
      does not say.
    - `vendored`: the author provides their institution's own class file; the
      house class is not used.
-   - `generated` (the default): start from the `house` profile: copy
-     `profiles/house.yaml` to `profiles/<id>.yaml`, adapt it to the
-     institution's guidelines in `raw/thesis-formatting/` (the `thesis-format`
-     skill does this), compile it with `texlua <book folder>/thesis-class/thesis-profile.lua
+   - `generated` (the default): run the `thesis-format` skill. It writes a new
+     `profiles/<id>.yaml` with `extends: house` and only the values the
+     guidelines in `raw/thesis-formatting/` state, each cited, with the rest
+     under `unstated` (it reads `profiles/house.yaml` as the baseline and never
+     copies it in); compile it with `texlua <book folder>/thesis-class/thesis-profile.lua
      <book folder>/profiles <id>`, and validate by building. Do not write or adapt a class.
 
    The `house` profile is where `generated` starts, not what `shipped` means.
