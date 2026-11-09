@@ -65,9 +65,11 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
-  `references.bib`, `_environment`, `THESIS-CLS-README.md`, every file of
-  `thesis-class/` and `profiles/` from
-  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), apply the two
+  `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public): `git clone --depth 1
+  https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"`, then `cp -a`
+  those files and `ui/www/thesis-class`, `ui/www/profiles`, `ui/www/_environment` into
+  `thesis/` (stop and tell the author if any is missing), apply the two
   rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
   ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
   The app's `build-thesis.yml` is already here and inert until `thesis/`
@@ -100,8 +102,10 @@ only a reference (`raw/` is not touched). A yes overrides the "keep the provisio
 Otherwise (the house class stays), the book has fixed front-matter slots the house
 class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
 and dedication in `.acknowledgments` / `.dedication` divs in `00-front-matter.qmd`, and
-fill the `thesis:` block of `_quarto.yml` from the spec (`institution.department`,
-`advisors`, ...), asking the author for what the spec lacks. These are placements of the
+fill the `thesis:` block of `_quarto.yml` from the manuscript's own title page first
+(institution, department, degree, advisors, committee); use the spec only where the
+manuscript is silent, and ask the author for what neither gives. If they disagree, the
+manuscript wins. These are placements of the
 v1.0 text, not edits to it.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning

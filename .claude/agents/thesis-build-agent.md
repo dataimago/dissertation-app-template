@@ -24,11 +24,14 @@ formatting in ways that violate it to make an error go away.
      `path` and `companions` (under `classes/<class>/`) and the profile's `cfg`
      and `yaml` (under `profiles/`), which are in different directories. In the
      book folder, `python3 thesis-class/sync.py sync --ref main --profile <id>`
-     does the fetch and records the registry commit (only when the profile is
-     not set up yet, or the author asks to update: if
+     does the fetch and records the registry commit. Do this only for an
+     explicit setup or update the author asked for, and only after you found
+     an available, non-`house` profile (if none, stop here and offer
+     `generated`). A routine build or log diagnosis never fetches: if
      `thesis-class/registry-source.json` exists and `_quarto.yml` already names
      the profile, build from the committed files, and repair a broken copy with
-     `sync.py sync --profile <id>` at the recorded commit, never `--ref main`). Then change `profile:` to
+     `sync.py sync --profile <id>` at the recorded commit, never `--ref main`.
+     Then change `profile:` to
      `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
      `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
      fallback), and prepare the files for commit (show the author the git commands; do not run them). If the institution has no available

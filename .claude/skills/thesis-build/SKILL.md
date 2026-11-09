@@ -18,7 +18,8 @@ never bend formatting in non-conformant ways to clear an error.
    - **`shipped`**: the registry has a profile for your institution, and you use
      it as-is. (Set it up as in "Setting up a shipped profile" below.)
    - **`vendored`**: you provide your institution's own class file. (It goes
-     beside the chapters, and the house class is then not used.)
+     beside `_quarto.yml`, and the house class is then not used; see "Switching
+     to `vendored`" below.)
    - **`generated`** (the default): you start from the registry's `house`
      profile and adapt it to your institution's formatting guidelines. (The
      guidelines are in `raw/thesis-formatting/`; the `thesis-format` skill does
@@ -107,7 +108,7 @@ to the house class" below.
    and the like are `.acknowledgments` / `.dedication` divs in
    `chapters/00-front-matter.qmd`. Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
-9. **Prepare the commit.** Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
+9. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request, naming the profile `id`, the
    class `version` and the registry commit in the message. Do not push or open the
    pull request yourself: show the author the commands. The committed files are the
@@ -126,6 +127,18 @@ under `unstated`), compiles it (`texlua thesis-class/thesis-profile.lua profiles
 `_quarto.yml` (show the change) and build once the author says yes. Until the author has a guide, the `house` profile builds
 as it is.
 
+## Switching to `vendored`
+
+For a book on the house class whose author supplies their own `.cls`: with the author's
+yes (name the `.cls` and the list first), copy the `.cls`/`.sty` beside `_quarto.yml`;
+in `_quarto.yml` set `documentclass` to the `.cls` file name without its extension,
+drop the house `template-partials`, `filters` and `thesis:` block, set `pdf-engine` to
+the engine the class names (ask if it names none), and leave `classoption` empty unless
+the class documents required options; set `thesis.classFile.type: vendored` and `path`
+in `dataimago-spec.yaml`; then remove `_environment`, `thesis-class/` and `profiles/`.
+Nothing is deleted before the yes, and in the R-package layout ask before touching the
+package.
+
 ## Moving an older repository to the house class
 
 A repository set up before the house class has `thesis.cls`, `dataimago.sty`,
@@ -138,8 +151,15 @@ that used the old default `thesis.cls` (`shipped` in the old wording, or
 `generated`), not for `vendored` ones: a vendored author keeps their class and
 does not move.
 
-1. From `dataimago/dissertation-rpkg-template`'s `ui/www/` (public), copy
-   `thesis-class/`, `profiles/` and `_environment` into the book folder.
+1. Copy the house bundle from `dataimago/dissertation-rpkg-template`'s `ui/www/`
+   (public) into the book folder:
+   ```sh
+SCRATCH=<a fresh scratch folder>
+git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
+cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRATCH/rpkg/ui/www/_environment" <book folder>/
+```
+   Stop and tell the author if any of those paths is missing; never assemble the
+   folder from guesses.
 2. In `_quarto.yml` take the template's `lang`, `thesis:` block (fill it from
    the spec) and `format: pdf:` settings; remove `mainfont`, `sansfont`,
    `mathfont`, `classoption` and the `\usepackage{dataimago}` header. The
@@ -157,7 +177,9 @@ does not move.
    (it has the R setup; never copy this repo's workflow into the package). Also
    copy `THESIS-CLS-README.md` from the template's `ui/www/`, so the old
    class-per-institution README does not stay beside the house class.
-5. Delete `thesis.cls` and `dataimago.sty`.
+5. Delete `thesis.cls` and `dataimago.sty` (named in the agreement; the working tree
+   changes, and you show the author the `git` commands, never running `git add`,
+   `commit`, `push` or `gh pr create`).
 6. Render until the PDF builds.
 
 `classFile.path` in the spec names the old file; leave it unless the author

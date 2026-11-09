@@ -18,7 +18,7 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 **2. Install what you need to build the PDF locally.** You only need these to preview/build the thesis on your own machine (you can also just push and let the build run for you — step 5):
 
 - [Quarto](https://quarto.org/docs/get-started/) — the document engine.
-- A current **TeX Live** (2026 or newer) for the LaTeX/PDF step, with the TeX Gyre fonts, `luamml`, `tagpdf` and `latex-lab`: for example [MacTeX](https://tug.org/mactex/) or Homebrew's `texlive` on a Mac, or TeX Live from [tug.org](https://tug.org/texlive/). The thesis is built with LuaLaTeX and comes out as a tagged (accessible) PDF.
+- A current **TeX Live** (2026 or newer) for the LaTeX/PDF step, with the TeX Gyre fonts, `luamml`, `tagpdf` and `latex-lab`: for example [MacTeX](https://tug.org/mactex/) or Homebrew's `texlive` on a Mac, or TeX Live from [tug.org](https://tug.org/texlive/). The thesis is built with LuaLaTeX and comes out as a tagged (accessible) PDF. After installing it, run `tlmgr install tex-gyre tex-gyre-math luamml tagpdf latex-lab` (from a terminal; on a system install it needs `sudo`) so the packages match the build's. Or skip this and just push: the build runs on GitHub.
 - The fonts: the house thesis class sets the thesis in **TeX Gyre** (a Times-style family that comes with TeX Live), so there is nothing to install separately. If a build complains a font is missing, your TeX Live lacks `tex-gyre` and `tex-gyre-math`.
 - **R** *only if your dissertation includes an R package* (the no-R path needs none).
 
@@ -72,7 +72,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 **Your institution's thesis format.** `thesis.classFile.type` in `dataimago-spec.yaml` records the choice you made at setup:
 
 - **`shipped`**: the registry has a profile for your institution, and you use it as-is. The registry is the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes): one house class plus a small profile of formatting rules per institution. Ask your AI assistant to "set up my institution's thesis profile". It copies the class and your institution's profile into your repository, so your PDF builds from files you can see, and they stay the same until you ask to update them.
-- **`vendored`**: you provide your institution's own class file. Put it in `<chapters>/` and point `_quarto.yml` at it; the house class is then not used.
+- **`vendored`**: you provide your institution's own class file. Put it beside `<chapters>/_quarto.yml`, set `documentclass` to its file name there, and drop the house `template-partials`, `filters` and `thesis:` block (ask your AI assistant: *"switch my thesis to my own class"*; `thesis-build` lists the changes and waits for your yes).
 - **`generated`** (the default): you start from the registry's `house` profile and adapt it to your institution's formatting guidelines. Put the guidelines in `raw/thesis-formatting/`, and your AI assistant does the adapting with you (`/thesis-format`).
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
