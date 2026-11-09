@@ -169,7 +169,11 @@ cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRA
    `chapters/00-front-matter.qmd` (words stay the author's; move, do not edit).
    An `index.qmd` landing text that should not print goes inside
    `::: {.content-visible when-format="html"}`.
-4. Replace `build-thesis.yml` with the one for the layout: content-only, this
+4. Replace `build-thesis.yml` with the one for the layout. Content-only: `git clone --depth 1
+   https://github.com/dataimago/dissertation-app-template "$SCRATCH/app"` and `cp
+   "$SCRATCH/app/.github/workflows/build-thesis.yml" .github/workflows/`. R package:
+   `cp "$SCRATCH/rpkg/.github/workflows/build-thesis.yml"` (the step 1 clone) over the
+   package's. In words: content-only, this
    template's `.github/workflows/build-thesis.yml` from
    `dataimago/dissertation-app-template` (an unmigrated repo's own copy is the old
    one); R package, the package's

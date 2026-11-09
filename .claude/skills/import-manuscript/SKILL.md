@@ -66,10 +66,10 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
   `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
-  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public): `git clone --depth 1
-  https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"`, then `cp -a`
-  `$SCRATCH/rpkg/ui/www/` `_quarto.yml`, `index.qmd`, `references.bib`, `THESIS-CLS-README.md`,
-  `thesis-class`, `profiles` and `_environment` into
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public): `SCRATCH=<a fresh scratch folder>`, `git clone --depth 1
+  https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"`, then
+  `cd "$SCRATCH/rpkg/ui/www" && cp -a _quarto.yml index.qmd references.bib THESIS-CLS-README.md
+  thesis-class profiles _environment <this repo>/thesis/` (create `thesis/` first)
   `thesis/` (stop and tell the author if any is missing), apply the two
   rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
   ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
