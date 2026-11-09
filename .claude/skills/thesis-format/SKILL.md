@@ -71,8 +71,11 @@ there. I will run the registry's checker and `texlua` (or `quarto`) on your prof
 generated settings file and a two-line example file, and build the registry's sample book
 with your profile twice, once with LuaLaTeX and once with XeLaTeX. That build needs Quarto, a
 current TeX Live and the TeX Gyre fonts, and it can take several minutes. Nothing from the
-copy is committed to your repository, and I will delete the folder afterwards." Continue only
-on an explicit yes. Without it, run none of this, including `render.sh`.
+copy is committed to your repository, and I will delete the folder afterwards. You can say yes to
+all of it, or yes to just the copy and the checker and no to the builds, or no." Three separate
+yeses: (a) copying and reading the registry's spec and schema, (b) the checker, `texlua` and the
+Python packages, (c) the two builds. Run only what got a yes; never run `render.sh` without (c).
+(a) is required for the skill: if it is declined, stop.
 
 ```sh
 REPO_ROOT=$(git rev-parse --show-toplevel)   # the author's repository; never cd away from it in a way you do not undo
@@ -109,7 +112,10 @@ fill or validate a profile from memory or invent a schema.
 
 ## Step 3: read the guide and fill the profile
 
-Read the whole guide. A PDF: read it page by page and keep the page numbers. A
+Read the whole guide. A PDF: read it page by page with the Read tool's `pages` option and
+keep the page numbers; if that does not give reliable page numbers, use
+`pdftotext -layout -f <n> -l <n> <guide.pdf> -`, and if neither is available ask the author
+for a text or HTML copy and stop rather than inventing page citations. A
 web page or text file with no page numbers: cite by section heading, as the CU
 profile does.
 
@@ -187,8 +193,11 @@ the book is built with the house profile.
 
 Run only the two `render.sh` commands, and only after the author's yes in Step 2. They need `quarto`, a current TeX
 Live and the TeX Gyre fonts. If any is missing, skip the builds (not the overlay) and tell the author the
-build did not run; never report it as passed. Otherwise report whether each build passed. Show the
-author the first pages of the PDF (title, abstract, contents, a chapter opening)
+build did not run; never report it as passed. Otherwise report whether each build passed. The
+PDFs are `$SCRATCH/registry/classes/dataimago-thesis/example/_build/<id>-lualatex/thesis.pdf` and
+`.../<id>-xelatex/thesis.pdf`; read the first pages with the Read tool (`pages: "1-8"`), or
+`pdftotext -layout -f 1 -l 8 <pdf> -`, and show the author the title page, abstract, contents
+and a chapter opening
 so they can compare them with the guide's sample pages. Building the author's own
 chapters with a profile belongs to `thesis-build`, once that skill supports
 profiles; do not change `thesis-build` from here.
@@ -215,7 +224,9 @@ wrong or that they want changed. Edit the profile, re-run Steps 4 and 5, and
 repeat until they say it is right.
 
 Then offer to save the profile in their repository, and wait for their go-ahead.
-**The author runs these commands after that go-ahead. You do not run any of them.**
+**The author runs these commands after that go-ahead. You do not run any of them.** Put one
+plain sentence under each saying what it does and what they should see; if they do not have
+`git` or `gh`, offer the GitHub website route instead.
 The AI never runs `git add`, `git commit`, `git push` or `gh pr create` in the
 dissertation repository, in the package repository or in the scratch clone. Show the
 commands as text with `<id>` and the paths filled in.
@@ -248,7 +259,8 @@ gh pr create --repo <package owner>/<package repo> --head profile/<id> --title "
 After the author has merged that pull request, update the submodule pointer here:
 
 ```sh
-git -C packages/r-packages/<name> switch main && git -C packages/r-packages/<name> pull
+git -C packages/r-packages/<name> fetch origin
+git -C packages/r-packages/<name> checkout "$(git -C packages/r-packages/<name> symbolic-ref --short refs/remotes/origin/HEAD)"
 git switch -c profile/<id>-pointer
 git add packages/r-packages/<name>
 git commit -m "Update <name> to include the <institution> profile"
@@ -323,11 +335,24 @@ it follows.
 
 **The author opens the pull request; you only prepare.** Ask the author for their GitHub
 username (never read it from `gh`) and for a folder outside their repository to keep the
-files in (suggest `~/thesis-format-<id>`). Write into it, and print its full path:
-`profiles/<id>.yaml`, `profiles/<id>.cfg`, the overlay at
-`classes/dataimago-thesis/example/_quarto-<id>.yml`, and `pr-body.md` (described below).
+files in (suggest `~/thesis-format-<id>`). Write into it, and print its full path. Do exactly this, check that each copy succeeded,
+and only then delete `$SCRATCH`:
+
+```sh
+CONTRIB=<the folder the author chose, absolute>
+mkdir -p "$CONTRIB/profiles" "$CONTRIB/classes/dataimago-thesis/example"
+cp "$PROFILE_FILE" "$CONTRIB/profiles/<id>.yaml"
+cp "$SCRATCH/registry/profiles/<id>.cfg" "$CONTRIB/profiles/<id>.cfg"
+cp "$SCRATCH/registry/classes/dataimago-thesis/example/_quarto-<id>.yml" "$CONTRIB/classes/dataimago-thesis/example/"
+ls -l "$CONTRIB/profiles" "$CONTRIB/classes/dataimago-thesis/example"
+```
+
+and write `pr-body.md` (described below) into `$CONTRIB`.
 Then show the author the commands below as text to copy, with `<CONTRIB>` replaced by that
-absolute path and `<their-username>`, `<id>` and `<institution>` filled in. They run
+absolute path and `<their-username>`, `<id>` and `<institution>` filled in, and **one plain
+sentence under each command saying what it does and what they should see**. If they do not
+have `gh`, give the GitHub website steps instead (fork the repository, upload the files on a
+new branch, open the pull request). They run
 them in their own terminal, signed in as themselves. **You do not run any of them** and
 you put none of them in a command of your own. Delete `$SCRATCH` once the files are
 written; the folder you printed is what the author keeps.
