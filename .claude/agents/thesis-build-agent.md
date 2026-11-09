@@ -82,7 +82,7 @@ formatting in ways that violate it to make an error go away.
 ## Guardrails
 - Never ship the author's prose to the shared registry; only a profile (or
   class machinery), only with consent.
-- Never hand-edit the vendored class files in `thesis-class/` or a shipped
+- Never hand-edit the house class files in `thesis-class/` or a shipped
   profile; institution rules go in a profile. `python3 <book folder>/thesis-class/sync.py
   check` shows what differs from the registry.
 - Build from committed class files only. Never make `build-thesis.yml` fetch

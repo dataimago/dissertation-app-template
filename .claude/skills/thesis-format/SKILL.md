@@ -174,8 +174,11 @@ purpose: the scratch one above is compiled by the registry's current generator a
 is what `check_profile.py` checks and what Step 7 offers the registry (whose
 maintainer regenerates it with `main`'s generator anyway); the one beside the
 author's profile is compiled by the generator vendored with the author's class, is
-the one the author's PDF reads and is checked by building that PDF in Step 5. Both
-come from the same `.yaml`, which is what `check_profile.py` validated. Use the generator that was
+the one the author's PDF reads. Step 5's sample build and `check_profile.py` check
+only the scratch `.cfg`; the book-folder `.cfg` is checked when `thesis-build`
+renders the author's own book after they set `profile: <id>`, so do not report it
+as build-checked before then. Both come from the same `.yaml`, which is what
+`check_profile.py` validated. Use the generator that was
 vendored with the class, so the `.cfg` matches the class that will read it:
 `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` (or
 `quarto pandoc lua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` if `texlua` is missing). If the book folder has no

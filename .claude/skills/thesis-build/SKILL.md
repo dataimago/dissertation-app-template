@@ -301,9 +301,10 @@ to see the real `! LaTeX Error`.
   `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>`.
 - **`The ... is missing` naming a `thesis.*` key** — a required title-page field
   (`thesis.degree.name`, `department`, `institution`, `advisors`, `committee`) or
-  `abstract:` is empty. Fill it by the rules of "Setting up a shipped profile" step 7:
-  from the manuscript's own title page and abstract first, then the spec, and ask the
-  author for anything neither gives. Never invent a value or an abstract. Moving the
+  `abstract:` is empty. Propose, do not fill: list each value you would write and its
+  source (the manuscript's own title page and abstract first, then the spec; a
+  placeholder such as "Your University" counts as empty), ask the author for anything
+  neither gives, wait for a yes, then write. Never invent a value or an abstract. Moving the
   abstract text into `index.qmd` is a move: name it and wait for a yes (and again
   under `raw/manuscript/LOCKED.md`).
 - **Equations come out in Latin Modern Math** — no error, just the wrong font
@@ -334,8 +335,11 @@ to see the real `! LaTeX Error`.
 ## Guardrails
 - Only class machinery and profiles may be contributed back to the registry,
   only with consent — never the manuscript prose.
-- Never hand-edit the vendored class files (`python3 <book folder>/thesis-class/sync.py check`
-  lists differences from the registry); institution rules go in a profile.
+- Never hand-edit the house class files in `thesis-class/` or a shipped profile
+  (`python3 <book folder>/thesis-class/sync.py check` lists differences from the
+  registry); institution rules go in a profile. This is not about `vendored` mode:
+  an author's own `.cls` beside `_quarto.yml` is theirs, and the repairs listed above
+  for it are made after a yes.
 - Build from committed files only; do not make `build-thesis.yml` fetch from the
   registry.
 - If `raw/manuscript/LOCKED.md` exists, the chapters are v1.0 of a finished work:
