@@ -78,15 +78,17 @@ on an explicit yes. Without it, run none of this, including `render.sh`.
 REPO_ROOT=$(git rev-parse --show-toplevel)   # the author's repository; never cd away from it in a way you do not undo
 SCRATCH=$(mktemp -d)
 git clone --depth 1 https://github.com/dataimago/dissertation-thesis-classes "$SCRATCH/registry"
-ls "$SCRATCH/registry/profiles"          # profiles that already exist
 for f in docs/house-class-spec.md profiles/profile.schema.json profiles/house.yaml \
          classes/dataimago-thesis/thesis-profile.lua classes/dataimago-thesis/example/render.sh tools/check_profile.py; do
   [ -e "$SCRATCH/registry/$f" ] || echo "MISSING: $f"
 done
+ls "$SCRATCH/registry/profiles" 2>/dev/null || true      # profiles that already exist
+python3 -m venv "$SCRATCH/venv" && "$SCRATCH/venv/bin/pip" install -q jsonschema==4.23.0 pyyaml==6.0.2   # the pins in the registry's tools/requirements.txt
 ```
 
-If any file is reported missing, stop. Tell the author that the house class and profiles
-are not available in the registry's default branch yet, name what is missing, and do not
+**Stop the whole skill, and do not start Step 3,** if the author declines this copy, the clone
+fails, or any file is reported missing. Tell the author that the house class and profiles
+are not available (declined, or not in the registry's default branch yet), name what is missing, and do not
 fill or validate a profile from memory or invent a schema.
 
 - **A profile for this institution already exists.** Tell the author, show it,
@@ -101,9 +103,9 @@ fill or validate a profile from memory or invent a schema.
   `guide.retrieved` and `guide.url`). If it is not there, tell the author there is no
   worked example and go on; it is not needed. Note 6 under the CU example in spec section 6.6 explains why
   a field the guide is silent on goes under `unstated` and is not assumed.
-- Checking needs `python3` with `jsonschema` and `pyyaml`
-  (`python3 -m venv "$SCRATCH/venv" && "$SCRATCH/venv/bin/pip" install jsonschema==4.23.0 pyyaml==6.0.2`, the pins in the registry's `tools/requirements.txt`; the rest of that file is for the PDF checks)
-  and `texlua` or `quarto` for the generator. If one is missing, tell the author which check you could not run. Do not report it as passed.
+- Checking needs the venv created above (`jsonschema`, `pyyaml`) and `texlua` or `quarto` for the
+  generator. If the venv was not created or a tool is missing, say "venv not created" or name the
+  tool, tell the author which check did not run, and do not report it as passed or failed.
 
 ## Step 3: read the guide and fill the profile
 
@@ -173,7 +175,7 @@ Build the registry's synthetic example book with the profile, which shows how
 the profile lays a page out without touching the author's chapters:
 
 The example book picks its profile from an overlay named after it. In the scratch
-copy, first create `classes/dataimago-thesis/example/_quarto-<id>.yml` with two
+copy, create (whenever Step 4 ran, even if you skip the builds below; Step 7 needs it) `classes/dataimago-thesis/example/_quarto-<id>.yml` with two
 lines, `thesis:` and `  profile: <id>` (add `  institution: Example University` if the
 profile sets no `institution.name`; a synthetic name, never a real one). Without it
 the book is built with the house profile.
@@ -183,8 +185,8 @@ the book is built with the house profile.
 (cd "$SCRATCH/registry" && sh classes/dataimago-thesis/example/render.sh <id> xelatex)
 ```
 
-Run these only after the author's yes in Step 2. They need `quarto`, a current TeX
-Live and the TeX Gyre fonts. If any is missing, skip this step and tell the author the
+Run only the two `render.sh` commands, and only after the author's yes in Step 2. They need `quarto`, a current TeX
+Live and the TeX Gyre fonts. If any is missing, skip the builds (not the overlay) and tell the author the
 build did not run; never report it as passed. Otherwise report whether each build passed. Show the
 author the first pages of the PDF (title, abstract, contents, a chapter opening)
 so they can compare them with the guide's sample pages. Building the author's own
@@ -229,7 +231,9 @@ git push -u origin profile/<id>
 gh pr create --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
 ```
 
-R-package layout: first the profile inside the package's own repository (the folder is
+R-package layout (take `<package owner>/<package repo>` from `source.rPackage.submoduleUrl` in
+`dataimago-spec.yaml`, or from `git -C packages/r-packages/<name> remote get-url origin`; never guess it
+from the author's username): first the profile inside the package's own repository (the folder is
 the Step 3 path's parent, `packages/r-packages/<source.rPackage.name>/`), as its own branch and
 pull request:
 
