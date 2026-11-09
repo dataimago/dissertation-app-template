@@ -57,7 +57,7 @@ jobs:
         run: |
           TL="$HOME/texlive"
           mkdir -p /tmp/tlinst && cd /tmp/tlinst
-          curl -fsSL https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | tar xz --strip-components=1
+          curl -fsSL --retry 4 --retry-delay 5 --retry-all-errors https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | tar xz --strip-components=1
           cat > profile.txt <<EOP
           selected_scheme scheme-medium
           TEXDIR $TL
