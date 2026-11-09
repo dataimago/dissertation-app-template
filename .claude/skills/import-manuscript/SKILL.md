@@ -103,11 +103,13 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   `thesis/figures/`. The same fence escape applies to each `thesis/chapters/*.qmd`
   as you write it (§2).
   The copied `_quarto.yml` and `index.qmd` are template scaffolding, not the author's
-  book: treat every `thesis:` value in them (and any `PLACEHOLDER-*` or `{{...}}`) as
-  empty, and propose real values from the manuscript, then the spec, in the §3
-  front-matter proposal; wrap the template's `index.qmd` landing text in
-  `::: {.content-visible when-format="html"}` so it does not print; and list
-  `chapters/00-front-matter.qmd` in `chapters:` right after `index.qmd`. The app's `build-thesis.yml` is already here and inert
+  book: treat every `thesis:` value in them (and any `PLACEHOLDER-*`, `{{...}}` or
+  stand-in such as "Your University") as unset. Add to the §3 front-matter proposal
+  below, and apply only after its yes: the real `thesis:` values (manuscript, then
+  spec), wrapping the template's `index.qmd` landing text in
+  `::: {.content-visible when-format="html"}` so it does not print, and creating
+  `chapters/00-front-matter.qmd` and then listing it in `chapters:` right after
+  `index.qmd`. The app's `build-thesis.yml` is already here and inert
   until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
@@ -163,7 +165,7 @@ fixed front-matter slots the house class requires: the abstract in `index.qmd`'s
 v1.0 text, not edits to it, and this skill runs under `raw/manuscript/LOCKED.md`, so
 **propose them before writing anything**: list each placement (what, from where in
 the manuscript, to where) and each `thesis:` value with its source (the manuscript's
-own title page first, the spec only where the manuscript is silent; if they
+own title page first, the spec only where the manuscript is silent (a placeholder such as `PLACEHOLDER-*`, `{{...}}` or "Your University" counts as unset and is not a source); if they
 disagree, the manuscript wins), ask the author for what neither gives, and wait for
 a yes. Only then write them. Keep values already in `_quarto.yml`; a change to a
 non-empty one is part of the same proposal.

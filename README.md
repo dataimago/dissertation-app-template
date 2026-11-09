@@ -72,7 +72,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 **Your institution's thesis format.** `thesis.classFile.type` in `dataimago-spec.yaml` records the choice you made at setup:
 
 - **`shipped`**: the registry has a profile for your institution, and you use it as-is. The registry is the [dataimago thesis-class registry](https://github.com/dataimago/dissertation-thesis-classes): one house class plus a small profile of formatting rules per institution. Ask your AI assistant to "set up my institution's thesis profile". It copies the class and your institution's profile into your repository, so your PDF builds from files you can see, and they stay the same until you ask to update them.
-- **`vendored`**: you provide your institution's own class file. Put it beside `<chapters>/_quarto.yml`, set `documentclass` to its file name there, and drop the house `template-partials`, `filters` and `thesis:` block (ask your AI assistant: *"switch my thesis to my own class"*; `thesis-build` lists the changes and waits for your yes).
+- **`vendored`**: you provide your institution's own class file. Put it beside `<chapters>/_quarto.yml`, set `documentclass` to its file name without `.cls` there, and drop the house `template-partials`, `filters` and `thesis:` block (ask your AI assistant: *"switch my thesis to my own class"*; `thesis-build` lists the changes and waits for your yes).
 - **`generated`** (the default): you start from the registry's `house` profile and adapt it to your institution's formatting guidelines. Put the guidelines in `raw/thesis-formatting/`, and your AI assistant does the adapting with you (`/thesis-format`).
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.

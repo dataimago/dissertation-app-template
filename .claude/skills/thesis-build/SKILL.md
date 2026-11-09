@@ -117,11 +117,14 @@ of "Steps" above. A routine build never runs these steps.
    (`dataimago-thesis`), and `pdf-engine` (the entry's `engine`, `lualatex`;
    `engineFallback` is `xelatex`, untagged). The profile's `classOptions` is
    `profile=<id>`; `thesis.profile` already sends it, so do not repeat it under
-   `classoption`. Fill only the **empty** keys of the `thesis:` block (institution, degree,
-   department, advisors, committee): the manuscript's own title page first, the
-   spec where the manuscript is silent, and ask the author for what neither gives.
-   Keep every value already there; to change a non-empty one, show the change and
-   ask first.
+   `classoption`. For the `thesis:` block (institution, degree, department, advisors,
+   committee), **propose, do not fill**: list each value you would write and its
+   source (the manuscript's own title page first, the spec where the manuscript is
+   silent), ask the author for what neither gives, wait for a yes, then write. A key
+   is unset if it is empty or holds a placeholder (`PLACEHOLDER-*`, `{{...}}`, or a
+   stand-in such as "Your University" or "Dr. Your Chair"), and the spec's own
+   placeholders are not a source. Keep every real value already there; changing one
+   is part of the same proposal.
 8. **Read what the profile does not say.** Open `profiles/<id>.yaml`. Fields the
    institution's guide does not state are listed under `unstated` and keep the
    house value, and `sources` cites the rest. Tell the author what is unstated;
@@ -238,7 +241,17 @@ package, then the submodule pointer here).
    for f in "$W"/profiles/*; do              # never over a profile already there
      [ -e "$BOOK/profiles/${f##*/}" ] || cp -a "$f" "$BOOK/profiles/"
    done
+   # recompile the author's own profiles with the generator now vendored with the
+   # class (a .cfg compiled before the move came from another generator)
+   for y in "$BOOK"/profiles/*.yaml; do
+     id="${y##*/}"; id="${id%.yaml}"
+     case "$id" in house|*.test) continue;; esac   # not house, not a test config
+     texlua "$BOOK/thesis-class/thesis-profile.lua" "$BOOK/profiles" "$id"
+   done
    ```
+   If `texlua` is missing, use `quarto pandoc lua` with the same arguments; if
+   neither is installed, tell the author the author profile's `.cfg` was not
+   recompiled and the move's first render may not match it.
 3. **Edit `_quarto.yml`** exactly as agreed in step 1. The `format: pdf:` keys
    listed there are replaced (that is the move); the `thesis:` values are the
    ones the author agreed to.
