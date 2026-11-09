@@ -68,8 +68,12 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
   `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
-  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). Run this from the
-  repository root; it changes no directory and stops if a file is missing:
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). **Ask first:** tell
+  the author you will clone that public template into a temporary folder and copy
+  `_quarto.yml`, `index.qmd`, `THESIS-CLS-README.md`, `thesis-class/`, `profiles/` and
+  `_environment` into `thesis/` here (and `references.bib` only if `thesis/` has none
+  yet, so the bibliography copied in §2 is kept), then wait for a yes. Run this from
+  the repository root; it changes no directory and stops if a file is missing:
   ```sh
   SCRATCH="$(mktemp -d)"
   git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
@@ -78,14 +82,16 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
     [ -e "$W/$f" ] || { echo "missing in the template: $f (stop and tell the author)"; exit 1; }
   done
   mkdir -p thesis
-  cp -a "$W/_quarto.yml" "$W/index.qmd" "$W/references.bib" "$W/THESIS-CLS-README.md" \
+  cp -a "$W/_quarto.yml" "$W/index.qmd" "$W/THESIS-CLS-README.md" \
         "$W/thesis-class" "$W/profiles" "$W/_environment" thesis/
+  [ -e thesis/references.bib ] || cp "$W/references.bib" thesis/   # never over the author's bibliography
   # the two rewrites the hub applies, in place under this repository's thesis/
   perl -pi -e 's{output-dir: \.\./\.\./docs}{output-dir: ../docs}' thesis/_quarto.yml
   find thesis -name '*.qmd' -exec perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' {} +
   ```
-  The app's `build-thesis.yml` is already here and inert until `thesis/`
-  exists. The referenced repository is read, never written. On this path the
+  If §2's `.bib` copy had no `thesis/` to go to yet, do it now, onto
+  `thesis/references.bib`. The app's `build-thesis.yml` is already here and inert
+  until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
   repository, and an author who wants executable chapters moves to the

@@ -87,7 +87,9 @@ jobs:
           mkdir -p "$HOME/.config/fontconfig/conf.d"
           cp "$HOME/texlive/texmf-var/fonts/conf/texlive-fontconfig.conf" "$HOME/.config/fontconfig/conf.d/09-texlive.conf"
           fc-cache -f
-          fc-list | grep -m3 -i "TeX Gyre Termes"
+          # fontconfig serves only the XeLaTeX fallback (LuaLaTeX loads TeX Gyre from the
+          # TeX tree); the PDF's fonts are checked after render, so this only warns.
+          fc-list | grep -m3 -i -E "TeX ?Gyre ?Termes" || echo "::warning::fontconfig does not list TeX Gyre Termes; an XeLaTeX fallback build may not find it."
 
       - name: Render thesis PDF
         if: hashFiles('thesis/_quarto.yml') != ''

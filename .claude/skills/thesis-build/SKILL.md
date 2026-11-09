@@ -123,7 +123,11 @@ to the house class" below.
    Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
 9. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
-   on a branch and propose them as a pull request, naming the profile `id`, the
+   on a branch and propose them as a pull request: in this repository for
+   content-only (`thesis/...` paths); in the R-package layout, first in the
+   package's own repository and then the submodule-pointer pull request here, with
+   the same commands as `thesis-format` Step 6 (`git -C packages/r-packages/<name> ...`,
+   then the pointer). Ask before touching the package repository. Either way, naming the profile `id`, the
    class `version` and the registry commit in the message. Do not push or open the
    pull request yourself: show the author the commands. The committed files are the
    author's pinned copy: `build-thesis.yml` builds from them and never fetches from
@@ -168,14 +172,18 @@ does not move.
 1. Copy the house bundle from `dataimago/dissertation-rpkg-template`'s `ui/www/`
    (public) into the book folder:
    ```sh
-SCRATCH=<a fresh scratch folder>
+SCRATCH="$(mktemp -d)"
 git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
 cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRATCH/rpkg/ui/www/_environment" <book folder>/
 ```
    Stop and tell the author if any of those paths is missing; never assemble the
    folder from guesses.
-2. In `_quarto.yml` take the *shape* of the template's `lang`, `thesis:` block and
-   `format: pdf:` settings from the step 1 clone (`"$SCRATCH/rpkg/ui/www/_quarto.yml"`).
+2. In `_quarto.yml`, from the step 1 clone's `"$SCRATCH/rpkg/ui/www/_quarto.yml"`, copy
+   `lang`, the `thesis:` block's keys, and under `format: pdf:` the keys
+   `documentclass` (`dataimago-thesis`), `pdf-engine` (`lualatex`),
+   `template-partials` and `filters`. Do **not** copy `output-dir`: keep the book's
+   own (`../docs` for content-only `thesis/`; the template's `../../docs` is the R
+   package's), since `build-thesis.yml` publishes `docs/thesis.pdf`.
    Fill only empty `thesis:` keys (the manuscript's title page first, then the
    spec, then ask the author); keep values already in `_quarto.yml` and ask before
    changing a non-empty one; remove `mainfont`, `sansfont`,
@@ -215,7 +223,11 @@ to see the real `! LaTeX Error`.
 - **`dataimago-thesis.cls` or `<id>.cfg` not found** — `_environment` is missing
   or the folder was copied piecemeal. The class is in `thesis-class/` and the
   compiled profile in `profiles/`; `_environment` puts both on `TEXINPUTS`.
-  Restore them with `python3 <book folder>/thesis-class/sync.py sync` (no `--ref` and no `--profile`: it restores every vendored file and profile at the commit in `registry-source.json`), to repair. `--profile <id>` is only for an explicit shipped setup or update (step 5). A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
+  To repair, first run `python3 <book folder>/thesis-class/sync.py check` and show the
+  author the files it reports, then, after a yes, `python3 <book folder>/thesis-class/sync.py sync`
+  (no `--ref`, no `--profile`). It rewrites only the class files and the registry
+  profiles listed in `registry-source.json`, at the commit recorded there; it deletes
+  nothing, and a profile the author wrote (not in that list) is never touched. `--profile <id>` is only for an explicit shipped setup or update (step 5). A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
 - **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
   a profile with no compiled `.cfg`. Compile it:
   `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>`.

@@ -34,8 +34,11 @@ formatting in ways that violate it to make an error go away.
      `generated`). A routine build or log diagnosis never fetches: if
      `thesis-class/registry-source.json` exists and `_quarto.yml` already names
      the profile, build from the committed files, and repair a broken copy with
-     `python3 <book folder>/thesis-class/sync.py sync` (no `--ref`, no `--profile`:
-     it restores every vendored file and profile at the recorded commit), never `--ref main`, and
+     `python3 <book folder>/thesis-class/sync.py check`, then, after the author's yes,
+     `python3 <book folder>/thesis-class/sync.py sync` (no `--ref`, no `--profile`: it
+     rewrites only the class files and the registry profiles listed in
+     `registry-source.json`, deletes nothing, and never touches a profile the author
+     wrote), never `--ref main`, and
      never edit `profile:` in `_quarto.yml` while diagnosing. In an explicit setup
      or update only, after the author confirmed the registry match, change `profile:` to
      `<id>` in the `thesis:` block of `_quarto.yml` (it sends `profile=<id>` to the class), keep
