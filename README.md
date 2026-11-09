@@ -76,6 +76,8 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
 
+**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* To make this repository's own PDF match your institution's format, use `/thesis-build`; "my school isn't in the registry" is still the `generated` mode. `/thesis-format` only drafts a profile for the registry's house class, for you to check and optionally offer to the registry; it does not change `thesis-build` yet, and it will ask before copying the public registry and before any long TeX build. A profile is a list of formatting facts about your institution's guide. It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`): each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile and builds the registry's sample book with it, and you confirm every value against the guide. This does not change how your own PDF is built: that still follows the mode above and `thesis-build`, until that skill builds from profiles. You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent.
+
 ## Adding committee members + advisor
 
 Edit `dataimago-spec.yaml`'s `vertical.dissertation.advisors` block. The generator updates the signature page template + README.
