@@ -51,7 +51,7 @@ the reference for what "v1.0 looked like".
   into the chapters directory as **vendored** class files — set
   `dataimago-spec.yaml` `thesis.classFile.type: vendored` and `path`, whatever
   the spec said before (`shipped` means a registry profile, `generated` the
-  house profile adapted; the author's own class is neither). A vendored class replaces the house class: in `_quarto.yml` point `documentclass`, `classoption` and `pdf-engine` at it and drop the house `template-partials`, `filters` and `thesis:` block (`THESIS-CLS-README.md`, "Which mode are you in?").
+  house profile adapted; the author's own class is neither). A vendored class replaces the house class. Do this as a last step of §3, after the house `_quarto.yml` and bundle have been kept or fetched (so a fetch cannot undo it), and only when a `.cls` was imported: in `_quarto.yml` point `documentclass`, `classoption` and `pdf-engine` at it and drop the house `template-partials`, `filters` and `thesis:` block (`THESIS-CLS-README.md`, "Which mode are you in?").
 
 ## 3. Place, as v1.0
 

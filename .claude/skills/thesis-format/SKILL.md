@@ -169,8 +169,8 @@ next to the profile whenever the profile changes. Use the generator that was
 vendored with the class, so the `.cfg` matches the class that will read it:
 `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` (or
 `quarto pandoc lua` in place of `texlua`). If the book folder has no
-`thesis-class/` (the older layout), copy `$SCRATCH/registry/profiles/<id>.cfg` there
-and tell the author the build cannot use it until the repository moves to the house class
+`thesis-class/` (the older layout), create `<book folder>/profiles/` if it is missing, copy `$SCRATCH/registry/profiles/<id>.cfg` to
+`<book folder>/profiles/<id>.cfg`, and tell the author the build cannot use it until the repository moves to the house class
 (`thesis-build`, "Moving an older repository to the house class").
 
 If `texlua` is missing but `quarto` is installed, use

@@ -107,7 +107,7 @@ to the house class" below.
    and the like are `.acknowledgments` / `.dedication` divs in
    `chapters/00-front-matter.qmd`. Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
-9. **Commit the files.** Commit `thesis-class/`, `profiles/` and `_quarto.yml`
+9. **Prepare the commit.** Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request, naming the profile `id`, the
    class `version` and the registry commit in the message. Do not push or open the
    pull request yourself: show the author the commands. The committed files are the
@@ -122,8 +122,8 @@ the starting point. Run the `thesis-format` skill: it copies
 `profiles/house.yaml` to `profiles/<id>.yaml` beside the chapters, fills it
 from the guide in `raw/thesis-formatting/` (each value cited, the rest listed
 under `unstated`), compiles it (`texlua thesis-class/thesis-profile.lua profiles
-<id>`), and gives the author a checklist. Then set `thesis.profile: <id>` in
-`_quarto.yml` and build. Until the author has a guide, the `house` profile builds
+<id>`), and gives the author a checklist. Then propose setting `thesis.profile: <id>` in
+`_quarto.yml` (show the change) and build once the author says yes. Until the author has a guide, the `house` profile builds
 as it is.
 
 ## Moving an older repository to the house class
@@ -162,7 +162,7 @@ to see the real `! LaTeX Error`.
 - **`dataimago-thesis.cls` or `<id>.cfg` not found** — `_environment` is missing
   or the folder was copied piecemeal. The class is in `thesis-class/` and the
   compiled profile in `profiles/`; `_environment` puts both on `TEXINPUTS`.
-  Restore them with `python3 thesis-class/sync.py sync`.
+  Restore them with `python3 thesis-class/sync.py sync --profile <id>` (at the recorded commit; add `--ref main` for a newer profile).
 - **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
   a profile with no compiled `.cfg`. Compile it:
   `texlua thesis-class/thesis-profile.lua profiles <id>`.

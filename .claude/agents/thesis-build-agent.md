@@ -27,7 +27,7 @@ formatting in ways that violate it to make an error go away.
      does the fetch and records the registry commit. Then set `thesis.profile:
      <id>` in `_quarto.yml` (it sends `profile=<id>` to the class), keep
      `pdf-engine: lualatex` (the class's `engine`; `xelatex` is the untagged
-     fallback), and commit the files. If the institution has no available
+     fallback), and prepare the files for commit (show the author the git commands; do not run them). If the institution has no available
      profile, say so plainly and offer `generated`. The full steps are in
      `.claude/skills/thesis-build/SKILL.md`, "Setting up a shipped profile".
      Read the profile's `unstated` list and tell the author what the guide
