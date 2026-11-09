@@ -132,12 +132,16 @@ jobs:
       # Last, so the author still gets the PDF: LaTeX falls back to another
       # font without an error, so check the fonts the PDF embeds (the profile's
       # main and math fonts, all embedded, no Latin Modern Math fallback).
-      # Skipped unless _quarto.yml uses the house class (a vendored class has its own fonts).
+      # Skipped when _quarto.yml does not use the house class (a vendored class has its own
+      # fonts); fails when it does and the check script is missing (a partial copy).
       - name: Check the PDF's fonts
         if: hashFiles('thesis/_quarto.yml') != ''
         run: |
-          if grep -q '^ *documentclass: *dataimago-thesis' thesis/_quarto.yml && [ -f thesis/thesis-class/check-pdf-fonts.sh ]; then
-            sh thesis/thesis-class/check-pdf-fonts.sh thesis docs/thesis.pdf
+          if ! grep -q '^ *documentclass: *dataimago-thesis' thesis/_quarto.yml; then
+            echo "Not the house class (a vendored class, or the older thesis.cls layout): the font check does not apply."
+          elif [ ! -f thesis/thesis-class/check-pdf-fonts.sh ]; then
+            echo "::error::_quarto.yml uses the house class but thesis/thesis-class/check-pdf-fonts.sh is missing. Restore thesis-class/ from the commit in thesis-class/registry-source.json (python3 thesis/thesis-class/sync.py sync)."
+            exit 1
           else
-            echo "Not the house class (a vendored class of your own): the font check does not apply."
+            sh thesis/thesis-class/check-pdf-fonts.sh thesis docs/thesis.pdf
           fi

@@ -59,20 +59,31 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
 `source.referencedRepo`, a local `source.rPackage`):
 
 - `no-r` → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
-  `index.qmd`, `thesis-class/`, `profiles/`); knitr chunks escaped for the R-free build.
+  `index.qmd`, and the house bundle `thesis-class/`, `profiles/`, `_environment`;
+  on the older layout, `thesis.cls` and `dataimago.sty` instead, see below); knitr
+  chunks escaped for the R-free build.
 - `extension` **with** `referencedRepo` (the author's whole dissertation is an
   existing repository; `rPackage` is null, there is no submodule and no local
   `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
   on this path you create the `thesis/` bundle yourself**, because the hub
   scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
   `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
-  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public): `SCRATCH=<a fresh scratch folder>`, `git clone --depth 1
-  https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"`, then
-  `cd "$SCRATCH/rpkg/ui/www" && cp -a _quarto.yml index.qmd references.bib THESIS-CLS-README.md
-  thesis-class profiles _environment <this repo>/thesis/` (create `thesis/` first)
-  `thesis/` (stop and tell the author if any is missing), apply the two
-  rewrites the hub applies (`output-dir: ../../docs` → `../docs`; any
-  ```` ```{r} ```` fence → ```` ```{{r}} ````), and write them under `thesis/`.
+  `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). Run this from the
+  repository root; it changes no directory and stops if a file is missing:
+  ```sh
+  SCRATCH="$(mktemp -d)"
+  git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
+  W="$SCRATCH/rpkg/ui/www"
+  for f in _quarto.yml index.qmd references.bib THESIS-CLS-README.md thesis-class profiles _environment; do
+    [ -e "$W/$f" ] || { echo "missing in the template: $f (stop and tell the author)"; exit 1; }
+  done
+  mkdir -p thesis
+  cp -a "$W/_quarto.yml" "$W/index.qmd" "$W/references.bib" "$W/THESIS-CLS-README.md" \
+        "$W/thesis-class" "$W/profiles" "$W/_environment" thesis/
+  # the two rewrites the hub applies, in place under this repository's thesis/
+  perl -pi -e 's{output-dir: \.\./\.\./docs}{output-dir: ../docs}' thesis/_quarto.yml
+  find thesis -name '*.qmd' -exec perl -pi -e 's/^(\s*```)\{(r[^}]*)\}/$1\{\{$2\}\}/' {} +
+  ```
   The app's `build-thesis.yml` is already here and inert until `thesis/`
   exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
@@ -100,14 +111,23 @@ before touching it). If the author says no, the house class stays and the `.cls`
 only a reference (`raw/` is not touched). A yes overrides the "keep the provisioned
 `_quarto.yml`" lines above.
 
-Otherwise (the house class stays), the book has fixed front-matter slots the house
-class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
+**Older layout.** If the book folder has no `thesis-class/` (a repository set up
+before the house class: `thesis.cls`, `dataimago.sty`, `documentclass: thesis`), keep
+`thesis.cls`, `dataimago.sty` and `_quarto.yml` as they are and skip the house-class
+slots below; the old class does not read them. Tell the author the move to the house
+class is available and where it is described (`/thesis-build`, "Moving an older
+repository to the house class"): propose it, never do it here.
+
+Otherwise, when the house bundle is present and the house class stays, the book has
+fixed front-matter slots the house class requires: put the abstract in `index.qmd`'s `abstract:` field, acknowledgments
 and dedication in `.acknowledgments` / `.dedication` divs in `00-front-matter.qmd`, and
 fill the `thesis:` block of `_quarto.yml` from the manuscript's own title page first
 (institution, department, degree, advisors, committee); use the spec only where the
 manuscript is silent, and ask the author for what neither gives. If they disagree, the
-manuscript wins. These are placements of the
-v1.0 text, not edits to it.
+manuscript wins. Keep values already in `_quarto.yml`; ask before changing a
+non-empty one. These are placements of the v1.0 text, not edits to it; if
+`raw/manuscript/LOCKED.md` exists, name each placement and wait for the author's
+yes.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
 stubs; front matter to `00-front-matter.qmd` (abstract: see the house-class slots above),

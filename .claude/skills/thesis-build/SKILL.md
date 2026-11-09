@@ -81,8 +81,9 @@ to the house class" below.
    class's `path` and `companions` (under `classes/<class>/`) are the class
    bundle; the profile's `cfg` and `yaml` (under `profiles/`) are the other half.
    They live in different directories of the registry; fetch both.
-5. **Fetch them.** From the book folder, run
-   `python3 thesis-class/sync.py sync --ref main --profile <id>`. It fetches the
+5. **Fetch them.** Run
+   `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
+   from the repository root (the book folder is `thesis/` for content-only, or the R package's `ui/www/`). It fetches the
    class `path` and every `companions` file into `thesis-class/` and the
    profile's `yaml` and `cfg` into `profiles/`, all from one registry commit,
    and records that commit in `thesis-class/registry-source.json`. If
@@ -94,8 +95,11 @@ to the house class" below.
    (`dataimago-thesis`), and `pdf-engine` (the entry's `engine`, `lualatex`;
    `engineFallback` is `xelatex`, untagged). The profile's `classOptions` is
    `profile=<id>`; `thesis.profile` already sends it, so do not repeat it under
-   `classoption`. Fill the `thesis:` block from the spec (institution, degree,
-   department, advisors, committee); ask the author for what the spec lacks.
+   `classoption`. Fill only the **empty** keys of the `thesis:` block (institution, degree,
+   department, advisors, committee): the manuscript's own title page first, the
+   spec where the manuscript is silent, and ask the author for what neither gives.
+   Keep every value already there; to change a non-empty one, show the change and
+   ask first.
 7. **Read what the profile does not say.** Open `profiles/<id>.yaml`. Fields the
    institution's guide does not state are listed under `unstated` and keep the
    house value, and `sources` cites the rest. Tell the author what is unstated;
@@ -106,7 +110,10 @@ to the house class" below.
    registry (`classes/dataimago-thesis/example/`). Front-matter content has fixed
    places: the abstract is `abstract:` in `index.qmd`, acknowledgments, dedication
    and the like are `.acknowledgments` / `.dedication` divs in
-   `chapters/00-front-matter.qmd`. Make changes there and in `_quarto.yml`, never
+   `chapters/00-front-matter.qmd`. Moving text into those places is a move, not
+   an edit: name each move first, and if `raw/manuscript/LOCKED.md` exists show
+   each one and wait for the author's yes, as in "Moving an older repository".
+   Make changes there and in `_quarto.yml`, never
    in the vendored class files: using them as-is is what `shipped` means.
 9. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request, naming the profile `id`, the
@@ -122,8 +129,8 @@ to the house class" below.
 the starting point. Run the `thesis-format` skill: it copies
 `profiles/house.yaml` to `profiles/<id>.yaml` beside the chapters, fills it
 from the guide in `raw/thesis-formatting/` (each value cited, the rest listed
-under `unstated`), compiles it (`texlua thesis-class/thesis-profile.lua profiles
-<id>`), and gives the author a checklist. Then propose changing `profile:` to `<id>` in the `thesis:` block of
+under `unstated`), compiles it (`texlua <book folder>/thesis-class/thesis-profile.lua
+<book folder>/profiles <id>`), and gives the author a checklist. Then propose changing `profile:` to `<id>` in the `thesis:` block of
 `_quarto.yml` (show the change) and build once the author says yes. Until the author has a guide, the `house` profile builds
 as it is.
 
@@ -160,8 +167,11 @@ cp -a "$SCRATCH/rpkg/ui/www/thesis-class" "$SCRATCH/rpkg/ui/www/profiles" "$SCRA
 ```
    Stop and tell the author if any of those paths is missing; never assemble the
    folder from guesses.
-2. In `_quarto.yml` take the template's `lang`, `thesis:` block (fill it from
-   the spec) and `format: pdf:` settings; remove `mainfont`, `sansfont`,
+2. In `_quarto.yml` take the *shape* of the template's `lang`, `thesis:` block and
+   `format: pdf:` settings from the step 1 clone (`"$SCRATCH/rpkg/ui/www/_quarto.yml"`).
+   Fill only empty `thesis:` keys (the manuscript's title page first, then the
+   spec, then ask the author); keep values already in `_quarto.yml` and ask before
+   changing a non-empty one; remove `mainfont`, `sansfont`,
    `mathfont`, `classoption` and the `\usepackage{dataimago}` header. The
    profile owns those.
 3. Move the abstract to `abstract:` in `index.qmd`, and acknowledgments and
@@ -198,10 +208,10 @@ to see the real `! LaTeX Error`.
 - **`dataimago-thesis.cls` or `<id>.cfg` not found** — `_environment` is missing
   or the folder was copied piecemeal. The class is in `thesis-class/` and the
   compiled profile in `profiles/`; `_environment` puts both on `TEXINPUTS`.
-  Restore them with `python3 thesis-class/sync.py sync --profile <id>` at the recorded commit, to repair. A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
+  Restore them with `python3 <book folder>/thesis-class/sync.py sync --profile <id>` at the recorded commit, to repair. A newer registry is an update, not a repair: send the author to "Setting up a shipped profile" step 5 and wait for a yes.
 - **`Profile ... not found` / `no profile file <id>.cfg`** — `thesis.profile` names
   a profile with no compiled `.cfg`. Compile it:
-  `texlua thesis-class/thesis-profile.lua profiles <id>`.
+  `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>`.
 - **`The ... is missing` naming a `thesis.*` key** — a required title-page field
   (`thesis.degree.name`, `department`, `institution`, `advisors`, `committee`) or
   `abstract:` is empty. Fill it in `_quarto.yml` / `index.qmd`.
@@ -229,7 +239,7 @@ to see the real `! LaTeX Error`.
 ## Guardrails
 - Only class machinery and profiles may be contributed back to the registry,
   only with consent — never the manuscript prose.
-- Never hand-edit the vendored class files (`python3 thesis-class/sync.py check`
+- Never hand-edit the vendored class files (`python3 <book folder>/thesis-class/sync.py check`
   lists differences from the registry); institution rules go in a profile.
 - Build from committed files only; do not make `build-thesis.yml` fetch from the
   registry.

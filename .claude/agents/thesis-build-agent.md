@@ -22,8 +22,9 @@ formatting in ways that violate it to make an error go away.
      taking the entry with `mode: shipped` and `status: available` (never the
      `house` profile). Resolve its `class` in `classes`; fetch the class's
      `path` and `companions` (under `classes/<class>/`) and the profile's `cfg`
-     and `yaml` (under `profiles/`), which are in different directories. In the
-     book folder, `python3 thesis-class/sync.py sync --ref main --profile <id>`
+     and `yaml` (under `profiles/`), which are in different directories. From the
+     repository root, `python3 <book folder>/thesis-class/sync.py sync --ref main --profile <id>`
+     (the book folder is `thesis/` for content-only, or the R package's `ui/www/`)
      does the fetch and records the registry commit. Do this only for an
      explicit setup or update the author asked for, and only after you found
      an available, non-`house` profile (if none, stop here and offer
@@ -45,8 +46,8 @@ formatting in ways that violate it to make an error go away.
    - `generated` (the default): start from the `house` profile: copy
      `profiles/house.yaml` to `profiles/<id>.yaml`, adapt it to the
      institution's guidelines in `raw/thesis-formatting/` (the `thesis-format`
-     skill does this), compile it with `texlua thesis-class/thesis-profile.lua
-     profiles <id>`, and validate by building. Do not write or adapt a class.
+     skill does this), compile it with `texlua <book folder>/thesis-class/thesis-profile.lua
+     <book folder>/profiles <id>`, and validate by building. Do not write or adapt a class.
 
    The `house` profile is where `generated` starts, not what `shipped` means.
    `THESIS-CLS-README.md` beside the chapters explains the modes to the author.
@@ -63,7 +64,7 @@ formatting in ways that violate it to make an error go away.
 - Never ship the author's prose to the shared registry; only a profile (or
   class machinery), only with consent.
 - Never hand-edit the vendored class files in `thesis-class/` or a shipped
-  profile; institution rules go in a profile. `python3 thesis-class/sync.py
+  profile; institution rules go in a profile. `python3 <book folder>/thesis-class/sync.py
   check` shows what differs from the registry.
 - Build from committed class files only. Never make `build-thesis.yml` fetch
   from the registry: the committed copy pins the author's class version.
