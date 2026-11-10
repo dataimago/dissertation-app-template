@@ -51,6 +51,11 @@ purpose, so Cursor's own Bugbot never applies them to an author's dissertation.
 - CI builds from committed files only: a build step that fetches a class or
   profile at build time is a defect. The build engine is LuaLaTeX (the class's
   `engine`), with XeLaTeX only as the untagged fallback.
+- TeX Live is pinned: `TL_SNAPSHOT`, `TL_INSTALLER_SHA512` and `TL_TLPDB_SHA512`
+  in `build-thesis.yml`'s Install TeX Live step equal `tools/texlive-pin.txt` in
+  the registry (bumped there first). The installer is downloaded to a file and
+  checked before it is unpacked, and `install-tl` and `tlmgr` use only the
+  snapshot. Flag an install from the current CTAN mirror and an unchecked download.
 
 ## P1 — spec
 
