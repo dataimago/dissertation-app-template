@@ -148,7 +148,7 @@ any of it on.
 ### While your repositories are private
 
 A private repository is visible only to you and the people you invite
-(Settings → Collaborators). Four things follow from that.
+(Settings → Collaborators). Five things follow from that.
 
 - **GitHub Pages needs a public repository on GitHub's free plan.** A private
   repository can have a Pages site only on a paid plan (GitHub Pro, Team or
@@ -159,9 +159,12 @@ A private repository is visible only to you and the people you invite
   either make this repository public (Settings → General → Danger Zone → Change
   visibility), or, on a paid plan, add a repository variable named
   `PUBLISH_PAGES_FROM_PRIVATE` with the value `true` (Settings → Secrets and
-  variables → Actions → Variables). If you make a public repository private
-  again, check Settings → Pages: on a paid plan a site already published can
-  stay up until you unpublish it there.
+  variables → Actions → Variables). The value must be exactly `true`.
+- **Making a repository private does not undo publishing.** On a paid plan, a
+  site that is already published stays on the public web after you switch the
+  repository to private: unpublish it yourself (Settings → Pages). The switch
+  does not clear `PUBLISH_PAGES_FROM_PRIVATE` either, so if you set it, the next
+  push publishes again until you delete the variable.
 - **The landing page's links assume public repositories.** "Thesis PDF" and
   "Methodology & package site" on this app's landing page (`src/app/page.tsx`)
   assume the manuscript repository is public and its Pages site is published.
@@ -184,8 +187,9 @@ A private repository is visible only to you and the people you invite
   nothing; the rest of the repository works as before.
 
 **Limits on the free plan.** For private repositories, GitHub's free plan
-includes 2,000 minutes of Actions a month and 500 MB of storage for build
-artifacts; public repositories are not metered. The long step is the thesis
+includes a monthly allowance of Actions minutes and of storage for build
+artifacts; [GitHub's plans page](https://github.com/pricing) states the current
+amounts. Public repositories are not metered. The long step is the thesis
 build's first run, which installs TeX Live (later runs reuse a cached copy).
 The build keeps its PDF artifact for 7 days, and a push build also commits the
 PDF to `docs/thesis.pdf`, which is the copy to rely on. Your usage so far is
