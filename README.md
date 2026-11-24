@@ -168,15 +168,18 @@ A private repository is visible only to you and the people you invite
 - **The landing page's links assume public repositories.** "Thesis PDF" and
   "Methodology & package site" on this app's landing page (`src/app/page.tsx`)
   assume the manuscript repository is public and its Pages site is published.
-  For an R-package dissertation, both links point at the package's Pages site,
-  which does not exist while the package repository is private: they are dead
-  for everyone, you included. Only the small "direct download" link beside the
-  PDF points at the repository itself, and it works for someone signed in to
-  GitHub with access to that repository. For a content-only dissertation there
+  For an R-package dissertation, both links point at the package's Pages site.
+  They work only once that site is published, and then for everyone, because a
+  Pages site is public. A private package repository publishes it only on a
+  paid plan and only if you opted in there; otherwise the site does not exist
+  and both links are dead for everyone, you included. The small "direct
+  download" link beside the PDF points at the repository itself, and it works
+  for someone signed in to GitHub with access to that repository. For a content-only dissertation there
   is no site link, and "Thesis PDF" and "direct download" both point at this
   repository, so both work for a signed-in person with access and for no one
-  else. If you deploy the app while the repository is private, remove the
-  links your readers cannot open from `src/app/page.tsx`.
+  else. Before you deploy the app, open each link in a browser window where
+  you are signed out of GitHub, and remove from `src/app/page.tsx` the ones
+  that do not open.
 - **A private R package needs a token for one workflow.** `generate.yml` reads
   your R package's source, and the token GitHub gives a workflow reads only its
   own repository. Create a fine-grained personal access token with
