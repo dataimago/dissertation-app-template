@@ -24,7 +24,7 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 
 **3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder with your AI. In Claude Code, run **`/ingest`**; in any other tool (Codex, opencode, Cursor, ChatGPT with folder access), ask it: *"Read `.claude/skills/ingest/SKILL.md` and follow it."* Either way it is the same procedure. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
 
-- **Brought a finished dissertation, a folder of code, reports, data?** If it might contain anything private (names, addresses, identifiers), make this repository private on GitHub **first**. Then copy all of it into `raw/inbox/` — as it is, no sorting; the inbox is gitignored, so nothing is committed until `/ingest` has sorted it — and run `/ingest`. It sorts everything, keeps anything private out of git (`raw/private/`, and it will tell you if it found any), and writes `raw/MANIFEST.md`. Then run **`/import-manuscript`**: it turns your dissertation's sources (`.tex`, `.Rnw`, `.docx`; PDF as a last resort) into editable chapters, as **version 1.0** — the originals in `raw/manuscript/` stay locked and untouched.
+- **Brought a finished dissertation, a folder of code, reports, data?** If it might contain anything private (names, addresses, identifiers), check this repository's visibility **first** (it is shown beside the repository's name on GitHub); if it is public, make it private (Settings → General → Danger Zone → Change visibility). Then copy all of it into `raw/inbox/` — as it is, no sorting; the inbox is gitignored, so nothing is committed until `/ingest` has sorted it — and run `/ingest`. It sorts everything, keeps anything private out of git (`raw/private/`, and it will tell you if it found any), and writes `raw/MANIFEST.md`. Then run **`/import-manuscript`**: it turns your dissertation's sources (`.tex`, `.Rnw`, `.docx`; PDF as a last resort) into editable chapters, as **version 1.0** — the originals in `raw/manuscript/` stay locked and untouched.
 - **Started fresh at dissertation.ai?** The documents you attached are already under `raw/`; `/ingest` does the rest.
 
 **4. Find where your writing lives.** Each chapter is one file.
@@ -39,7 +39,7 @@ quarto preview        # live HTML preview while you write
 quarto render --to pdf   # build the PDF locally
 ```
 
-**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations).
+**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations). While the manuscript repository is private, those links work only for people signed in to GitHub with access to it, and the methodology site does not exist; see "While your repositories are private" below.
 
 ### The submodule mental model (R-package dissertations only)
 
@@ -48,6 +48,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 ### Common problems
 
 - **`packages/r-packages/.../` is empty after cloning** — you cloned without `--recursive`. Run `git submodule update --init --recursive`.
+- **Cloning asks you to sign in, or says the repository was not found** — a private repository can be cloned only by someone signed in to GitHub with access to it, and GitHub answers "not found" to anyone else. Sign in first (`gh auth login` with the [GitHub CLI](https://cli.github.com) is the shortest way), then clone again. A private R package is a second private repository: `--recursive` needs your account to have access to both.
 - **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts; TinyTeX is not enough). On the house class (`documentclass: dataimago-thesis` in `_quarto.yml`), check that the folder holding `_quarto.yml` (`ui/www/` or `thesis/`) still has `thesis-class/`, `profiles/` (with the `.cfg` of the profile `_quarto.yml` names) and `_environment`. On your own class (`vendored`), check that the `.cls` sits beside `_quarto.yml` and that `documentclass` is its file name without `.cls`.
 - **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` for R-package dissertations, `thesis/**` for content-only ones).
 
@@ -111,7 +112,12 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 
 MIT
 
-## Deployment (optional, recommended)
+## Deployment (optional)
+
+Everything in this section puts something on the public web. A private
+repository keeps your files private; it does not make a website built from
+them private. Read "While your repositories are private" below before turning
+any of it on.
 
 - **GitHub Pages (R-package dissertations):** the R package repo publishes the
   thesis HTML book + PDF + package reference via its `quarto-publish.yml`.
@@ -121,10 +127,15 @@ MIT
   `wiki/`, `wiki-publish.yml` publishes it —
   theory and methods pages, the claim ledger, and the experiment registry — at
   `https://<you>.github.io/<this-repo>/`. Enable Pages once
-  (Settings → Pages → Source: GitHub Actions) if onboarding hasn't.
+  (Settings → Pages → Source: GitHub Actions) if onboarding hasn't. While this
+  repository is private the workflow builds and publishes nothing, and says so
+  in its run summary.
 - **Vercel (this app, optional):** import this repo at
   [vercel.com/new/import](https://vercel.com/new/import) — Next.js is
   auto-detected, no configuration needed; pushes then deploy automatically.
+  A Vercel deployment is public even when this repository is private: anyone
+  with the address sees the landing page, which shows your title, your name,
+  your institution and your chapter list.
   The landing page reads `dataimago-spec.yaml` at build time, so redeploys
   pick up spec edits. **Vercel is one host among several** — this is a
   standard Next.js app and runs anywhere Next.js runs (Netlify,
@@ -133,3 +144,44 @@ MIT
   credentials live only in YOUR repo secrets.
 - After your first `npm install`, commit the generated `package-lock.json`
   for reproducible installs.
+
+### While your repositories are private
+
+A private repository is visible only to you and the people you invite
+(Settings → Collaborators). Four things follow from that.
+
+- **GitHub Pages needs a public repository on GitHub's free plan.** A private
+  repository can have a Pages site only on a paid plan (GitHub Pro, Team or
+  Enterprise).
+- **A Pages site is public even when its repository is private.** Anyone with
+  the address can read it. For that reason `wiki-publish.yml` publishes nothing
+  from a private repository unless you opt in. To publish the knowledge base,
+  either make this repository public (Settings → General → Danger Zone → Change
+  visibility), or, on a paid plan, add a repository variable named
+  `PUBLISH_PAGES_FROM_PRIVATE` with the value `true` (Settings → Secrets and
+  variables → Actions → Variables). If you make a public repository private
+  again, check Settings → Pages: on a paid plan a site already published can
+  stay up until you unpublish it there.
+- **The landing page's links assume public repositories.** "Thesis PDF" and
+  "Methodology & package site" on this app's landing page (`src/app/page.tsx`)
+  point at the manuscript repository and at its Pages site. While that
+  repository is private, the PDF link works only for people signed in to GitHub
+  with access to it, and the site link is dead for everyone. If you deploy the
+  app before then, remove those links from `src/app/page.tsx` or expect them
+  not to work for your readers.
+- **A private R package needs a token for one workflow.** `generate.yml` reads
+  your R package's source, and the token GitHub gives a workflow reads only its
+  own repository. Create a fine-grained personal access token with
+  "Contents: read" on the package repository (your GitHub Settings → Developer
+  settings → Personal access tokens → Fine-grained tokens) and save it in this
+  repository as a secret named `SUBMODULE_TOKEN` (Settings → Secrets and
+  variables → Actions). Without it the workflow ends with a notice and changes
+  nothing; the rest of the repository works as before.
+
+**Limits on the free plan.** For private repositories, GitHub's free plan
+includes 2,000 minutes of Actions a month and 500 MB of storage for build
+artifacts; public repositories are not metered. The long step is the thesis
+build's first run, which installs TeX Live (later runs reuse a cached copy).
+The build keeps its PDF artifact for 7 days, and a push build also commits the
+PDF to `docs/thesis.pdf`, which is the copy to rely on. Your usage so far is
+shown in your GitHub account's billing settings.

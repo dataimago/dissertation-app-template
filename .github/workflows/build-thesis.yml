@@ -126,7 +126,10 @@ jobs:
         with:
           name: thesis-pdf
           path: docs/thesis.pdf
-          retention-days: 30
+          # A week, not longer: a push build also commits the PDF to docs/
+          # below, and a private repository on GitHub's free plan has 500 MB
+          # of artifact storage.
+          retention-days: 7
 
       - name: Commit rendered PDF to repo
         if: github.event_name == 'push' && hashFiles('thesis/_quarto.yml') != ''

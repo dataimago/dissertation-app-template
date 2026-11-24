@@ -49,13 +49,48 @@ jobs:
     permissions:
       contents: write
     steps:
+      # This repository only; the R package (a submodule) is fetched in the
+      # next step. GITHUB_TOKEN stays the credential for the commit-back below.
       - uses: actions/checkout@v5
         with:
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: false
+
+      # GITHUB_TOKEN reads only this repository, so it can fetch the R package
+      # only while that repository is public. For a private one, add a
+      # repository secret SUBMODULE_TOKEN: a fine-grained personal access token
+      # with "Contents: read" on the package repository. The token is passed to
+      # this one git command and is not written to any config file. When the
+      # package cannot be fetched the run ends with a notice, not a failure:
+      # nothing else in this repository depends on the generated files.
+      - name: Fetch the R package (submodule)
+        id: rpkg
+        env:
+          SUBMODULE_TOKEN: ${{ secrets.SUBMODULE_TOKEN || secrets.GITHUB_TOKEN }}
+          HAS_SUBMODULE_TOKEN: ${{ secrets.SUBMODULE_TOKEN != '' }}
+        run: |
+          if [ ! -f .gitmodules ]; then
+            echo "No .gitmodules: this dissertation has no linked R package."
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          basic=$(printf 'x-access-token:%s' "$SUBMODULE_TOKEN" | base64 | tr -d '\n')
+          echo "::add-mask::$basic"
+          if git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $basic" \
+               submodule update --init --recursive --depth 1; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "ready=false" >> "$GITHUB_OUTPUT"
+          if [ "$HAS_SUBMODULE_TOKEN" = "true" ]; then
+            echo "::notice title=The R package could not be fetched::The generator did not run. The SUBMODULE_TOKEN secret is set but could not read the package repository: check that the token has not expired and has Contents: read on that repository. Nothing was changed."
+          else
+            echo "::notice title=The R package could not be fetched::The generator did not run. If your R package repository is private, this workflow needs a repository secret named SUBMODULE_TOKEN: a fine-grained personal access token with Contents: read on the package repository (Settings → Secrets and variables → Actions). Your repository works without it. Nothing was changed."
+          fi
 
       - uses: r-lib/actions/setup-r@v2
+        if: steps.rpkg.outputs.ready == 'true'
       - uses: r-lib/actions/setup-r-dependencies@v2
+        if: steps.rpkg.outputs.ready == 'true'
         with:
           # `dataimago` is not on CRAN — install from the GitHub repo. The R
           # package is at the repo ROOT, so NO subdir (pak ref: github::owner/repo).
@@ -74,6 +109,7 @@ jobs:
       # side is fixed.
       - name: Run dataimago::ai(spec_path)
         id: ai
+        if: steps.rpkg.outputs.ready == 'true'
         continue-on-error: true
         run: |
           Rscript -e 'dataimago::ai(spec_path = "dataimago-spec.yaml")'
