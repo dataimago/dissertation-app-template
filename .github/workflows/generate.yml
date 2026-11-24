@@ -59,7 +59,10 @@ jobs:
       # only while that repository is public. For a private one, add a
       # repository secret SUBMODULE_TOKEN: a fine-grained personal access token
       # with "Contents: read" on the package repository. The token is passed to
-      # this one git command and is not written to any config file. When the
+      # this one git command and is not written to any config file. (The
+      # checkout's own GITHUB_TOKEN header lives in this repository's
+      # .git/config, which a submodule clone does not read, so the clone sends
+      # one Authorization header, not two.) When the
       # package cannot be fetched the run ends with a notice, not a failure:
       # nothing else in this repository depends on the generated files.
       - name: Fetch the R package (submodule)

@@ -39,7 +39,7 @@ quarto preview        # live HTML preview while you write
 quarto render --to pdf   # build the PDF locally
 ```
 
-**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations). While the manuscript repository is private, those links work only for people signed in to GitHub with access to it, and the methodology site does not exist; see "While your repositories are private" below.
+**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations). While the manuscript repository is private, most of those links do not work for your readers; see "While your repositories are private" below.
 
 ### The submodule mental model (R-package dissertations only)
 
@@ -164,11 +164,16 @@ A private repository is visible only to you and the people you invite
   stay up until you unpublish it there.
 - **The landing page's links assume public repositories.** "Thesis PDF" and
   "Methodology & package site" on this app's landing page (`src/app/page.tsx`)
-  point at the manuscript repository and at its Pages site. While that
-  repository is private, the PDF link works only for people signed in to GitHub
-  with access to it, and the site link is dead for everyone. If you deploy the
-  app before then, remove those links from `src/app/page.tsx` or expect them
-  not to work for your readers.
+  assume the manuscript repository is public and its Pages site is published.
+  For an R-package dissertation, both links point at the package's Pages site,
+  which does not exist while the package repository is private: they are dead
+  for everyone, you included. Only the small "direct download" link beside the
+  PDF points at the repository itself, and it works for someone signed in to
+  GitHub with access to that repository. For a content-only dissertation there
+  is no site link, and "Thesis PDF" and "direct download" both point at this
+  repository, so both work for a signed-in person with access and for no one
+  else. If you deploy the app while the repository is private, remove the
+  links your readers cannot open from `src/app/page.tsx`.
 - **A private R package needs a token for one workflow.** `generate.yml` reads
   your R package's source, and the token GitHub gives a workflow reads only its
   own repository. Create a fine-grained personal access token with
