@@ -115,5 +115,5 @@ This knowledge base is yours. Nothing here is shared upstream without your
 action. Keep restricted data out of `wiki/`: summarize structure, never
 sensitive content. If `/ingest` moved anything into `raw/private/`, check this
 repository's visibility before you push (it is shown beside the repository's
-name on GitHub); if it is public, make it private (Settings → General → Danger
-Zone → Change visibility).
+name on GitHub); if it does not say "Private", make it private (Settings →
+General → Danger Zone → Change visibility).
