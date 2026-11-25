@@ -66,7 +66,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 | Your sources and materials | `raw/` — then run `/ingest` |
 | Your knowledge base | `wiki/` — the AI maintains it from `raw/`; you own it (see `KNOWLEDGE.md`) |
 | App landing page | `src/app/page.tsx` |
-| Dissertation metadata (title, committee, ...) | `dataimago-spec.yaml` |
+| Dissertation metadata (title, research question, ...) | `dataimago-spec.yaml` |
 
 After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the generated files in sync.
 
@@ -82,7 +82,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 ## Adding committee members + advisor
 
-Edit `dataimago-spec.yaml`'s `vertical.dissertation.advisors` block. The generator updates the signature page template + README.
+With the house thesis class, the names on the committee page come from the `thesis:` block in `<chapters>/_quarto.yml`: your chair under `advisors:`, the other members under `committee:`. dissertation.ai filled it in from your interview answers. Edit the names there, then commit and push the repository that holds that file: for an R-package dissertation that is the package (then commit the updated submodule pointer here), otherwise this one. `dataimago-spec.yaml`'s `advisors` block keeps a record of your interview answers; changing it does not change the names in the PDF. A `vendored` class or an older book built with `thesis.cls` has no `thesis:` block (do not add one): the names are set the way that class asks, so open the class file beside `<chapters>/_quarto.yml` (the `.cls` whose name, without `.cls`, is `documentclass` there, or `thesis.cls` on the older layout) and use the entries it defines.
 
 ## Additional information (fill in over time)
 
