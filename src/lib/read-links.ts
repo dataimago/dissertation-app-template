@@ -17,9 +17,9 @@
  * - A link that answers (2xx or a redirect) is shown.
  * - A link that answers 404 is either in a private repository or not built
  *   yet (a new repository has no PDF and no site until its first build). The
- *   repository's own page tells the two apart: 200 means public, so the link
- *   is shown and comes alive after the build, as before; anything else means
- *   the link is left out.
+ *   repository's own page tells the two apart: only a 404 there means private,
+ *   and the link is left out. Any other answer keeps the link: a public
+ *   repository's link comes alive after the build, as before.
  * - Any other answer (offline, slow, rate-limited) is unknown, and an unknown
  *   link is shown, as before. A build with no network behaves as it always did.
  */
@@ -62,10 +62,12 @@ export async function resolveReadLinks(
   ]);
 
   // Only a 404 needs the tie-breaker, and the repository page is asked once.
-  let repoPublic: Promise<boolean> | null = null;
-  const isPublic = () =>
-    (repoPublic ??= probe(args.manuscriptRepoUrl).then((s) => s === 200));
-  const keep = async (state: LinkState) => state !== 'dead' || (await isPublic());
+  // Only its own 404 means private; a redirect, a rate limit or no answer is
+  // unknown, and unknown keeps the link.
+  let repoPrivate: Promise<boolean> | null = null;
+  const isPrivate = () =>
+    (repoPrivate ??= probe(args.manuscriptRepoUrl).then((s) => s === 404));
+  const keep = async (state: LinkState) => state !== 'dead' || !(await isPrivate());
 
   const keepRaw = await keep(rawState);
   const keepPages = args.pagesUrl ? await keep(pagesState) : false;
@@ -76,23 +78,42 @@ export async function resolveReadLinks(
   return { pdfHref, directDownloadHref, pagesUrl, pdfWithheld: pdfHref === null };
 }
 
-/** The real probe: anonymous HEAD, no redirects followed, 5 s timeout. */
-export function headStatus(url: string, timeoutMs = 5000): Promise<number | null> {
+/**
+ * The real probe: anonymous HEAD, no redirects followed. It settles exactly
+ * once, by `timeoutMs` at the latest, counting DNS lookup and connect: a probe
+ * that never answers is unknown (null) and must not hold up the build.
+ * `requestFn` is node:https `request`; tests pass a stand-in.
+ */
+export function headStatus(
+  url: string,
+  timeoutMs = 5000,
+  requestFn: typeof request = request,
+): Promise<number | null> {
   return new Promise((resolve) => {
+    let req: ReturnType<typeof request> | undefined;
+    let settled = false;
+    const settle = (status: number | null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      if (status === null) req?.destroy(new Error('link probe gave up'));
+      resolve(status);
+    };
+    const deadline = setTimeout(() => settle(null), timeoutMs);
     try {
-      const req = request(
+      req = requestFn(
         url,
         { method: 'HEAD', headers: { 'User-Agent': 'dissertation-landing-page' }, timeout: timeoutMs },
         (res) => {
           res.resume();
-          resolve(res.statusCode ?? null);
+          settle(res.statusCode ?? null);
         },
       );
-      req.on('timeout', () => req.destroy());
-      req.on('error', () => resolve(null));
+      req.on('timeout', () => settle(null));
+      req.on('error', () => settle(null));
       req.end();
     } catch {
-      resolve(null);
+      settle(null);
     }
   });
 }

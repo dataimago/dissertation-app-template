@@ -2,7 +2,8 @@
 // Every probe is a stub: these tests never touch the network.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { resolveReadLinks } from '../src/lib/read-links.ts';
+import { EventEmitter } from 'node:events';
+import { headStatus, resolveReadLinks } from '../src/lib/read-links.ts';
 
 const REPO = 'https://github.com/jane/janepkg';
 const RAW = `${REPO}/raw/main/docs/thesis.pdf`;
@@ -85,10 +86,39 @@ test('rate-limited or failing answers are unknown and shown', async () => {
   assert.equal(links.pagesUrl, PAGES);
 });
 
-test('a dead link whose repository page cannot be read is left out', async () => {
-  const { probe } = stub({ [RAW]: 404, [PAGES]: 200 }); // repository page: no answer
-  const links = await resolveReadLinks({ manuscriptRepoUrl: REPO, pagesUrl: PAGES }, probe);
-  assert.equal(links.directDownloadHref, null);
-  assert.equal(links.pagesUrl, PAGES);
-  assert.equal(links.pdfHref, `${PAGES}thesis.pdf`);
+test('only a 404 from the repository page means private: any other answer keeps the link', async () => {
+  for (const repoStatus of [null, 301, 302, 403, 429, 500]) {
+    const { probe } = stub({ [RAW]: 404, [PAGES]: 404, ...(repoStatus === null ? {} : { [REPO]: repoStatus }) });
+    const links = await resolveReadLinks({ manuscriptRepoUrl: REPO, pagesUrl: PAGES }, probe);
+    assert.equal(links.directDownloadHref, RAW, `repository answered ${repoStatus}`);
+    assert.equal(links.pagesUrl, PAGES, `repository answered ${repoStatus}`);
+    assert.equal(links.pdfWithheld, false, `repository answered ${repoStatus}`);
+  }
+});
+
+// A stand-in for node:https request(): never connects, never answers.
+function silentRequest() {
+  const req = new EventEmitter();
+  req.end = () => {};
+  req.destroy = () => {};
+  return req;
+}
+
+test('a probe that never answers settles as unknown (null) at its deadline', async () => {
+  const started = Date.now();
+  const status = await headStatus('https://example.invalid/', 50, silentRequest);
+  assert.equal(status, null);
+  assert.ok(Date.now() - started < 1000, 'settled near the deadline');
+});
+
+test('a socket timeout settles the probe once, as unknown', async () => {
+  let req;
+  const requestFn = () => {
+    req = silentRequest();
+    return req;
+  };
+  const pending = headStatus('https://example.invalid/', 5000, requestFn);
+  req.emit('timeout');
+  req.emit('error', new Error('late error after timeout'));
+  assert.equal(await pending, null);
 });
