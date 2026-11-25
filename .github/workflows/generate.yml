@@ -4,7 +4,15 @@ name: Generate (dataimago::ai)
 # incl. discover.json + mcp-schema.json, packages/shared-utils/src/types.ts,
 # optional R/api.R) from the current `dataimago-spec.yaml` + R package source.
 #
-# Triggers on pushes that change the spec or the R package (and manually).
+# Triggers on pushes that change the spec or move the R package's submodule
+# pointer (and manually). The R package is a submodule, so this repository
+# never sees the package's files change: a push records only a new commit for
+# the gitlink at `packages/r-packages/<package>`, and GitHub lists that one
+# path as changed. `packages/r-packages/*` matches it; a pattern reaching into
+# the package (`**/R/**`, `**/DESCRIPTION`) never matches anything. A pointer
+# moves when the author commits it here, so the generator runs on each new
+# version of the package they take in, whether or not its R code changed; it
+# commits only when its output differs.
 # Enabled in D.2.3.b, once `dataimago::ai(spec_path)` shipped in the
 # `dataimago/dataimago` R package. The bot's commit carries `[skip ci]` so its
 # own push doesn't retrigger this workflow.
@@ -14,8 +22,7 @@ on:
     branches: [main]
     paths:
       - 'dataimago-spec.yaml'
-      - 'packages/r-packages/**/R/**'
-      - 'packages/r-packages/**/DESCRIPTION'
+      - 'packages/r-packages/*'
   workflow_dispatch: {}
 
 jobs:
