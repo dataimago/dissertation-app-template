@@ -18,9 +18,10 @@ Then open this repository in an AI-enabled editor and run **`/ingest`**. It will
 pushed — not by you, not by the AI — until `/ingest` has sorted it into
 `raw/<category>/`, and anything it sets aside in `raw/private/` stays out of
 git for good. Never force-add (`git add -f`) anything in it. (This guide lives outside the folder, so a README in what you copy can never replace it and become committable.) If your folder
-*might* contain anything with names, addresses or other identifiers, **make
-this repository private on GitHub before you push anything** (Settings →
-General → Danger Zone → Change visibility); `/ingest` will tell you if it
+*might* contain anything with names, addresses or other identifiers, **check
+this repository's visibility before you push anything** (it is shown beside
+the repository's name on GitHub); if it is public, make it private (Settings →
+General → Danger Zone → Change visibility). `/ingest` will tell you if it
 found such material, but git history is not undone by a later move.
 
 Nothing in `raw/inbox/` is read by anything until you run `/ingest`. When
