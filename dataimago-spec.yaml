@@ -37,7 +37,14 @@ source:
     name: PLACEHOLDER-thesis-rpkg
     submoduleUrl: "https://github.com/your-github-username/PLACEHOLDER-thesis-rpkg"
     submodulePath: "packages/r-packages/PLACEHOLDER-thesis-rpkg"
-    quartoRoot: "ui/www"
+  referencedRepo: null
+  # Where the thesis book lives (src/lib/manuscript-home.ts). repo: app (this
+  # repository; path thesis), package (a new R package dissertation.ai created;
+  # path ui/www) or referenced (an existing whole-dissertation repository). An
+  # existing R package the author linked is never written in: repo app.
+  quartoHome:
+    repo: app
+    path: thesis
 
 vertical:
   dissertation:

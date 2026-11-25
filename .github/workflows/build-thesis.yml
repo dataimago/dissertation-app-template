@@ -1,16 +1,18 @@
 name: Build thesis PDF
 #
-# Content-only (no-R) dissertations host the thesis bundle directly in this app
-# repo's `thesis/` (provisioned by dissertation.ai from the canonical rpkg
+# Content-only (no-R) dissertations, and an author who connected an existing R
+# package (which is never written in), host the thesis bundle directly in this
+# app repo's `thesis/` (provisioned by dissertation.ai from the canonical rpkg
 # template). The build is pure Quarto + LuaLaTeX — no R — so this is the rpkg
 # template's build-thesis.yml minus the R setup steps, working in `thesis/`:
 # Quarto + LuaLaTeX on a CTAN TeX Live, building the house class (thesis/thesis-class/)
 # with the profile `thesis.profile` names (thesis/profiles/). Keep the TeX Live and
 # font steps equal to the rpkg template's.
 #
-# R-bearing dissertations build their PDF in the R package instead; they never
-# populate `thesis/`, so the `thesis/**` path trigger never fires here and the
-# real steps are additionally guarded on `thesis/` existing.
+# A book in a new R package (source.quartoHome repo: package) builds its PDF in
+# the package instead; it never populates `thesis/`, so the `thesis/**` path
+# trigger never fires here and the real steps are additionally guarded on
+# `thesis/` existing.
 #
 on:
   push:
