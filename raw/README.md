@@ -16,8 +16,9 @@ again whenever you add material.
 - **From dissertation.ai onboarding** — the documents you attached during the
   interview land in the category directories below.
 - **From your own folders** — if you came with a finished dissertation, a
-  folder of analysis, reports, slides, data: make the repository private on
-  GitHub first if the folder might hold anything private, then copy all of it
+  folder of analysis, reports, slides, data: if the folder might hold anything
+  private, check the repository's visibility first (it is shown beside the
+  repository's name on GitHub) and make it private if it does not say "Private", then copy all of it
   into **`raw/inbox/`** after cloning (see `raw/INBOX.md`; the inbox
   is gitignored, so nothing is committed until it has been sorted) and run
   `/ingest`. It sorts everything into the categories, keeps anything private
@@ -38,7 +39,7 @@ again whenever you add material.
 | `background/` | Reports, talks (as PDF), blog posts, course readings, methodological references that shape your thinking but aren't cited. |
 | `thesis-formatting/` | Your institution's formatting guidelines. Used to adapt the `house` profile when `classFile.type` is `generated`: `/thesis-format` turns it into a profile for the house thesis class that you check against the guide, and `thesis.profile` in the book's `_quarto.yml` makes your PDF follow it. |
 | `data/` | Data files. They are **listed and characterised from their headers only** — never opened further, never summarized in `wiki/`. |
-| `private/` | Anything with names, addresses, identifiers, or that you flag. **Gitignored; the AI is denied from reading it.** If `/ingest` put anything here, make this repository private before you push. |
+| `private/` | Anything with names, addresses, identifiers, or that you flag. **Gitignored; the AI is denied from reading it.** If `/ingest` put anything here, check this repository's visibility before you push; if it does not say "Private", make it private. |
 | `MANIFEST.md` | What you brought, where each item went, what was set aside and why. Written by `/ingest`. |
 | `inventory/` | `corpus-inventory.yaml` — every claim `/ingest` made about your material, each with its evidence and a confidence, and the list of gaps (what is missing and why it matters). |
 

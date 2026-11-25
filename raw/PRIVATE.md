@@ -8,5 +8,7 @@ from reading it (`.claude/settings.json`).
 
 What is here is listed by name in `raw/MANIFEST.md` and in the repo's
 `.dataimago/content.yaml` `containment[]`, so the knowledge base knows these
-files exist and never opens them. If any file was moved here, make this
-repository **private** on GitHub before you push anything else.
+files exist and never opens them. If any file was moved here, check this
+repository's visibility before you push anything else (it is shown beside the
+repository's name on GitHub); if it does not say "Private", make it private
+(Settings → General → Danger Zone → Change visibility).
