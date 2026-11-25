@@ -23,9 +23,13 @@ jobs:
     if: github.repository != 'dataimago/dissertation-app-template'
     runs-on: ubuntu-latest
     steps:
+      # No submodules: typecheck, lint and ingest:check read nothing under
+      # packages/r-packages/. Fetching the R package here would also fail when
+      # its repository is private, because GITHUB_TOKEN reads only this
+      # repository.
       - uses: actions/checkout@v5
         with:
-          submodules: recursive
+          submodules: false
 
       - uses: actions/setup-node@v4
         with:

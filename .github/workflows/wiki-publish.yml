@@ -5,6 +5,13 @@ name: Publish Knowledge Base
 # tokens-neutral-sibling ADR. No-ops cleanly when wiki/ has no content yet
 # (fresh template repos: the knowledge base publishes once your AI assistant
 # seeds wiki/ by running /ingest — see KNOWLEDGE.md).
+#
+# A GitHub Pages site is on the public web even when its repository is private.
+# So while this repository is private, nothing is built or published unless you
+# opt in: set the repository variable PUBLISH_PAGES_FROM_PRIVATE to `true`
+# (Settings → Secrets and variables → Actions → Variables). On GitHub's free
+# plan a private repository cannot have a Pages site at all; there, make the
+# repository public to publish. A public repository publishes as before.
 
 on:
   push:
@@ -28,50 +35,66 @@ jobs:
       contents: read
     outputs:
       has_wiki: ${{ steps.gate.outputs.has_wiki }}
+      publish: ${{ steps.gate.outputs.publish }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
       - name: Check for wiki content
         id: gate
+        env:
+          # 'true' or 'false' from the event that started this run. Anything
+          # else (a missing value) is treated as private.
+          REPO_PRIVATE: ${{ github.event.repository.private }}
+          PUBLISH_PAGES_FROM_PRIVATE: ${{ vars.PUBLISH_PAGES_FROM_PRIVATE }}
         run: |
           if [ -f wiki/index.md ] && [ -f wiki/_quarto.yml ]; then
             echo "has_wiki=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_wiki=false" >> "$GITHUB_OUTPUT"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
             echo "No wiki content yet - skipping publish."
+            exit 0
+          fi
+          if [ "$REPO_PRIVATE" = "false" ] || [ "$PUBLISH_PAGES_FROM_PRIVATE" = "true" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Knowledge base not published::This repository is private, and a GitHub Pages site is public to anyone with its address, so nothing was built or published. To publish the knowledge base, make the repository public, or (on a paid GitHub plan) set the repository variable PUBLISH_PAGES_FROM_PRIVATE to true under Settings → Secrets and variables → Actions → Variables."
           fi
 
       - name: Setup Quarto
-        if: steps.gate.outputs.has_wiki == 'true'
+        if: steps.gate.outputs.publish == 'true'
         uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Setup R
-        if: steps.gate.outputs.has_wiki == 'true'
+        if: steps.gate.outputs.publish == 'true'
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 'release'
           use-public-rspm: true
 
       - name: Install chunk dependencies
-        if: steps.gate.outputs.has_wiki == 'true'
+        if: steps.gate.outputs.publish == 'true'
         run: Rscript -e 'install.packages(c("knitr", "rmarkdown", "yaml"))'
 
       - name: Render knowledge base
-        if: steps.gate.outputs.has_wiki == 'true'
+        if: steps.gate.outputs.publish == 'true'
         run: |
           cd wiki
           quarto render
 
       - name: Upload Pages artifact
-        if: steps.gate.outputs.has_wiki == 'true'
+        if: steps.gate.outputs.publish == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: wiki/_site
 
   deploy:
     needs: build-site
-    if: needs.build-site.outputs.has_wiki == 'true'
+    # Never for a private repository unless PUBLISH_PAGES_FROM_PRIVATE opts in
+    # (the gate step above decides, and treats an unknown visibility as private).
+    if: needs.build-site.outputs.has_wiki == 'true' && needs.build-site.outputs.publish == 'true'
     runs-on: ubuntu-latest
     permissions:
       pages: write
