@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { load } from 'js-yaml';
+import { resolveReadLinks } from '@/lib/read-links';
 
 interface SpecMetadata {
   metadata: { name: string };
@@ -24,7 +25,7 @@ interface SpecMetadata {
 const linkClass =
   'text-ink-700 underline underline-offset-2 hover:text-ink-900 hover:decoration-2';
 
-export default function Home() {
+export default async function Home() {
   const spec = load(
     readFileSync(resolve(process.cwd(), 'dataimago-spec.yaml'), 'utf-8'),
   ) as SpecMetadata;
@@ -45,8 +46,13 @@ export default function Home() {
     ? `https://github.com/${githubUser}/${spec.metadata.name}`
     : (spec.source.rPackage?.submoduleUrl ??
        `https://github.com/${githubUser}/${rpkgName}`);
-  const thesisPdfRawUrl = `${manuscriptRepoUrl}/raw/main/docs/thesis.pdf`;
-  const pagesUrl = isNoR ? null : `https://${githubUser}.github.io/${rpkgName}/`;
+  // Each link is asked, at build time and anonymously, whether a reader can
+  // open it; one in a private repository is left out (src/lib/read-links.ts).
+  // Without a network the links are shown as they always were.
+  const { pdfHref, directDownloadHref, pagesUrl, pdfWithheld } = await resolveReadLinks({
+    manuscriptRepoUrl,
+    pagesUrl: isNoR ? null : `https://${githubUser}.github.io/${rpkgName}/`,
+  });
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -86,24 +92,33 @@ export default function Home() {
       <section className="mt-12">
         <h2 className="font-display text-2xl text-ink-900">Read it</h2>
         <ul className="mt-3 space-y-2 text-stone-900">
-          <li>
-            <a
-              className={linkClass}
-              href={pagesUrl ? `${pagesUrl}thesis.pdf` : thesisPdfRawUrl}
-            >
-              Thesis PDF
-            </a>{' '}
-            <span className="text-sm text-stone-700">
-              — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
-              touches <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
-              {isNoR ? '' : (
-                <>
-                  {' '}or <code className="font-mono">R/</code>
-                </>
-              )}
-              {' '}(<a className={linkClass} href={thesisPdfRawUrl}>direct download</a>)
-            </span>
-          </li>
+          {pdfHref && (
+            <li>
+              <a className={linkClass} href={pdfHref}>
+                Thesis PDF
+              </a>{' '}
+              <span className="text-sm text-stone-700">
+                — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
+                touches <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
+                {isNoR ? '' : (
+                  <>
+                    {' '}or <code className="font-mono">R/</code>
+                  </>
+                )}
+                {directDownloadHref && (
+                  <>
+                    {' '}(<a className={linkClass} href={directDownloadHref}>direct download</a>)
+                  </>
+                )}
+              </span>
+            </li>
+          )}
+          {pdfWithheld && (
+            <li className="text-stone-700">
+              The thesis PDF is not linked here because its repository is private. People with
+              access find it in that repository at <code className="font-mono">docs/thesis.pdf</code>.
+            </li>
+          )}
           {pagesUrl && (
             <li>
               <a
