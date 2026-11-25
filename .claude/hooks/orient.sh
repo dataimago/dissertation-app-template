@@ -47,10 +47,14 @@ done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
   sect == "referencedRepo" && /^    url:/ { print "referenced=1" }
 ' dataimago-spec.yaml 2>/dev/null)
 book=""; book_note=""
-# The two rules @dataimago/spec enforces (dataimago-ai#365): path relative with
-# no '..', and a referenced repository says repo: referenced.
-case "/${home_path}/" in */../*) home_bad=1 ;; esac
-case "${home_path}" in /*) home_bad=1 ;; esac
+# The rules @dataimago/spec and dataimago::validate_spec() enforce: path
+# relative to its repository (no leading / or \, no .. segment, no control
+# characters or line separators), and a referenced repository says repo:
+# referenced.
+case "${home_path}" in /*|\\*) home_bad=1 ;; esac
+case "/${home_path}/" in */../*|*\\..\\*|*/..\\*|*\\../*) home_bad=1 ;; esac
+case "${home_path}" in *[[:cntrl:]]*) home_bad=1 ;; esac
+case "${home_path}" in *$'\xe2\x80\xa8'*|*$'\xe2\x80\xa9'*) home_bad=1 ;; esac
 if [ -n "${referenced:-}" ] && [ "${home_repo:-}" != referenced ]; then home_bad=1; fi
 if [ -n "${home_set:-}" ] && [ -z "${old_root:-}" ] && [ -z "${home_bad:-}" ]; then
   case "${home_repo:-}" in

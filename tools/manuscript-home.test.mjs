@@ -49,6 +49,10 @@ test('a referenced whole-dissertation repository: as today, its working chapters
   });
 });
 
+test('a path with dots that is not a .. segment is still a path', () => {
+  assert.equal(manuscriptHome(source({ case: 'no-r', ...home({ repo: 'app', path: 'my..book/v1.0' }) })).bookFolder, 'my..book/v1.0');
+});
+
 test('path is any relative string, with the defaults when it is left out', () => {
   assert.equal(manuscriptHome(source({ case: 'no-r', ...home({ repo: 'app', path: 'book' }) })).bookFolder, 'book');
   assert.equal(manuscriptHome(source({ case: 'no-r', ...home({ repo: 'app' }) })).bookFolder, 'thesis');
@@ -77,6 +81,15 @@ test('a spec from before the beta: the one plain message, never a guess', () => 
     source({ case: 'no-r', ...home({ repo: 'app', path: '/thesis' }) }),
     source({ case: 'no-r', ...home({ repo: 'app', path: '../thesis' }) }),
     source({ case: 'retrofit', rPackage: pkg, ...home({ repo: 'package', path: 'ui/../../www' }) }),
+    // As dataimago::validate_spec() and @dataimago/spec refuse: a leading
+    // backslash, '..' between backslashes, control characters, line separators.
+    source({ case: 'no-r', ...home({ repo: 'app', path: '\\thesis' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'a\\..\\b' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'the\tsis' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'thesis\u0000' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'thesis\u007f' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'the\u2028sis' }) }),
+    source({ case: 'no-r', ...home({ repo: 'app', path: 'the\u2029sis' }) }),
   ]) {
     assert.deepEqual(manuscriptHome(s), { status: 'predates-beta' }, JSON.stringify(s));
   }

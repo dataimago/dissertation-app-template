@@ -22,8 +22,14 @@
  * `source.rPackage.quartoRoot`) is not supported: it gets the one plain message
  * in src/copy/predates-beta.txt, never a guess. So does one that breaks the two
  * rules @dataimago/spec enforces (dataimago-ai#365): a referenced repository
- * must say `repo: 'referenced'`, and `path` is relative with no `..`.
+ * must say `repo: 'referenced'`, and `path` is relative to its repository: no
+ * leading `/` or `\`, no `..` segment, no control characters or line
+ * separators (RELATIVE_PATH, the same pattern as @dataimago/spec's and
+ * dataimago::validate_spec()'s).
  */
+// eslint-disable-next-line no-control-regex -- refusing control characters is the point
+const RELATIVE_PATH = /^(?![/\\])(?!(?:.*[/\\])?\.\.(?:[/\\]|$))[^\u0000-\u001f\u007f\u2028\u2029]+$/;
+
 export const HOME_FIELD = 'quartoHome';
 
 export interface SpecSource {
@@ -54,7 +60,7 @@ export function manuscriptHome(source: SpecSource): ManuscriptHome {
   const home = source[HOME_FIELD] as { repo?: unknown; path?: unknown } | undefined | null;
   if (!home || typeof home !== 'object' || source.rPackage?.quartoRoot !== undefined) return PREDATES;
   const path = typeof home.path === 'string' && home.path.length > 0 ? home.path : null;
-  if (path !== null && (path.startsWith('/') || path.split('/').includes('..'))) return PREDATES;
+  if (path !== null && !RELATIVE_PATH.test(path)) return PREDATES;
   if (source.referencedRepo && home.repo !== 'referenced') return PREDATES;
   switch (home.repo) {
     case 'app':

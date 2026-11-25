@@ -92,6 +92,10 @@ test('a spec from before the beta: the one plain message, and no folder named', 
     spec({ kind: 'extension', referenced: true, home: ['repo: app', 'path: thesis'] }),
     spec({ kind: 'no-r', home: ['repo: app', 'path: /thesis'] }),
     spec({ kind: 'no-r', home: ['repo: app', 'path: ../thesis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: \\thesis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: a\\..\\b'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: the\tsis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: the\u2028sis'] }),
   ]) {
     const out = orient(s, { dirs: ['thesis/chapters'] });
     assert.ok(out.includes(MESSAGE), out);
