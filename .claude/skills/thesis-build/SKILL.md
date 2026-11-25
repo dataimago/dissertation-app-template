@@ -144,7 +144,8 @@ of "Steps" above. A routine build never runs these steps.
    in the house class files in `thesis-class/` or the shipped profile: using them as-is is what `shipped` means.
 10. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
    on a branch and propose them as a pull request: in this repository for a
-   `thesis/` book (`thesis/...` paths); for a new R package, first in the
+   book here (`<book folder>/...` paths, the folder "Where things are" gives); for
+   a new R package (`quartoHome.repo: package`), first in the
    package's own repository and then the submodule-pointer pull request here, with
    the same commands as `thesis-format` Step 6 (`git -C packages/r-packages/<name> ...`,
    then the pointer). Ask before touching the package repository. Either way, naming the profile `id`, the
