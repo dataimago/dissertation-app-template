@@ -83,9 +83,7 @@ author dropped is untracked until you move it: only files placed in a
 category become trackable, on the author's next commit, and `raw/private/`
 never does. Do not commit or push during this step. If anything went to
 `raw/private/`, check the repository's visibility (`gh repo view --json
-visibility`, or the label beside the repository's name on GitHub); if it is
-public, or you cannot tell, the report's first sentence asks the author to
-make it private before they push at all.
+visibility`); the report's first sentence depends on what it says (below).
 
 Then write **`raw/MANIFEST.md`**: the table from its template, one row per
 item as the author brought it — class, new location, kept in git (yes / no:
@@ -93,11 +91,18 @@ private / no: byproduct / no: too large), why. Set `Status:` and `Last ingest:`
 at the top. If anything went to `raw/private/`, append each path to
 `.dataimago/content.yaml` → `spec.containment[]` (create the block if absent).
 Then put one sentence at the top of the report, by what the visibility check
-found. Public: **this repository is public: make it private before you push**
-(Settings → General → Danger Zone → Change visibility). Could not tell:
-**check that this repository is private before you push** (the label beside
-its name on GitHub). Private: say that the set-aside files stay out of git and
-the repository is private, so there is nothing to change.
+found:
+
+- `PUBLIC`: **this repository is public: make it private before you push**
+  (Settings → General → Danger Zone → Change visibility).
+- `INTERNAL`: **this repository is visible to everyone in your organization:
+  make it private before you push** (same place).
+- The check failed or gave anything else: **check that this repository is
+  private before you push** (the label beside its name on GitHub; if it is not
+  "Private", change it in Settings → General → Danger Zone → Change
+  visibility).
+- `PRIVATE`: the set-aside files stay out of git and the repository is
+  private, so its visibility needs no change.
 
 ## 2. Inventory
 
