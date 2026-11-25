@@ -82,7 +82,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 ## Adding committee members + advisor
 
-Edit the `thesis:` block in `<chapters>/_quarto.yml`: it is the one place the title page and the committee page are read from. dissertation.ai filled it in from your interview answers; `dataimago-spec.yaml`'s `advisors` block keeps a record of those answers and does not change the PDF.
+With the house thesis class, the names on the committee page come from the `thesis:` block in `<chapters>/_quarto.yml`: your chair under `advisors:`, the other members under `committee:`. dissertation.ai filled it in from your interview answers. Edit the names there, then commit and push the repository that holds that file: for an R-package dissertation that is the package (then commit the updated submodule pointer here), otherwise this one. `dataimago-spec.yaml`'s `advisors` block keeps a record of your interview answers; changing it does not change the names in the PDF. A `vendored` class or an older book built with `thesis.cls` has no `thesis:` block: its names are wherever that class reads them.
 
 ## Additional information (fill in over time)
 
