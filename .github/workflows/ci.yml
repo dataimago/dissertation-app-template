@@ -1,8 +1,8 @@
 name: CI
 #
-# Runs typecheck + lint on every push + PR.
+# Runs typecheck + lint on every push + PR, and the landing page's link test.
 #
-# **Skipped on the template repo itself** (`dataimago/dissertation-app-template`).
+# **typecheck is skipped on the template repo itself** (`dataimago/dissertation-app-template`).
 # The template ships placeholders ({{user.name}}, etc.) that don't pass
 # `tsc --noEmit` or `eslint`. CI runs in user-derived repos once
 # `/api/generate` has substituted real values into the placeholders.
@@ -45,3 +45,17 @@ jobs:
       # turn your first commit red. Un-ingested files show as a warning.
       - name: Ingestion completeness (reminder)
         run: npm run ingest:check || echo "::warning title=Run /ingest::Some files in raw/ are not in your knowledge base yet. Run /ingest (see KNOWLEDGE.md)."
+
+  # The landing page's link check (src/lib/read-links.ts). Runs on the template
+  # repository too: the test reads no placeholder, needs no install (Node runs
+  # the TypeScript module directly) and never touches the network.
+  landing-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm test
