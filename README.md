@@ -66,7 +66,7 @@ Your R package is its *own* Git repository; this dissertation repo merely **poin
 | Your sources and materials | `raw/` — then run `/ingest` |
 | Your knowledge base | `wiki/` — the AI maintains it from `raw/`; you own it (see `KNOWLEDGE.md`) |
 | App landing page | `src/app/page.tsx` |
-| Dissertation metadata (title, committee, ...) | `dataimago-spec.yaml` |
+| Dissertation metadata (title, research question, ...) | `dataimago-spec.yaml` |
 
 After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the generated files in sync.
 
@@ -82,7 +82,7 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 ## Adding committee members + advisor
 
-Edit `dataimago-spec.yaml`'s `vertical.dissertation.advisors` block. The generator updates the signature page template + README.
+Edit the `thesis:` block in `<chapters>/_quarto.yml`: it is the one place the title page and the committee page are read from. dissertation.ai filled it in from your interview answers; `dataimago-spec.yaml`'s `advisors` block keeps a record of those answers and does not change the PDF.
 
 ## Additional information (fill in over time)
 
