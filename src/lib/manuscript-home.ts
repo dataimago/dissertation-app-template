@@ -45,6 +45,9 @@ export type ManuscriptHome =
       inPackage: boolean;
       /** The folder that holds `_quarto.yml`, from this repository's root. */
       bookFolder: string;
+      /** The same folder inside the repository that holds it (the package's own
+       *  path for `repo: package`): what that repository's build watches. */
+      pathInRepo: string;
       /** The chapters folder, from this repository's root. */
       chapters: string;
     }
@@ -52,8 +55,13 @@ export type ManuscriptHome =
 
 const PREDATES: ManuscriptHome = { status: 'predates-beta' };
 
-function at(bookFolder: string, inPackage: boolean, status: 'ok' | 'referenced' = 'ok'): ManuscriptHome {
-  return { status, inPackage, bookFolder, chapters: `${bookFolder}/chapters` };
+function at(
+  bookFolder: string,
+  inPackage: boolean,
+  pathInRepo: string,
+  status: 'ok' | 'referenced' = 'ok',
+): ManuscriptHome {
+  return { status, inPackage, bookFolder, pathInRepo, chapters: `${bookFolder}/chapters` };
 }
 
 export function manuscriptHome(source: SpecSource): ManuscriptHome {
@@ -64,15 +72,15 @@ export function manuscriptHome(source: SpecSource): ManuscriptHome {
   if (source.referencedRepo && home.repo !== 'referenced') return PREDATES;
   switch (home.repo) {
     case 'app':
-      return at(path ?? 'thesis', false);
+      return at(path ?? 'thesis', false, path ?? 'thesis');
     case 'package': {
       const pkg = source.rPackage;
       if (!pkg) return PREDATES;
       const root = pkg.submodulePath ?? `packages/r-packages/${pkg.name}`;
-      return at(`${root}/${path ?? 'ui/www'}`, true);
+      return at(`${root}/${path ?? 'ui/www'}`, true, path ?? 'ui/www');
     }
     case 'referenced':
-      return source.referencedRepo && !source.rPackage ? at('thesis', false, 'referenced') : PREDATES;
+      return source.referencedRepo && !source.rPackage ? at('thesis', false, 'thesis', 'referenced') : PREDATES;
     default:
       return PREDATES;
   }

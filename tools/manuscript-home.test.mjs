@@ -26,6 +26,7 @@ test('the app repository (no R package, or an existing package linked): thesis/ 
       status: 'ok',
       inPackage: false,
       bookFolder: 'thesis',
+      pathInRepo: 'thesis',
       chapters: 'thesis/chapters',
     });
   }
@@ -36,6 +37,9 @@ test('a new R package the hub created: the package’s ui/www/', () => {
     status: 'ok',
     inPackage: true,
     bookFolder: 'packages/r-packages/janepkg/ui/www',
+    // The folder inside the package, which the package's own build watches
+    // (round 2 on #37: the landing page names this, not the path from here).
+    pathInRepo: 'ui/www',
     chapters: 'packages/r-packages/janepkg/ui/www/chapters',
   });
 });
@@ -45,6 +49,7 @@ test('a referenced whole-dissertation repository: as today, its working chapters
     status: 'referenced',
     inPackage: false,
     bookFolder: 'thesis',
+    pathInRepo: 'thesis',
     chapters: 'thesis/chapters',
   });
 });

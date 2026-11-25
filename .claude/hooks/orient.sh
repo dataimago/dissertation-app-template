@@ -31,7 +31,14 @@ while IFS='=' read -r key value; do
     pkg_null) pkg_null=1 ;; referenced) referenced=1 ;;
   esac
 done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
-  function val(s) { sub(/^[^:]*:[ \t]*/, "", s); sub(/[ \t]+#.*$/, "", s); gsub(/["\047]/, "", s); return s }
+  # A value as YAML reads it: one pair of surrounding quotes removed (a doubled
+  # single quote inside single quotes is one), and a # comment only outside quotes.
+  function val(s) {
+    sub(/^[^:]*:[ \t]*/, "", s)
+    if (s ~ /^"/) { sub(/^"/, "", s); sub(/"[ \t]*(#.*)?$/, "", s); return s }
+    if (s ~ /^\047/) { sub(/^\047/, "", s); sub(/\047[ \t]*(#.*)?$/, "", s); gsub(/\047\047/, "\047", s); return s }
+    sub(/[ \t]+#.*$/, "", s); sub(/[ \t]+$/, "", s); return s
+  }
   /^[ \t]*#/ { next }
   /^source:/ { src = 1; next }
   src && /^[^ \t#]/ { src = 0 }

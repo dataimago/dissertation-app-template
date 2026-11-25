@@ -119,3 +119,18 @@ test('comments inside the source block do not hide the field', () => {
   assert.ok(s.includes('# the repository'));
   assert.match(lineOf(orient(s), '## Book'), /thesis\/$/);
 });
+
+// Round 2 on #37: the hook reads a value as YAML does, so it names the same
+// folder manuscriptHome returns (js-yaml): an apostrophe is kept, one pair of
+// surrounding quotes is removed, and ' #' inside quotes is not a comment.
+import { load } from 'js-yaml';
+import { manuscriptHome } from '../src/lib/manuscript-home.ts';
+
+for (const raw of [`author's-book`, `"my #1 book"`, `'it''s mine'`, `"quoted" # a comment`, `plain # a comment`]) {
+  test(`a path written ${raw} names the folder manuscriptHome names`, () => {
+    const s = spec({ kind: 'no-r', home: ['repo: app', `path: ${raw}`] });
+    const expected = manuscriptHome(load(s).source);
+    assert.equal(expected.status, 'ok');
+    assert.equal(lineOf(orient(s), '## Book'), `## Book: ${expected.bookFolder}/`);
+  });
+}

@@ -109,12 +109,13 @@ export default async function Home() {
               </a>{' '}
               <span className="text-sm text-stone-700">
                 — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
-                touches <code className="font-mono">{home.status === 'predates-beta' ? '' : `${home.bookFolder}/`}</code>
+                touches <code className="font-mono">{home.status === 'predates-beta' ? '' : `${home.pathInRepo}/`}</code>
                 {!inPackage ? '' : (
                   <>
                     {' '}or <code className="font-mono">R/</code>
                   </>
-                )}
+                )}{' '}
+                in {inPackage ? 'your R package' : 'this repository'}
                 {directDownloadHref && (
                   <>
                     {' '}(<a className={linkClass} href={directDownloadHref}>direct download</a>)
