@@ -7,10 +7,17 @@
 # else in the repository is the author's own work. This file says nothing
 # about it and gives nobody a right to reuse it.
 #
-# The lists name files one by one. They never name a whole folder the author
-# writes in, so a file the author adds is not covered. Two files that came
-# from the template are left out because they hold the author's own project
-# record: dataimago-spec.yaml and raw/MANIFEST.md.
+# The lists name files one by one, with no wildcards, so a file the author
+# adds is never covered. Two files that came from the template are left out
+# because they hold the author's own project record: dataimago-spec.yaml and
+# raw/MANIFEST.md.
+#
+# An entry stays true only while the file is still the template's. If you
+# replace a listed file with your own (writing/STYLE.md with your own style
+# guide, say), delete its line here. If you add your own material to one
+# (your rules in wiki/assets/site.scss), the template's part stays MIT and
+# your part is yours; a copyright and licence header at the top of the file
+# says so and wins over the entry here.
 #
 # `precedence` is left at its default (`closest`), so a licence header an
 # author puts in a file wins over the entry for that file here.
@@ -81,8 +88,15 @@ path = [
   "wiki/registry.qmd",
   "writing/README.md",
   "writing/STYLE.md",
+  "wiki/assets/fonts/cyrillic-ext/fonts.css",
+  "wiki/assets/fonts/cyrillic/fonts.css",
+  "wiki/assets/fonts/greek-ext/fonts.css",
+  "wiki/assets/fonts/greek/fonts.css",
   "wiki/assets/fonts/lang.css",
-  "wiki/assets/fonts/*/fonts.css",
+  "wiki/assets/fonts/latin-ext/fonts.css",
+  "wiki/assets/fonts/latin/fonts.css",
+  "wiki/assets/fonts/math/fonts.css",
+  "wiki/assets/fonts/vietnamese/fonts.css",
 ]
 SPDX-FileCopyrightText = "2026 dataimago"
 SPDX-License-Identifier = "MIT"
@@ -91,8 +105,43 @@ SPDX-License-Identifier = "MIT"
 # dataimago's: the SIL Open Font License 1.1 is in LICENSES/OFL-1.1.txt.
 [[annotations]]
 path = [
-  "wiki/assets/fonts/*/*.woff2",
-  "wiki/assets/fonts/*/OFL-*.txt",
+  "wiki/assets/fonts/cyrillic-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/cyrillic-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans.woff2",
+  "wiki/assets/fonts/cyrillic/OFL-NotoSans.txt",
+  "wiki/assets/fonts/cyrillic/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/cyrillic/noto-sans-italic.woff2",
+  "wiki/assets/fonts/cyrillic/noto-sans-mono.woff2",
+  "wiki/assets/fonts/cyrillic/noto-sans.woff2",
+  "wiki/assets/fonts/greek-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/greek-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/greek-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/greek-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/greek-ext/noto-sans.woff2",
+  "wiki/assets/fonts/greek/OFL-NotoSans.txt",
+  "wiki/assets/fonts/greek/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/greek/noto-sans-italic.woff2",
+  "wiki/assets/fonts/greek/noto-sans-mono.woff2",
+  "wiki/assets/fonts/greek/noto-sans.woff2",
+  "wiki/assets/fonts/latin-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/latin-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/latin-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/latin-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/latin-ext/noto-sans.woff2",
+  "wiki/assets/fonts/latin/OFL-NotoSans.txt",
+  "wiki/assets/fonts/latin/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/latin/noto-sans-italic.woff2",
+  "wiki/assets/fonts/latin/noto-sans-mono.woff2",
+  "wiki/assets/fonts/latin/noto-sans.woff2",
+  "wiki/assets/fonts/math/OFL-NotoSansMath.txt",
+  "wiki/assets/fonts/math/noto-sans-math.woff2",
+  "wiki/assets/fonts/vietnamese/OFL-NotoSans.txt",
+  "wiki/assets/fonts/vietnamese/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/vietnamese/noto-sans-italic.woff2",
+  "wiki/assets/fonts/vietnamese/noto-sans-mono.woff2",
+  "wiki/assets/fonts/vietnamese/noto-sans.woff2",
 ]
 SPDX-FileCopyrightText = "2022 The Noto Project Authors"
 SPDX-License-Identifier = "OFL-1.1"
