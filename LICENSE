@@ -2,8 +2,24 @@ MIT License
 
 Copyright (c) 2026 dataimago
 
+Scope. In this license, "the Software" means only the files that dataimago
+publishes in its dissertation-app-template repository
+(https://github.com/dataimago/dissertation-app-template), in the form
+published there, wherever copies of them appear in this repository. That is
+the application shell, the agent harness, the build and publishing workflows,
+and the starter pages the template ships.
+
+"The Software" does not include the work of this repository's author: their
+writing, data, analysis, figures, the pages they write, and their changes to
+the template's files. That work belongs to its author, who alone chooses
+whether and how to license it. This license grants no right to it.
+
+"The Software" does not include third-party material, which keeps its own
+license: the fonts under wiki/assets/fonts/ are under the SIL Open Font
+License, and each font's license text sits beside it.
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+of the Software as defined above and its associated documentation files, to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
@@ -19,20 +35,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Scope: this license covers the files that came from dataimago's
-dissertation-app-template (https://github.com/dataimago/dissertation-app-template):
-the application shell, the agent harness, the build and publishing workflows,
-and the starter pages, as they stood when this repository was made from the
-template.
-
-It does not cover the work of the repository's author: their writing, data,
-analysis, figures, wiki pages, and anything else they add or change here.
-That work belongs to its author, who alone chooses whether and how to license
-it. Nothing in this file grants any right to it.
-
-It does not cover third-party material, which keeps its own license: the
-fonts under wiki/assets/fonts/ are under the SIL Open Font License, and each
-font's license text sits beside it.

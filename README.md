@@ -113,9 +113,9 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 
 ## License
 
-The files that came from the template (the app shell, the agent harness, the workflows and the starter pages) are MIT-licensed by dataimago; [`LICENSE`](LICENSE) says exactly what that covers.
+The files that came from the template (the app shell, the agent harness, the workflows and the starter pages) are MIT-licensed by dataimago. [`LICENSE`](LICENSE) defines exactly which files that means: the ones dataimago publishes in the template, as published there.
 
-Your own work in this repository (your writing, data, analysis and figures) is yours. The MIT license does not cover it, and nobody may reuse it unless you say so. If you want to license it, that is your choice to make, with your advisor and your institution's rules in mind; add a note here saying what you chose.
+Your own work in this repository (your writing, data, analysis, figures, and your changes to the template's files) is yours. `LICENSE` does not cover it, and it gives nobody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a license file of your own that names what it covers. A note in this README does not change what `LICENSE` says.
 
 ## Deployment (optional)
 
