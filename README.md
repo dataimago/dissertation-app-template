@@ -119,7 +119,9 @@ The files that came from the template are MIT-licensed by dataimago. [`REUSE.tom
 
 Your own work in this repository (your writing, data, analysis, figures and the pages you write) is yours. No file here gives anybody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
 
-A file listed in `REUSE.toml` stays listed after you change it. Two of them are places the guides send your own text: `writing/STYLE.md`, if you replace it with your own style guide, and `wiki/assets/site.scss`, if you add your own rules. When you replace a listed file with your own, delete its line from `REUSE.toml`. When you add to one, the template's part stays MIT and your part is yours; a copyright and license header at the top of the file says so, and it overrides the entry in `REUSE.toml`.
+Two template files are places the guides send your own text, so they carry their notice inside the file and are not in `REUSE.toml`: `writing/STYLE.md` and `wiki/assets/site.scss`. If you replace `writing/STYLE.md` with your own style guide, the notice goes with the text you replaced. The notice in `wiki/assets/site.scss` covers the whole file, so if you add rules and want them marked as yours, add a copyright line of your own under dataimago's.
+
+Any other listed file stays listed after you change it. If you replace one with your own, delete its line from `REUSE.toml`.
 
 ## Deployment (optional)
 

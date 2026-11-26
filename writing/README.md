@@ -7,8 +7,8 @@ under. Your `dataimago-spec.yaml` selects how it is sourced
 | Mode | What to do |
 |---|---|
 | `shipped` (default) | Nothing. `STYLE.md` is the dataimago technical writing spec, used as-is. |
-| `vendored` | Replace `STYLE.md` wholesale with your own style guide (or point `writingStyle.path` at it). |
-| `generated` | Upload exemplar prose you admire (they land in `raw/` via `context.styleExemplars`), then ask your AI assistant to distill a personal `STYLE.md` from them and approve the result before adopting it. |
+| `vendored` | Replace `STYLE.md` wholesale with your own style guide (or point `writingStyle.path` at it). The shipped file's MIT notice is inside it, so it goes when you replace the file. |
+| `generated` | Upload exemplar prose you admire (they land in `raw/` via `context.styleExemplars`), then ask your AI assistant to distill a personal `STYLE.md` from them and approve the result before adopting it. The new file is yours: it replaces the shipped one whole, and the shipped file's MIT notice does not carry over. |
 
 As with the thesis profile (see the rpkg template's `THESIS-CLS-README.md`),
 generated-mode work happens **in this repo, with your AI, at edit time** —

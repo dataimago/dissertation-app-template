@@ -1,4 +1,7 @@
 <!-- source: dataimago-design/templates/WRITING-STYLE.md@aade34e (provenance — do not edit this line; replace the whole file to vendor your own style guide) -->
+<!-- SPDX-FileCopyrightText: 2026 dataimago
+     SPDX-License-Identifier: MIT
+     This notice is for the shipped text. If you replace this file with your own style guide, it goes with the rest. -->
 
 # The dataimago technical writing spec
 

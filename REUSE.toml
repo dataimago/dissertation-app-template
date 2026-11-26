@@ -12,15 +12,17 @@
 # because they hold the author's own project record: dataimago-spec.yaml and
 # raw/MANIFEST.md.
 #
-# An entry stays true only while the file is still the template's. If you
-# replace a listed file with your own (writing/STYLE.md with your own style
-# guide, say), delete its line here. If you add your own material to one
-# (your rules in wiki/assets/site.scss), the template's part stays MIT and
-# your part is yours; a copyright and licence header at the top of the file
-# says so and wins over the entry here.
+# Two more template files carry their notice in the file itself and are not
+# listed here, because the guides send the author's own text to them:
+# writing/STYLE.md and wiki/assets/site.scss. Replacing either file removes
+# the notice with the template's text.
 #
-# `precedence` is left at its default (`closest`), so a licence header an
-# author puts in a file wins over the entry for that file here.
+# An entry here stays true only while the file is still the template's. If
+# you replace a listed file with your own, delete its line.
+#
+# `precedence` is left at its default (`closest`): a copyright and licence
+# header inside a file replaces the entry for that file here, for the whole
+# file.
 
 version = 1
 
@@ -83,11 +85,9 @@ path = [
   "wiki/assets/a11y-skip-link.html",
   "wiki/assets/neutral-dark.scss",
   "wiki/assets/neutral-light.scss",
-  "wiki/assets/site.scss",
   "wiki/claims.qmd",
   "wiki/registry.qmd",
   "writing/README.md",
-  "writing/STYLE.md",
   "wiki/assets/fonts/cyrillic-ext/fonts.css",
   "wiki/assets/fonts/cyrillic/fonts.css",
   "wiki/assets/fonts/greek-ext/fonts.css",
