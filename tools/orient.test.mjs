@@ -116,7 +116,7 @@ test('any other book folder: the unsupported-folder message, and no folder named
     spec({ kind: 'no-r', home: ['repo: app', "path: author's-book"] }),
     spec({ kind: 'no-r', home: ['repo: app', 'path: "my #1 book"'] }),
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: book'] }),
-    spec({ kind: 'extension', referenced: true, home: ['repo: referenced', 'path: thesis'] }),
+    spec({ kind: 'extension', referenced: true, home: ['repo: referenced', 'path: book'] }),
     // The package folder: relative by the path rule, never at or under raw/.
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: '../raw/private' }),
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: 'raw/janepkg' }),
@@ -134,9 +134,23 @@ test('any other book folder: the unsupported-folder message, and no folder named
   }
 });
 
-test('the package fallback packages/r-packages/<name> is used when submodulePath is absent', () => {
-  const out = orient(spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: null }));
-  assert.match(lineOf(out, '## Book'), /packages\/r-packages\/janepkg\/ui\/www\/$/);
+test('the package fallback packages/r-packages/<name> is used when submodulePath is unset: absent, null, ~ or empty', () => {
+  for (const submodulePath of [null, 'null', '~', '""', "''", '']) {
+    const out = orient(spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath }));
+    assert.match(lineOf(out, '## Book'), /: packages\/r-packages\/janepkg\/ui\/www\/$/, String(submodulePath));
+  }
+});
+
+test('a referenced repository with path: thesis is the referenced book, as with no path', () => {
+  const out = orient(spec({ kind: 'extension', referenced: true, home: ['repo: referenced', 'path: thesis'] }), { dirs: ['thesis/chapters'] });
+  assert.match(lineOf(out, '## Book'), /referenced repository/);
+  assert.match(lineOf(out, 'derivative chapters'), /thesis\/chapters$/);
+});
+
+test('a spec saved with Windows line endings (CRLF) resolves the same', () => {
+  const crlf = spec({ kind: 'no-r', home: ['repo: app', 'path: thesis'] }).replace(/\n/g, '\r\n');
+  assert.match(lineOf(orient(crlf, { dirs: ['thesis/chapters'] }), '## Book'), /: thesis\/\r?$/);
+  assert.doesNotMatch(lineOf(orient(crlf), '## Book'), /\r/);
 });
 
 test('a value in the spec is read as text, never run', () => {

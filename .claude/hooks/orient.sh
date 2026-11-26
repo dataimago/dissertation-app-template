@@ -29,7 +29,7 @@ home_set=""; home_repo=""; home_path=""; home_path_set=""; pkg_path=""; pkg_name
 while IFS='=' read -r key value; do
   case "$key" in
     home_set) home_set=1 ;; home_repo) home_repo="$value" ;; home_path) home_path="$value"; home_path_set=1 ;;
-    pkg_path) pkg_path="$value" ;; pkg_name) pkg_name="$value" ;; old_root) old_root=1 ;;
+    pkg_path) case "$value" in null|"~") pkg_path="" ;; *) pkg_path="$value" ;; esac ;; pkg_name) pkg_name="$value" ;; old_root) old_root=1 ;;
     pkg_null) pkg_null=1 ;; referenced) referenced=1 ;;
   esac
 done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
@@ -41,6 +41,7 @@ done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
     if (s ~ /^\047/) { sub(/^\047/, "", s); sub(/\047[ \t]*(#.*)?$/, "", s); gsub(/\047\047/, "\047", s); return s }
     sub(/[ \t]+#.*$/, "", s); sub(/[ \t]+$/, "", s); return s
   }
+  { sub(/\r$/, "") }
   /^[ \t]*#/ { next }
   /^source:/ { src = 1; next }
   src && /^[^ \t#]/ { src = 0 }
@@ -83,7 +84,7 @@ else
       fi ;;
     referenced)
       if [ -z "$referenced" ] || [ -n "$pkg_name$pkg_path" ]; then verdict=predates
-      elif [ -n "$home_path_set" ]; then verdict=unsupported
+      elif [ -n "$home_path_set" ] && [ "$home_path" != thesis ]; then verdict=unsupported
       else book="thesis"; book_note="the referenced repository holds the manuscript; its working chapters, once imported, are in "
       fi ;;
     *) verdict=predates ;;

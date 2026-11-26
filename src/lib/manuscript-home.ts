@@ -29,7 +29,7 @@
 export const HOME_FIELD = 'quartoHome';
 
 export interface SpecSource {
-  rPackage: { name: string; submodulePath?: string; quartoRoot?: string } | null;
+  rPackage: { name: string; submodulePath?: string | null; quartoRoot?: string } | null;
   referencedRepo?: { url: string } | null;
   [field: string]: unknown;
 }
@@ -95,13 +95,15 @@ export function manuscriptHome(source: SpecSource): ManuscriptHome {
       const pkg = source.rPackage;
       if (!pkg) return PREDATES;
       if (path !== undefined && path !== BOOK_FOLDER.package) return UNSUPPORTED;
-      const root = pkg.submodulePath ?? `packages/r-packages/${pkg.name}`;
+      // Unset (absent, YAML null or ~, or empty) means the name fallback.
+      const root = pkg.submodulePath ? pkg.submodulePath : `packages/r-packages/${pkg.name}`;
       if (!PACKAGE_ROOT.test(root)) return UNSUPPORTED;
       return at(`${root}/${BOOK_FOLDER.package}`, true, BOOK_FOLDER.package);
     }
     case 'referenced':
       if (!source.referencedRepo || source.rPackage) return PREDATES;
-      if (path !== undefined) return UNSUPPORTED;
+      // An omitted path and `thesis` both mean the referenced book.
+      if (path !== undefined && path !== BOOK_FOLDER.app) return UNSUPPORTED;
       return at(BOOK_FOLDER.app, false, BOOK_FOLDER.app, 'referenced');
     default:
       return PREDATES;

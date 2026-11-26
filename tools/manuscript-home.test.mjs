@@ -39,11 +39,14 @@ test('the three homes that are built resolve', () => {
     pathInRepo: 'ui/www',
     chapters: 'packages/r-packages/janepkg/ui/www/chapters',
   });
-  // A referenced whole-dissertation repository, as today.
-  assert.deepEqual(manuscriptHome(source({ referencedRepo: REFERENCED, ...home({ repo: 'referenced' }) })), {
-    status: 'referenced',
-    ...THESIS,
-  });
+  // A referenced whole-dissertation repository, as today: an omitted path and
+  // path: thesis both mean its working chapters in thesis/ here.
+  for (const value of [{ repo: 'referenced' }, { repo: 'referenced', path: 'thesis' }]) {
+    assert.deepEqual(manuscriptHome(source({ referencedRepo: REFERENCED, ...home(value) })), {
+      status: 'referenced',
+      ...THESIS,
+    });
+  }
 });
 
 test('a path left out is the default the schema fills in', () => {
@@ -67,7 +70,7 @@ test('any other book folder names no folder, including a schema-valid one', () =
     source({ case: 'no-r', ...home({ repo: 'app', path: 'my #1 book' }) }),
     source({ case: 'retrofit', rPackage: pkg, ...home({ repo: 'package', path: 'book' }) }),
     source({ case: 'retrofit', rPackage: pkg, ...home({ repo: 'package', path: 'thesis' }) }),
-    source({ referencedRepo: REFERENCED, ...home({ repo: 'referenced', path: 'thesis' }) }),
+    source({ referencedRepo: REFERENCED, ...home({ repo: 'referenced', path: 'book' }) }),
   ]) {
     assert.deepEqual(manuscriptHome(s), UNSUPPORTED, JSON.stringify(s));
   }
@@ -102,6 +105,10 @@ test('the package folder is only packages/r-packages/<name>, as the hub writes i
   const { submodulePath: _drop, ...noPath } = pkg;
   assert.deepEqual(manuscriptHome(withPackage({ ...noPath, name: '../../raw' })), UNSUPPORTED);
   assert.equal(manuscriptHome(withPackage(noPath)).bookFolder, 'packages/r-packages/janepkg/ui/www');
+  // submodulePath null (YAML null or ~) or empty means unset: the name fallback.
+  for (const submodulePath of [null, undefined, '']) {
+    assert.equal(manuscriptHome(withPackage({ ...pkg, submodulePath })).bookFolder, 'packages/r-packages/janepkg/ui/www');
+  }
   // A name with the characters a package or repository name allows.
   assert.equal(
     manuscriptHome(withPackage({ ...pkg, submodulePath: 'packages/r-packages/data.table_2-x' })).bookFolder,
