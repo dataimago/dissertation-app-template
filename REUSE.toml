@@ -15,7 +15,12 @@
 # Two more template files carry their notice in the file itself and are not
 # listed here, because the guides send the author's own text to them:
 # writing/STYLE.md and wiki/assets/site.scss. Replacing either file removes
-# the notice with the template's text.
+# the notice with the template's text. A notice in a file covers the whole
+# file, so a rule added to wiki/assets/site.scss is under MIT while the
+# notice stays.
+#
+# The empty .gitkeep placeholders are listed too, so that every file the
+# template ships is accounted for.
 #
 # An entry here stays true only while the file is still the template's. If
 # you replace a listed file with your own, delete its line.
@@ -56,13 +61,23 @@ path = [
   "README.md",
   "next.config.js",
   "package.json",
+  "packages/r-packages/.gitkeep",
   "postcss.config.js",
+  "public/.gitkeep",
   "raw/.ingestignore",
   "raw/INBOX.md",
   "raw/PRIVATE.md",
   "raw/README.md",
+  "raw/advisor/.gitkeep",
+  "raw/background/.gitkeep",
+  "raw/code/.gitkeep",
+  "raw/data/.gitkeep",
   "raw/inbox/.dataimago-keep",
+  "raw/manuscript/.gitkeep",
   "raw/private/.dataimago-keep",
+  "raw/research/.gitkeep",
+  "raw/style/.gitkeep",
+  "raw/thesis-formatting/.gitkeep",
   "src/app/globals.css",
   "src/app/layout.tsx",
   "src/app/page.tsx",
@@ -83,11 +98,6 @@ path = [
   "wiki/_quarto.yml",
   "wiki/assets/a11y-fixups.html",
   "wiki/assets/a11y-skip-link.html",
-  "wiki/assets/neutral-dark.scss",
-  "wiki/assets/neutral-light.scss",
-  "wiki/claims.qmd",
-  "wiki/registry.qmd",
-  "writing/README.md",
   "wiki/assets/fonts/cyrillic-ext/fonts.css",
   "wiki/assets/fonts/cyrillic/fonts.css",
   "wiki/assets/fonts/greek-ext/fonts.css",
@@ -97,6 +107,11 @@ path = [
   "wiki/assets/fonts/latin/fonts.css",
   "wiki/assets/fonts/math/fonts.css",
   "wiki/assets/fonts/vietnamese/fonts.css",
+  "wiki/assets/neutral-dark.scss",
+  "wiki/assets/neutral-light.scss",
+  "wiki/claims.qmd",
+  "wiki/registry.qmd",
+  "writing/README.md",
 ]
 SPDX-FileCopyrightText = "2026 dataimago"
 SPDX-License-Identifier = "MIT"
