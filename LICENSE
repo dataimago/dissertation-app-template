@@ -19,3 +19,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Scope: this license covers the files that came from dataimago's
+dissertation-app-template (https://github.com/dataimago/dissertation-app-template):
+the application shell, the agent harness, the build and publishing workflows,
+and the starter pages, as they stood when this repository was made from the
+template.
+
+It does not cover the work of the repository's author: their writing, data,
+analysis, figures, wiki pages, and anything else they add or change here.
+That work belongs to its author, who alone chooses whether and how to license
+it. Nothing in this file grants any right to it.
+
+It does not cover third-party material, which keeps its own license: the
+fonts under wiki/assets/fonts/ are under the SIL Open Font License, and each
+font's license text sits beside it.
