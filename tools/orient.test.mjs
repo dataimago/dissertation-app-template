@@ -10,16 +10,17 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } f
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { HOME_FIELD, manuscriptHome } from '../src/lib/manuscript-home.ts';
+import { HOME_FIELD } from '../src/lib/manuscript-home.ts';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MESSAGE = readFileSync(join(REPO, 'src', 'copy', 'predates-beta.txt'), 'utf8').trim();
+const UNSUPPORTED = readFileSync(join(REPO, 'src', 'copy', 'unsupported-book-folder.txt'), 'utf8').trim();
 
 /** Run the hook in a fresh repo with the given spec, folders and files. */
 function orient(spec, { dirs = [], files = [], locked = true } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'orient-'));
   try {
-    for (const f of ['.claude/hooks/orient.sh', 'src/lib/manuscript-home.ts', 'src/copy/predates-beta.txt']) {
+    for (const f of ['.claude/hooks/orient.sh', 'src/lib/manuscript-home.ts', 'src/copy/predates-beta.txt', 'src/copy/unsupported-book-folder.txt']) {
       mkdirSync(dirname(join(root, f)), { recursive: true });
       cpSync(join(REPO, f), join(root, f));
     }
@@ -40,10 +41,11 @@ function orient(spec, { dirs = [], files = [], locked = true } = {}) {
 }
 
 /** A spec as the hub writes it (js-yaml block style). `home` is the field's lines, or null. */
-function spec({ kind, rPackage = false, quartoRoot = false, referenced = false, home }) {
+function spec({ kind, rPackage = false, quartoRoot = false, referenced = false, home, submodulePath = 'packages/r-packages/janepkg', name = 'janepkg' }) {
   const lines = ['apiVersion: dataimago.ai/v1alpha1', 'metadata:', '  name: jane-dissertation', 'source:', `  case: ${kind}`];
   if (rPackage) {
-    lines.push('  rPackage:', '    name: janepkg', '    submoduleUrl: https://github.com/jane/janepkg', '    submodulePath: packages/r-packages/janepkg');
+    lines.push('  rPackage:', `    name: ${name}`, '    submoduleUrl: https://github.com/jane/janepkg');
+    if (submodulePath !== null) lines.push(`    submodulePath: ${submodulePath}`);
     if (quartoRoot) lines.push('    quartoRoot: ui/www');
   } else lines.push('  rPackage: null');
   lines.push(referenced ? '  referencedRepo:\n    url: https://github.com/jane/diss' : '  referencedRepo: null');
@@ -90,12 +92,6 @@ test('a spec from before the beta: the one plain message, and no folder named', 
     spec({ kind: 'extension', rPackage: true }),
     spec({ kind: 'retrofit', rPackage: true, quartoRoot: true, home: ['repo: package'] }),
     spec({ kind: 'extension', referenced: true, home: ['repo: app', 'path: thesis'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: /thesis'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: ../thesis'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: \\thesis'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: a\\..\\b'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: the\tsis'] }),
-    spec({ kind: 'no-r', home: ['repo: app', 'path: the\u2028sis'] }),
   ]) {
     const out = orient(s, { dirs: ['thesis/chapters'] });
     assert.ok(out.includes(MESSAGE), out);
@@ -104,10 +100,45 @@ test('a spec from before the beta: the one plain message, and no folder named', 
   }
 });
 
+// The last round on #37: support only what is built. Any book folder other
+// than thesis/ here or ui/www/ in the new package names no folder and gets the
+// second message, whatever the schema allows; values are compared as written.
+test('any other book folder: the unsupported-folder message, and no folder named', () => {
+  for (const s of [
+    spec({ kind: 'no-r', home: ['repo: app', 'path: book'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: raw/private'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: /thesis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: ../thesis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: \\thesis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: the\tsis'] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: the\u2028sis'] }),
+    // The two spellings the review named: neither is a home, so neither is named.
+    spec({ kind: 'no-r', home: ['repo: app', "path: author's-book"] }),
+    spec({ kind: 'no-r', home: ['repo: app', 'path: "my #1 book"'] }),
+    spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: book'] }),
+    spec({ kind: 'extension', referenced: true, home: ['repo: referenced', 'path: thesis'] }),
+    // The package folder: relative by the path rule, never at or under raw/.
+    spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: '../raw/private' }),
+    spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: 'raw/janepkg' }),
+    spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: '/abs/pkg' }),
+    spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: null, name: '../../raw' }),
+  ]) {
+    const out = orient(s, { dirs: ['thesis/chapters', 'raw/private/chapters'] });
+    assert.ok(out.includes(UNSUPPORTED), out);
+    assert.ok(!out.includes(MESSAGE), out);
+    assert.equal(lineOf(out, 'derivative chapters'), '');
+  }
+});
+
+test('the package fallback packages/r-packages/<name> is used when submodulePath is absent', () => {
+  const out = orient(spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: null }));
+  assert.match(lineOf(out, '## Book'), /packages\/r-packages\/janepkg\/ui\/www\/$/);
+});
+
 test('a value in the spec is read as text, never run', () => {
-  const out = orient(spec({ kind: 'no-r', home: ['repo: app', 'path: $(echo RAN-IT)'] }));
-  assert.doesNotMatch(out, /RAN-IT(?!\))/);
-  assert.match(lineOf(out, '## Book'), /\$\(echo RAN-IT\)\/$/);
+  const out = orient(spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: 'x$(echo RAN-IT)' }));
+  assert.match(lineOf(out, '## Book'), /x\$\(echo RAN-IT\)\/ui\/www\/$/);
+  assert.doesNotMatch(out, /xRAN-IT/);
 });
 
 // Grok on #37: a YAML comment inside `source`, at any indent, is not a key.
@@ -119,23 +150,3 @@ test('comments inside the source block do not hide the field', () => {
   assert.ok(s.includes('# the repository'));
   assert.match(lineOf(orient(s), '## Book'), /thesis\/$/);
 });
-
-// Round 2 on #37: the hook reads a value as YAML does, so it names the same
-// folder manuscriptHome returns: an apostrophe is kept, one pair of surrounding
-// quotes is removed, and ' #' inside quotes is not a comment. Each spelling is
-// paired with the value YAML reads (this job runs with no install, so no
-// js-yaml here).
-for (const [raw, value] of [
-  [`author's-book`, `author's-book`],
-  [`"my #1 book"`, `my #1 book`],
-  [`'it''s mine'`, `it's mine`],
-  [`"quoted" # a comment`, `quoted`],
-  [`plain # a comment`, `plain`],
-]) {
-  test(`a path written ${raw} names the folder manuscriptHome names`, () => {
-    const s = spec({ kind: 'no-r', home: ['repo: app', `path: ${raw}`] });
-    const expected = manuscriptHome({ case: 'no-r', rPackage: null, referencedRepo: null, [HOME_FIELD]: { repo: 'app', path: value } });
-    assert.equal(expected.status, 'ok');
-    assert.equal(lineOf(orient(s), '## Book'), `## Book: ${expected.bookFolder}/`);
-  });
-}

@@ -66,8 +66,7 @@ or with a `source.rPackage.quartoRoot`, predates the beta: import nothing, and t
 the author the message in `src/copy/predates-beta.txt`.
 
 - `repo: app` (no R package, or an existing R package the author connected,
-  which is never written in) → `<path>/chapters/` here, `path` being
-  `source.quartoHome.path` (`thesis` when it is left out) (keep the provisioned `_quarto.yml`,
+  which is never written in) → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
   `index.qmd`, and the house bundle `thesis-class/`, `profiles/`, `_environment`); knitr
   chunks escaped for the R-free build.
 - `repo: referenced` (the author's whole dissertation is an
@@ -120,10 +119,10 @@ the author the message in `src/copy/predates-beta.txt`.
   R package's author: their analysis stays in the package, cited from the
   chapters.)
 - `repo: package` (a new R package) → the package's
-  `<path>/chapters/` (`ui/www/chapters/`), built by the package's own `build-thesis.yml`, chunks
+  `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
   left executable. One rule per path: escape in a book in this repository
   (`repo` `app` or `referenced`), keep executable in a new R package's book
-  (`repo: package`), whatever its `path` — never both on the same files.
+  (`repo: package`) — never both on the same files.
 
 Last, decide the class. **First check the layout**: does the book folder have
 `thesis-class/`?

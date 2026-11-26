@@ -51,9 +51,27 @@ export type ManuscriptHome =
       /** The chapters folder, from this repository's root. */
       chapters: string;
     }
-  | { status: 'predates-beta' };
+  | { status: 'predates-beta' }
+  | { status: 'unsupported-folder' };
 
 const PREDATES: ManuscriptHome = { status: 'predates-beta' };
+const UNSUPPORTED: ManuscriptHome = { status: 'unsupported-folder' };
+
+/**
+ * The two book folders anything builds (support only what is built, the last
+ * round on #37): `thesis` in this repository, built by `build-thesis.yml`, and
+ * `ui/www` in a new R package, built by the package's own. Any other folder,
+ * even one the schema allows, gets the message in
+ * src/copy/unsupported-book-folder.txt and names no folder, until the
+ * workflow and the manuals follow `quartoHome.path`.
+ */
+export const BOOK_FOLDER = { app: 'thesis', package: 'ui/www' } as const;
+
+/** A package folder from this repository's root that is safe to name: relative
+ *  by the path rule, and not at or under `raw/` (the author's sources). */
+function safePackageRoot(root: string): boolean {
+  return RELATIVE_PATH.test(root) && root !== 'raw' && !root.startsWith('raw/');
+}
 
 function at(
   bookFolder: string,
@@ -67,20 +85,25 @@ function at(
 export function manuscriptHome(source: SpecSource): ManuscriptHome {
   const home = source[HOME_FIELD] as { repo?: unknown; path?: unknown } | undefined | null;
   if (!home || typeof home !== 'object' || source.rPackage?.quartoRoot !== undefined) return PREDATES;
-  const path = typeof home.path === 'string' && home.path.length > 0 ? home.path : null;
-  if (path !== null && !RELATIVE_PATH.test(path)) return PREDATES;
+  // Compared as written: a path left out is the default the schema fills in.
+  const path = home.path === undefined ? undefined : home.path;
   if (source.referencedRepo && home.repo !== 'referenced') return PREDATES;
   switch (home.repo) {
     case 'app':
-      return at(path ?? 'thesis', false, path ?? 'thesis');
+      if (path !== undefined && path !== BOOK_FOLDER.app) return UNSUPPORTED;
+      return at(BOOK_FOLDER.app, false, BOOK_FOLDER.app);
     case 'package': {
       const pkg = source.rPackage;
       if (!pkg) return PREDATES;
+      if (path !== undefined && path !== BOOK_FOLDER.package) return UNSUPPORTED;
       const root = pkg.submodulePath ?? `packages/r-packages/${pkg.name}`;
-      return at(`${root}/${path ?? 'ui/www'}`, true, path ?? 'ui/www');
+      if (!safePackageRoot(root)) return UNSUPPORTED;
+      return at(`${root}/${BOOK_FOLDER.package}`, true, BOOK_FOLDER.package);
     }
     case 'referenced':
-      return source.referencedRepo && !source.rPackage ? at('thesis', false, 'thesis', 'referenced') : PREDATES;
+      if (!source.referencedRepo || source.rPackage) return PREDATES;
+      if (path !== undefined) return UNSUPPORTED;
+      return at(BOOK_FOLDER.app, false, BOOK_FOLDER.app, 'referenced');
     default:
       return PREDATES;
   }

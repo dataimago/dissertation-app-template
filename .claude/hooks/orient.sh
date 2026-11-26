@@ -21,12 +21,14 @@ fi
 # The thesis book's home, by the rule of src/lib/manuscript-home.ts: the field
 # named there (HOME_FIELD) under `source` in dataimago-spec.yaml. A spec without
 # it, or with the old source.rPackage.quartoRoot, predates the beta: print the
-# message in src/copy/predates-beta.txt and name no folder.
+# message in src/copy/predates-beta.txt and name no folder. Only the folders that
+# are built are homes (thesis/ here, ui/www/ in a new R package); any other prints
+# src/copy/unsupported-book-folder.txt and names no folder.
 HOME_FIELD="$(sed -nE "s/^export const HOME_FIELD = '([^']+)';.*$/\1/p" src/lib/manuscript-home.ts 2>/dev/null)"
-home_bad=""; home_set=""; home_repo=""; home_path=""; pkg_path=""; pkg_name=""; old_root=""; pkg_null=""; referenced=""
+home_set=""; home_repo=""; home_path=""; home_path_set=""; pkg_path=""; pkg_name=""; old_root=""; pkg_null=""; referenced=""
 while IFS='=' read -r key value; do
   case "$key" in
-    home_set) home_set=1 ;; home_repo) home_repo="$value" ;; home_path) home_path="$value" ;;
+    home_set) home_set=1 ;; home_repo) home_repo="$value" ;; home_path) home_path="$value"; home_path_set=1 ;;
     pkg_path) pkg_path="$value" ;; pkg_name) pkg_name="$value" ;; old_root) old_root=1 ;;
     pkg_null) pkg_null=1 ;; referenced) referenced=1 ;;
   esac
@@ -53,31 +55,45 @@ done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
   sect == "rPackage" && /^  rPackage:[ \t]*[^ \t]/ && val($0) == "null" { print "pkg_null=1" }
   sect == "referencedRepo" && /^    url:/ { print "referenced=1" }
 ' dataimago-spec.yaml 2>/dev/null)
-book=""; book_note=""
-# The rules @dataimago/spec and dataimago::validate_spec() enforce: path
-# relative to its repository (no leading / or \, no .. segment, no control
-# characters or line separators), and a referenced repository says repo:
-# referenced.
-case "${home_path}" in /*|\\*) home_bad=1 ;; esac
-case "/${home_path}/" in */../*|*\\..\\*|*/..\\*|*\\../*) home_bad=1 ;; esac
-case "${home_path}" in *[[:cntrl:]]*) home_bad=1 ;; esac
-case "${home_path}" in *$'\xe2\x80\xa8'*|*$'\xe2\x80\xa9'*) home_bad=1 ;; esac
-if [ -n "${referenced:-}" ] && [ "${home_repo:-}" != referenced ]; then home_bad=1; fi
-if [ -n "${home_set:-}" ] && [ -z "${old_root:-}" ] && [ -z "${home_bad:-}" ]; then
-  case "${home_repo:-}" in
-    app) book="${home_path:-thesis}" ;;
+book=""; book_note=""; verdict=""
+# A folder from this repository's root that is safe to name: relative by the
+# rules @dataimago/spec and dataimago::validate_spec() enforce (no leading / or
+# \, no .. segment, no control characters or line separators), and not at or
+# under raw/ (the author's sources).
+safe_root() {
+  case "$1" in ""|/*|\\*|raw|raw/*) return 1 ;; esac
+  case "/$1/" in */../*|*\\..\\*|*/..\\*|*\\../*) return 1 ;; esac
+  case "$1" in *[[:cntrl:]]*|*$'\xe2\x80\xa8'*|*$'\xe2\x80\xa9'*) return 1 ;; esac
+  return 0
+}
+if [ -z "$home_set" ] || [ -n "$old_root" ]; then
+  verdict=predates
+elif [ -n "$referenced" ] && [ "$home_repo" != referenced ]; then
+  verdict=predates
+else
+  # Values are compared as written: a path left out is the schema's default.
+  case "$home_repo" in
+    app)
+      if [ -n "$home_path_set" ] && [ "$home_path" != thesis ]; then verdict=unsupported; else book="thesis"; fi ;;
     package)
-      if [ -n "${pkg_name:-}${pkg_path:-}" ] && [ -z "${pkg_null:-}" ]; then
-        book="${pkg_path:-packages/r-packages/${pkg_name}}/${home_path:-ui/www}"
+      if [ -z "$pkg_name$pkg_path" ] || [ -n "$pkg_null" ]; then verdict=predates
+      elif [ -n "$home_path_set" ] && [ "$home_path" != ui/www ]; then verdict=unsupported
+      else
+        root="${pkg_path:-packages/r-packages/${pkg_name}}"
+        if safe_root "$root"; then book="$root/ui/www"; else verdict=unsupported; fi
       fi ;;
     referenced)
-      if [ -n "${referenced:-}" ] && [ -z "${pkg_name:-}${pkg_path:-}" ]; then
-        book="thesis"; book_note="the referenced repository holds the manuscript; its working chapters, once imported, are in "
+      if [ -z "$referenced" ] || [ -n "$pkg_name$pkg_path" ]; then verdict=predates
+      elif [ -n "$home_path_set" ]; then verdict=unsupported
+      else book="thesis"; book_note="the referenced repository holds the manuscript; its working chapters, once imported, are in "
       fi ;;
+    *) verdict=predates ;;
   esac
 fi
 if [ -n "$book" ]; then
   echo "## Book: ${book_note}${book}/"
+elif [ "$verdict" = unsupported ]; then
+  echo "## Book: $(cat src/copy/unsupported-book-folder.txt 2>/dev/null)"
 else
   echo "## Book: $(cat src/copy/predates-beta.txt 2>/dev/null)"
 fi

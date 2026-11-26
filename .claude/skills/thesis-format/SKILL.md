@@ -122,11 +122,13 @@ profile does.
 Write `<id>.yaml` in the `profiles/` folder beside the chapters (the folder that holds the book's `_quarto.yml`; the registry's own `profiles/` has the same shape), chosen by
 the book folder the `thesis-build` skill's "Where things are" gives (`source.quartoHome`):
 `<book folder>/profiles/<id>.yaml`. With `repo: app` (no R package, or an existing R
-package, which is never written in) that is `<path>/profiles/<id>.yaml` in this
-repository, `path` being `source.quartoHome.path` (`thesis` when it is left out); with
-`referenced`, `thesis/profiles/<id>.yaml`; with `repo: package` (a new R package) it is
-`<source.rPackage.submodulePath>/<path>/profiles/<id>.yaml` (`ui/www` by default),
-inside the package's own repository, so ask the author first. A spec without
+package, which is never written in) or `referenced`, that is `thesis/profiles/<id>.yaml`
+in this repository; with `repo: package` (a new R package) it is
+`<submodulePath>/ui/www/profiles/<id>.yaml`, `<submodulePath>` being
+`source.rPackage.submodulePath`, inside the package's own repository, so ask the author
+first. Only those two book folders are built; for any other, "Where things are" names no
+folder: draft nothing, and tell the author the message in
+`src/copy/unsupported-book-folder.txt`. A spec without
 `source.quartoHome`, or with a `source.rPackage.quartoRoot`, predates the beta: draft
 nothing, and tell the author the message in `src/copy/predates-beta.txt`. Start a **new** file with `id: <id>`, `extends: house` and the shape in spec
 section 6.3; do not copy `profiles/house.yaml` into it. A copy would pre-fill every
@@ -273,26 +275,26 @@ gh pr create --title "thesis-format: <institution> profile" --body "Profile from
 ```
 
 A book in a new R package (`quartoHome.repo: package`; take `<package owner>/<package repo>` from `source.rPackage.submoduleUrl` in
-`dataimago-spec.yaml`, or from `git -C packages/r-packages/<name> remote get-url origin`; never guess it
-from the author's username): first the profile inside the package's own repository (the folder is
-the Step 3 path's parent, `packages/r-packages/<source.rPackage.name>/`), as its own branch and
-pull request:
+`dataimago-spec.yaml`, or from `git -C <submodulePath> remote get-url origin`; never guess it
+from the author's username): first the profile inside the package's own repository, at
+`<submodulePath>` (`source.rPackage.submodulePath`, the same folder as Step 3), as its own
+branch and pull request:
 
 ```sh
-git -C packages/r-packages/<name> switch -c profile/<id>
-git -C packages/r-packages/<name> add <path>/profiles/<id>.yaml <path>/profiles/<id>.cfg
-git -C packages/r-packages/<name> commit -m "thesis-format: <institution> profile"
-git -C packages/r-packages/<name> push -u origin profile/<id>
+git -C <submodulePath> switch -c profile/<id>
+git -C <submodulePath> add ui/www/profiles/<id>.yaml ui/www/profiles/<id>.cfg
+git -C <submodulePath> commit -m "thesis-format: <institution> profile"
+git -C <submodulePath> push -u origin profile/<id>
 gh pr create --repo <package owner>/<package repo> --head profile/<id> --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
 ```
 
 After the author has merged that pull request, update the submodule pointer here:
 
 ```sh
-git -C packages/r-packages/<name> fetch origin
-git -C packages/r-packages/<name> checkout "$(git -C packages/r-packages/<name> symbolic-ref --short refs/remotes/origin/HEAD)"
+git -C <submodulePath> fetch origin
+git -C <submodulePath> checkout "$(git -C <submodulePath> symbolic-ref --short refs/remotes/origin/HEAD)"
 git switch -c profile/<id>-pointer
-git add packages/r-packages/<name>
+git add <submodulePath>
 git commit -m "Update <name> to include the <institution> profile"
 git push -u origin profile/<id>-pointer
 gh pr create --title "Update <name> pointer" --body "Points at the merged profile."

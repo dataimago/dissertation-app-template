@@ -53,7 +53,9 @@ With `repo: package` (a new R package dissertation.ai created) it is in the pack
 own repository, so ask the author before you change it; an existing R package linked
 (`repo: app`) is never written in. A spec with no `source.quartoHome`, or with a
 `source.rPackage.quartoRoot`, predates the beta: do no book work and tell the author
-the message in `src/copy/predates-beta.txt`. There:
+the message in `src/copy/predates-beta.txt`. Only `thesis/` here and `ui/www/` in a new
+R package are built; a spec naming any other folder gets the message in
+`src/copy/unsupported-book-folder.txt`, and no book work either. There:
 
 - `thesis-class/`: the house class and its Quarto partials and filter, copied
   from the registry. `registry-source.json` records the registry commit;
@@ -147,7 +149,7 @@ of "Steps" above. A routine build never runs these steps.
    book here (`<book folder>/...` paths, the folder "Where things are" gives); for
    a new R package (`quartoHome.repo: package`), first in the
    package's own repository and then the submodule-pointer pull request here, with
-   the same commands as `thesis-format` Step 6 (`git -C packages/r-packages/<name> ...`,
+   the same commands as `thesis-format` Step 6 (`git -C <submodulePath> ...`,
    then the pointer). Ask before touching the package repository. Either way, naming the profile `id`, the
    class `version` and the registry commit in the message. Do not push or open the
    pull request yourself: show the author the commands. The committed files are the

@@ -41,11 +41,20 @@ export default async function Home() {
   // A spec from before the beta names no folder: the page says so, in the words
   // of src/copy/predates-beta.txt, and links nothing it would have to guess.
   const home = manuscriptHome(spec.source);
-  const predatesBeta =
-    home.status === 'predates-beta'
-      ? readFileSync(resolve(process.cwd(), 'src/copy/predates-beta.txt'), 'utf-8').trim()
+  // A home that names no folder (a spec from before the beta, or a folder nothing
+  // builds) shows its plain message, in the words of src/copy/, and links nothing.
+  const named = home.status === 'ok' || home.status === 'referenced' ? home : null;
+  const notice =
+    named === null
+      ? readFileSync(
+          resolve(
+            process.cwd(),
+            home.status === 'unsupported-folder' ? 'src/copy/unsupported-book-folder.txt' : 'src/copy/predates-beta.txt',
+          ),
+          'utf-8',
+        ).trim()
       : null;
-  const inPackage = home.status !== 'predates-beta' && home.inPackage;
+  const inPackage = named?.inPackage ?? false;
 
   // Publish surfaces, derived entirely from the spec. The PDF is committed
   // by CI into the repo that hosts the book (the new R package, or this
@@ -58,7 +67,7 @@ export default async function Home() {
   // Each link is asked, at build time and anonymously, whether a reader can
   // open it; one in a private repository is left out (src/lib/read-links.ts).
   // Without a network the links are shown as they always were.
-  const { pdfHref, directDownloadHref, pagesUrl, pdfWithheld } = predatesBeta
+  const { pdfHref, directDownloadHref, pagesUrl, pdfWithheld } = notice
     ? { pdfHref: null, directDownloadHref: null, pagesUrl: null, pdfWithheld: false }
     : await resolveReadLinks({
         manuscriptRepoUrl,
@@ -89,12 +98,12 @@ export default async function Home() {
             </li>
           ))}
         </ol>
-        {home.status === 'predates-beta' ? (
-          <p className="mt-4 text-sm text-stone-700">{predatesBeta}</p>
+        {named === null ? (
+          <p className="mt-4 text-sm text-stone-700">{notice}</p>
         ) : (
           <p className="mt-4 text-sm text-stone-700">
             Edit chapter sources at{' '}
-            <code className="font-mono">{`${home.chapters}/*.qmd`}</code>.
+            <code className="font-mono">{`${named.chapters}/*.qmd`}</code>.
           </p>
         )}
       </section>
@@ -109,7 +118,7 @@ export default async function Home() {
               </a>{' '}
               <span className="text-sm text-stone-700">
                 — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
-                touches <code className="font-mono">{home.status === 'predates-beta' ? '' : `${home.pathInRepo}/`}</code>
+                touches <code className="font-mono">{named === null ? '' : `${named.pathInRepo}/`}</code>
                 {!inPackage ? '' : (
                   <>
                     {' '}or <code className="font-mono">R/</code>
