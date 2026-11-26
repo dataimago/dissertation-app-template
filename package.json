@@ -10,7 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "ingest:check": "node tools/ingest-check.mjs",
-    "test": "node --test tools/read-links.test.mjs"
+    "test": "node --test tools/read-links.test.mjs tools/manuscript-home.test.mjs tools/orient.test.mjs"
   },
   "dependencies": {
     "@dataimago/tokens-neutral": "^0.1.0-alpha.0",

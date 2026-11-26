@@ -29,10 +29,11 @@ formatting in ways that violate it to make an error go away.
        missing or `thesis.profile` is still `house`, say the shipped profile is not
        set up yet and offer "Setting up a shipped profile"; go on only after a yes.
      - *Setup or update*, only after that yes or when the author asked for it. The
-       book folder is `thesis/` for content-only, or the R package's `ui/www/`. If
-       `<book folder>/thesis-class/sync.py` does not exist, the book is on the
-       older layout: stop, do not touch `_quarto.yml`, offer the move to the house
-       class (`thesis-build`, "Moving an older repository") and wait for a yes.
+       book folder is the one the `thesis-build` skill's "Where things are"
+       gives, from `source.quartoHome` (none for a repository from before the beta:
+       say the message in `src/copy/predates-beta.txt` and stop). If
+       `<book folder>/thesis-class/sync.py` does not exist, stop and do not touch
+       `_quarto.yml`: a shipped profile needs the house class (`thesis-build`, "Where things are", **No `thesis-class/`**).
        Otherwise look up `vertical.dissertation.institution.name` in the
        `profiles` of the public `registry.json`
        (`https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`),
@@ -58,7 +59,7 @@ formatting in ways that violate it to make an error go away.
      `.cls` file name without its extension; `pdf-engine` the engine the class
      names; `classFile.type: vendored` and `path` the `.cls` file name; only after
      the yes remove `_environment`, `thesis-class/` and `profiles/`; in the
-     R-package layout ask before touching the package).
+     case of a new R package ask before touching the package).
    - `generated` (the default): build the profile `_quarto.yml` names (`house`
      until the author adapts one). Run the `thesis-format` skill only when the
      author asks to adapt their formatting guide (it needs the guide in
@@ -70,12 +71,10 @@ formatting in ways that violate it to make an error go away.
 
    The `house` profile is where `generated` starts, not what `shipped` means.
    `THESIS-CLS-README.md` beside the chapters explains the modes to the author.
-   A repository without `thesis-class/` is on the older layout (`thesis.cls`);
-   it keeps building as it did, and moving it is proposed to the author, not
-   done unasked (skill: "Moving an older repository to the house class").
+   A book without `thesis-class/` is `vendored` (build its own class) or on the
+   unsupported `thesis.cls` layout (`thesis-build`, "Where things are", **No `thesis-class/`**).
 2. Build (Quarto + LuaLaTeX, per `build-thesis.yml`); fix errors minimally. The
-   chapters are `thesis/chapters/` (content-only) or the R package's
-   `ui/www/chapters/`.
+   chapters are `chapters/` in that book folder.
 3. Verify against the institution's checklist (margins, front matter, ToC,
    captions), and that `pdffonts` shows the profile's fonts, none missing.
 

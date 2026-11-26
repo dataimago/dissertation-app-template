@@ -1,0 +1,1 @@
+This repository was set up before the dissertation.ai beta. Its dataimago-spec.yaml does not say where your thesis book lives in the form this version reads, so nothing here guesses. Generate a new repository from dissertation.ai (https://dissertation-ai.dataimago.ai) and bring your files into it.

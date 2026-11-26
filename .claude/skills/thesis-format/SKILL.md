@@ -120,11 +120,17 @@ web page or text file with no page numbers: cite by section heading, as the CU
 profile does.
 
 Write `<id>.yaml` in the `profiles/` folder beside the chapters (the folder that holds the book's `_quarto.yml`; the registry's own `profiles/` has the same shape), chosen by
-`source` in `dataimago-spec.yaml`: content-only and referenced-repository layouts
-(`source.rPackage` null) use `thesis/profiles/<id>.yaml` in this repository;
-the R-package layout uses
-`packages/r-packages/<source.rPackage.name>/<source.rPackage.quartoRoot>/profiles/<id>.yaml`
-(`ui/www` by default), inside the package's own repository, so ask the author first. Start a **new** file with `id: <id>`, `extends: house` and the shape in spec
+the book folder the `thesis-build` skill's "Where things are" gives (`source.quartoHome`):
+`<book folder>/profiles/<id>.yaml`. With `repo: app` (no R package, or an existing R
+package, which is never written in) or `referenced`, that is `thesis/profiles/<id>.yaml`
+in this repository; with `repo: package` (a new R package) it is
+`<submodulePath>/ui/www/profiles/<id>.yaml`, `<submodulePath>` being
+`source.rPackage.submodulePath`, inside the package's own repository, so ask the author
+first. Only those two book folders are built; for any other, "Where things are" names no
+folder: draft nothing, and tell the author the message in
+`src/copy/unsupported-book-folder.txt`. A spec without
+`source.quartoHome`, or with a `source.rPackage.quartoRoot`, predates the beta: draft
+nothing, and tell the author the message in `src/copy/predates-beta.txt`. Start a **new** file with `id: <id>`, `extends: house` and the shape in spec
 section 6.3; do not copy `profiles/house.yaml` into it. A copy would pre-fill every
 house default as if the guide had chosen it, and `check_profile.py` rejects a field
 that is both set and listed under `unstated`. Read `profiles/house.yaml` (the
@@ -182,9 +188,8 @@ as build-checked before then. Both come from the same `.yaml`, which is what
 vendored with the class, so the `.cfg` matches the class that will read it:
 `texlua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` (or
 `quarto pandoc lua <book folder>/thesis-class/thesis-profile.lua <book folder>/profiles <id>` if `texlua` is missing). If the book folder has no
-`thesis-class/` (the older layout), create `<book folder>/profiles/` if it is missing, copy `$SCRATCH/registry/profiles/<id>.cfg` to
-`<book folder>/profiles/<id>.cfg`, and tell the author the build cannot use it until the repository moves to the house class
-(`thesis-build`, "Moving an older repository to the house class").
+`thesis-class/`, write nothing into it: its class reads no house profile
+(`thesis-build`, "Where things are", **No `thesis-class/`**).
 
 For the scratch copy, if `texlua` is missing but `quarto` is installed, use
 `quarto pandoc lua classes/dataimago-thesis/thesis-profile.lua profiles <id>`
@@ -224,10 +229,7 @@ and a chapter opening
 so they can compare them with the guide's sample pages. To build the author's own
 chapters with the profile on the house class, the author changes `profile:` to `<id>` in the `thesis:` block of the book's `_quarto.yml`
 (`thesis-build`, "Building a `generated` profile"); suggest it, and leave the decision
-and the edit to them. On the older layout (no `thesis-class/`, no `thesis:` block)
-there is no such block to change: the profile is used only after the move to the
-house class (`thesis-build`, "Moving an older repository to the house class"), which
-proposes `profile: <id>` as part of the move.
+and the edit to them.
 
 ## Step 6: the checklist for the author
 
@@ -261,41 +263,41 @@ commands as text with `<id>` and the paths filled in.
 If Step 4 did not write `<id>.cfg` (no `texlua` or `quarto`), drop the `.cfg` path
 from the `git add` lines below; `git add` of a missing file fails.
 
-Content-only or referenced-repository layout (`source.rPackage` null), from the
+A book in this repository (`quartoHome.repo` `app` or `referenced`), from the
 repository root:
 
 ```sh
 git switch -c profile/<id>
-git add thesis/profiles/<id>.yaml thesis/profiles/<id>.cfg
+git add <book folder>/profiles/<id>.yaml <book folder>/profiles/<id>.cfg
 git commit -m "thesis-format: <institution> profile"
 git push -u origin profile/<id>
 gh pr create --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
 ```
 
-R-package layout (take `<package owner>/<package repo>` from `source.rPackage.submoduleUrl` in
-`dataimago-spec.yaml`, or from `git -C packages/r-packages/<name> remote get-url origin`; never guess it
-from the author's username): first the profile inside the package's own repository (the folder is
-the Step 3 path's parent, `packages/r-packages/<source.rPackage.name>/`), as its own branch and
-pull request:
+A book in a new R package (`quartoHome.repo: package`; take `<package owner>/<package repo>` from `source.rPackage.submoduleUrl` in
+`dataimago-spec.yaml`, or from `git -C <submodulePath> remote get-url origin`; never guess it
+from the author's username): first the profile inside the package's own repository, at
+`<submodulePath>` (`source.rPackage.submodulePath`, the same folder as Step 3), as its own
+branch and pull request:
 
 ```sh
-git -C packages/r-packages/<name> switch -c profile/<id>
-git -C packages/r-packages/<name> add <quartoRoot>/profiles/<id>.yaml <quartoRoot>/profiles/<id>.cfg
-git -C packages/r-packages/<name> commit -m "thesis-format: <institution> profile"
-git -C packages/r-packages/<name> push -u origin profile/<id>
+git -C <submodulePath> switch -c profile/<id>
+git -C <submodulePath> add ui/www/profiles/<id>.yaml ui/www/profiles/<id>.cfg
+git -C <submodulePath> commit -m "thesis-format: <institution> profile"
+git -C <submodulePath> push -u origin profile/<id>
 gh pr create --repo <package owner>/<package repo> --head profile/<id> --title "thesis-format: <institution> profile" --body "Profile from the formatting guide; checked against it."
 ```
 
 After the author has merged that pull request, update the submodule pointer here:
 
 ```sh
-git -C packages/r-packages/<name> fetch origin
-git -C packages/r-packages/<name> checkout "$(git -C packages/r-packages/<name> symbolic-ref --short refs/remotes/origin/HEAD)"
+git -C <submodulePath> fetch origin
+git -C <submodulePath> checkout "$(git -C <submodulePath> symbolic-ref --short refs/remotes/origin/HEAD)"
 git switch -c profile/<id>-pointer
-git add packages/r-packages/<name>
-git commit -m "Update <name> to include the <institution> profile"
+git add <submodulePath>
+git commit -m "Update <source.rPackage.name> to include the <institution> profile"
 git push -u origin profile/<id>-pointer
-gh pr create --title "Update <name> pointer" --body "Points at the merged profile."
+gh pr create --title "Update <source.rPackage.name> pointer" --body "Points at the merged profile."
 ```
 
 The author merges. Never run any git command that writes inside `$SCRATCH/registry`: it

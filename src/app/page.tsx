@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { load } from 'js-yaml';
 import { resolveReadLinks } from '@/lib/read-links';
+import { manuscriptHome, type SpecSource } from '@/lib/manuscript-home';
 
 interface SpecMetadata {
   metadata: { name: string };
@@ -15,7 +16,9 @@ interface SpecMetadata {
       };
     };
   };
-  source: { rPackage: { name: string; submoduleUrl?: string } | null };
+  source: SpecSource & {
+    rPackage: { name: string; submoduleUrl?: string; submodulePath?: string; quartoRoot?: string } | null;
+  };
 }
 
 // Every link carries the same affordance: always underlined, in a colour the
@@ -34,25 +37,42 @@ export default async function Home() {
   const author = spec.user.name;
   const institution = spec.vertical.dissertation.institution;
   const rpkgName = spec.source.rPackage?.name ?? '';
-  // Content-only (no-r): the manuscript lives in this repo's `thesis/`, not an
-  // R-package submodule. The chapter path + build trigger differ.
-  const isNoR = !rpkgName;
+  // Where the book is, from the spec's one field for it (src/lib/manuscript-home.ts).
+  // A spec from before the beta names no folder: the page says so, in the words
+  // of src/copy/predates-beta.txt, and links nothing it would have to guess.
+  const home = manuscriptHome(spec.source);
+  // A home that names no folder (a spec from before the beta, or a folder nothing
+  // builds) shows its plain message, in the words of src/copy/, and links nothing.
+  const named = home.status === 'ok' || home.status === 'referenced' ? home : null;
+  const notice =
+    named === null
+      ? readFileSync(
+          resolve(
+            process.cwd(),
+            home.status === 'unsupported-folder' ? 'src/copy/unsupported-book-folder.txt' : 'src/copy/predates-beta.txt',
+          ),
+          'utf-8',
+        ).trim()
+      : null;
+  const inPackage = named?.inPackage ?? false;
 
   // Publish surfaces, derived entirely from the spec. The PDF is committed
-  // by CI into the repo that hosts the manuscript (the R package for the
-  // r-cases, this repo for no-r); the Pages site exists for r-cases only.
+  // by CI into the repo that hosts the book (the new R package, or this
+  // repo); the package's Pages site exists only when the book is in the package.
   const githubUser = spec.user.githubUsername;
-  const manuscriptRepoUrl = isNoR
-    ? `https://github.com/${githubUser}/${spec.metadata.name}`
-    : (spec.source.rPackage?.submoduleUrl ??
-       `https://github.com/${githubUser}/${rpkgName}`);
+  const manuscriptRepoUrl = inPackage
+    ? (spec.source.rPackage?.submoduleUrl ??
+       `https://github.com/${githubUser}/${rpkgName}`)
+    : `https://github.com/${githubUser}/${spec.metadata.name}`;
   // Each link is asked, at build time and anonymously, whether a reader can
   // open it; one in a private repository is left out (src/lib/read-links.ts).
   // Without a network the links are shown as they always were.
-  const { pdfHref, directDownloadHref, pagesUrl, pdfWithheld } = await resolveReadLinks({
-    manuscriptRepoUrl,
-    pagesUrl: isNoR ? null : `https://${githubUser}.github.io/${rpkgName}/`,
-  });
+  const { pdfHref, directDownloadHref, pagesUrl, pdfWithheld } = notice
+    ? { pdfHref: null, directDownloadHref: null, pagesUrl: null, pdfWithheld: false }
+    : await resolveReadLinks({
+        manuscriptRepoUrl,
+        pagesUrl: inPackage ? `https://${githubUser}.github.io/${rpkgName}/` : null,
+      });
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -78,15 +98,14 @@ export default async function Home() {
             </li>
           ))}
         </ol>
-        <p className="mt-4 text-sm text-stone-700">
-          Edit chapter sources at{' '}
-          <code className="font-mono">
-            {isNoR
-              ? 'thesis/chapters/*.qmd'
-              : `packages/r-packages/${rpkgName}/ui/www/chapters/*.qmd`}
-          </code>
-          .
-        </p>
+        {named === null ? (
+          <p className="mt-4 text-sm text-stone-700">{notice}</p>
+        ) : (
+          <p className="mt-4 text-sm text-stone-700">
+            Edit chapter sources at{' '}
+            <code className="font-mono">{`${named.chapters}/*.qmd`}</code>.
+          </p>
+        )}
       </section>
 
       <section className="mt-12">
@@ -99,12 +118,13 @@ export default async function Home() {
               </a>{' '}
               <span className="text-sm text-stone-700">
                 — rebuilt by <code className="font-mono">build-thesis.yml</code> on every push that
-                touches <code className="font-mono">{isNoR ? 'thesis/' : 'ui/www/'}</code>
-                {isNoR ? '' : (
+                touches <code className="font-mono">{named === null ? '' : `${named.pathInRepo}/`}</code>
+                {!inPackage ? '' : (
                   <>
                     {' '}or <code className="font-mono">R/</code>
                   </>
-                )}
+                )}{' '}
+                in {inPackage ? 'your R package' : 'this repository'}
                 {directDownloadHref && (
                   <>
                     {' '}(<a className={linkClass} href={directDownloadHref}>direct download</a>)

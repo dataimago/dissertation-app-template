@@ -1,6 +1,6 @@
 ---
 name: import-manuscript
-description: For an author who imported a finished dissertation (raw/manuscript/LOCKED.md exists) — derive version 1.0 of the chapters as .qmd from their sources (.tex / .Rnw / .docx via pandoc; PDF only as a last resort, with the fidelity loss disclosed), into thesis/chapters/ (content-only layout) or the R package's ui/www/chapters/ (R-package layout). raw/manuscript/ stays authoritative and untouched. Run after /ingest. Use for "import my dissertation", "make my chapters editable", or when the orientation hook says the derivative is missing.
+description: For an author who imported a finished dissertation (raw/manuscript/LOCKED.md exists) — derive version 1.0 of the chapters as .qmd from their sources (.tex / .Rnw / .docx via pandoc; PDF only as a last resort, with the fidelity loss disclosed), into thesis/chapters/ (every layout but a new R package, an existing R package included) or a new R package's ui/www/chapters/. raw/manuscript/ stays authoritative and untouched. Run after /ingest. Use for "import my dissertation", "make my chapters editable", or when the orientation hook says the derivative is missing.
 ---
 
 # /import-manuscript — version 1.0, as text you can extend
@@ -39,11 +39,11 @@ the reference for what "v1.0 looked like".
   `pandoc -f latex -t markdown+raw_tex --wrap=none --bibliography=<bib> --citeproc=false`
   (keep `\cite` as `[@key]`: pandoc's `-t markdown` converts `\cite{a,b}` to
   `[@a; @b]`). For `.Rnw`, first turn `<<chunk>>= … @` blocks into
-  ```` ```{r} ```` fences (`knitr::purl`-style) — then, if this is the
-  **content-only** layout, escape them to ```` ```{{r}} ```` so the app's
-  R-free `build-thesis.yml` does not demand Rscript (the same
-  `escapeExecutableFences` convention the provisioning hub uses); in the
-  R-package layout leave them executable.
+  ```` ```{r} ```` fences (`knitr::purl`-style) — then, if the book is in this
+  repository (`source.quartoHome.repo` `app` or `referenced`), escape them to
+  ```` ```{{r}} ```` so the app's R-free `build-thesis.yml` does not demand
+  Rscript (the same `escapeExecutableFences` convention the provisioning hub
+  uses); in a new R package's book (`repo: package`) leave them executable.
 - **docx** → `pandoc -f docx -t markdown --wrap=none --extract-media=<figures dir>`
   (the book folder's `figures/`; on the referenced-repository path, where §3
   creates `thesis/`, convert into a scratch folder and place figures with the
@@ -61,18 +61,19 @@ the reference for what "v1.0 looked like".
 
 ## 3. Place, as v1.0
 
-Target, decided by the same trio `/ingest` reads (`source.case`,
-`source.referencedRepo`, a local `source.rPackage`):
+Target: the book folder `source.quartoHome` gives (`AGENTS.md`). A spec without it,
+or with a `source.rPackage.quartoRoot`, predates the beta: import nothing, and tell
+the author the message in `src/copy/predates-beta.txt`.
 
-- `no-r` → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
-  `index.qmd`, and the house bundle `thesis-class/`, `profiles/`, `_environment`;
-  on the older layout, `thesis.cls` and `dataimago.sty` instead, see below); knitr
+- `repo: app` (no R package, or an existing R package the author connected,
+  which is never written in) → `thesis/chapters/` here (keep the provisioned `_quarto.yml`,
+  `index.qmd`, and the house bundle `thesis-class/`, `profiles/`, `_environment`); knitr
   chunks escaped for the R-free build.
-- `extension` **with** `referencedRepo` (the author's whole dissertation is an
+- `repo: referenced` (the author's whole dissertation is an
   existing repository; `rPackage` is null, there is no submodule and no local
   `ui/www/`) → `thesis/chapters/` here, R-free build, chunks escaped — **and
   on this path you create the `thesis/` bundle yourself**, because the hub
-  scaffolds it only for `no-r`: fetch `_quarto.yml`, `index.qmd`,
+  scaffolds it only for `repo: app`: fetch `_quarto.yml`, `index.qmd`,
   `references.bib`, `THESIS-CLS-README.md` and the whole house bundle from
   `dataimago/dissertation-rpkg-template`'s `ui/www/` (public). **Ask first:** tell
   the author you will clone that public template into a temporary folder and copy
@@ -113,12 +114,15 @@ Target, decided by the same trio `/ingest` reads (`source.case`,
   until `thesis/` exists. The referenced repository is read, never written. On this path the
   `.Rnw` chunks become **inert listings** — say so in the first lines of the
   fidelity note (§4): the runnable analysis stays in the referenced
-  repository, and an author who wants executable chapters moves to the
-  R-package layout rather than un-escaping fences here.
-- `retrofit`, or `extension` with a local R-package submodule → the package's
+  repository, and an author who wants executable chapters moves to a new R
+  package rather than un-escaping fences here. (The same holds for an existing
+  R package's author: their analysis stays in the package, cited from the
+  chapters.)
+- `repo: package` (a new R package) → the package's
   `ui/www/chapters/`, built by the package's own `build-thesis.yml`, chunks
-  left executable. One rule per path: escape only under app `thesis/`, keep
-  executable only under `ui/www/` — never both on the same files.
+  left executable. One rule per path: escape in a book in this repository
+  (`repo` `app` or `referenced`), keep executable in a new R package's book
+  (`repo: package`) — never both on the same files.
 
 Last, decide the class. **First check the layout**: does the book folder have
 `thesis-class/`?
@@ -134,30 +138,17 @@ names (ask if it names none) and leave `classoption` empty unless the class
 documents required options; set `dataimago-spec.yaml` `thesis.classFile.type:
 vendored` and `path` to the `.cls` file name; and the folders `_environment`,
 `thesis-class/` and `profiles/` would be removed (nothing is deleted before the yes;
-in the R-package layout they live in the package repository, so ask before touching
+for a new R package they live in the package repository, so ask before touching
 it). If the author says no, the house class stays and the `.cls` is only a
 reference (`raw/` is not touched). A yes overrides the "keep the provisioned
 `_quarto.yml`" lines above.
 
-**Older layout** (no `thesis-class/`: a repository set up before the house class,
-with `thesis.cls`, `dataimago.sty`, `documentclass: thesis`). The house-class
-front-matter slots below do not apply; the old class does not read them.
-- If a `.cls` was found among the sources, offer the author a choice and wait: use
-  their own class (vendored), or move to the house class. Vendored here means: copy
-  their `.cls`/`.sty` beside `_quarto.yml`, set `documentclass` to the `.cls` file name
-  without its extension and `pdf-engine` to the engine the class names (ask if it
-  names none), remove `classoption` and the `\usepackage{dataimago}` header unless
-  their class documents them, set `thesis.classFile.type: vendored` and `path` to the
-  `.cls` file name, and, last and only once `documentclass` names their class,
-  remove `thesis.cls` and `dataimago.sty`. Nothing changes before the yes. The move
-  is `/thesis-build`, "Moving an older repository to the house class"; propose it,
-  never do it here.
-- If no `.cls` was found (or the author declines both), keep `thesis.cls`,
-  `dataimago.sty` and `_quarto.yml` as they are, and tell the author the move to the
-  house class is available (`/thesis-build`, "Moving an older repository to the
-  house class"): propose it, never do it here.
+**No `thesis-class/`** (`thesis-build`, "Where things are", **No `thesis-class/`**): a `vendored` book keeps its own class (the
+house-class slots below do not apply; place front matter where that class reads it,
+after a yes); the `thesis.cls` layout from before the house class is not supported:
+import nothing, and tell the author so.
 
-Otherwise, when the house bundle is present and the house class stays, the book has
+When the house bundle is present and the house class stays, the book has
 fixed front-matter slots the house class requires: the abstract in `index.qmd`'s
 `abstract:` field, acknowledgments and dedication in `.acknowledgments` /
 `.dedication` divs in `00-front-matter.qmd`, and the `thesis:` block of `_quarto.yml`
@@ -172,9 +163,7 @@ non-empty one is part of the same proposal.
 
 File names `NN-<slug>.qmd` in reading order; replace the eight provisioning
 stubs; front matter to `00-front-matter.qmd` (on the house class, the abstract
-and the other slots go where the proposal above put them once the author agreed;
-on the older layout, leave the abstract and front matter where `thesis.cls`
-already reads them),
+and the other slots go where the proposal above put them once the author agreed),
 appendices to `9N-…`. Update `_quarto.yml` `chapters:` to the real list (with
 `index.qmd` first). Add to each chapter's YAML: `version: "1.0"`,
 `derivedFrom: raw/manuscript/<source file>`, `importedAt: <date>`.

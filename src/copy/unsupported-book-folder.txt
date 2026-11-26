@@ -1,0 +1,1 @@
+This template builds your thesis book only in thesis/ in this repository or, for a new R package dissertation.ai created, in the package's ui/www/. Your dataimago-spec.yaml names another folder (source.quartoHome, or the package's source.rPackage.submodulePath), so nothing here names a book folder. Set it back to one of those folders.

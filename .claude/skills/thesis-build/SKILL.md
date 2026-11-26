@@ -40,17 +40,22 @@ never bend formatting in non-conformant ways to clear an error.
    a yes. Setup, update and adapting a guide happen only on the author's explicit
    request.
 3. Build via `build-thesis.yml` (Quarto + LuaLaTeX, tagged PDF; XeLaTeX is
-   supported but untagged). Chapters: `thesis/chapters/` (content-only) or the R
-   package's `ui/www/chapters/`. For deep diagnosis or profile drafting, hand
+   supported but untagged). Chapters: `chapters/` in the book folder
+   ("Where things are"). For deep diagnosis or profile drafting, hand
    off to the `thesis-build-agent`.
 4. Verify against the institution checklist (margins, front matter, ToC, captions).
 
 ## Where things are
 
-"Beside the chapters" means the Quarto book's folder: `thesis/` in this repo
-(content-only), or the R package's `ui/www/`. In the R-package layout that
-folder is in the package's own repository, so ask the author before you change
-it. There:
+"Beside the chapters" means the book folder: the one `source.quartoHome` in
+`dataimago-spec.yaml` gives, by the rule in `AGENTS.md` (`src/lib/manuscript-home.ts`).
+With `repo: package` (a new R package dissertation.ai created) it is in the package's
+own repository, so ask the author before you change it; an existing R package linked
+(`repo: app`) is never written in. A spec with no `source.quartoHome`, or with a
+`source.rPackage.quartoRoot`, predates the beta: do no book work and tell the author
+the message in `src/copy/predates-beta.txt`. Only `thesis/` here and `ui/www/` in a new
+R package are built; a spec naming any other folder gets the message in
+`src/copy/unsupported-book-folder.txt`, and no book work either. There:
 
 - `thesis-class/`: the house class and its Quarto partials and filter, copied
   from the registry. `registry-source.json` records the registry commit;
@@ -62,11 +67,12 @@ it. There:
   `template-partials` and `filters`, and a `thesis:` block (profile, institution,
   degree, department, advisors, committee).
 
-If the folder has no `thesis-class/` (a repository set up before the house class
-carries `thesis.cls` and `dataimago.sty` instead), it is on the older layout and
-keeps building as it did. Moving it over is a change to the author's repository,
-so propose it and wait for their agreement: follow "Moving an older repository
-to the house class" below.
+**No `thesis-class/`.** If `_quarto.yml` names the author's own class (`vendored`,
+below), the house-class profile steps do not apply: build that class as it is, and
+repair it only after a yes. If it still has `thesis.cls` and `dataimago.sty` with
+`documentclass: thesis`, it is the class layout from before the house class, which
+is not supported: tell the author so in those words, and that a new repository from
+dissertation.ai comes with the house class; change nothing.
 
 ## Setting up a shipped profile
 
@@ -75,14 +81,9 @@ of "Steps" above. A routine build never runs these steps.
 
 1. **Find the institution.** Read `vertical.dissertation.institution.name` from
    `dataimago-spec.yaml`.
-2. **Check the layout first.** The book folder is `thesis/` for content-only, or
-   the R package's `ui/www/`. **If `<book folder>/thesis-class/sync.py` does not
-   exist, stop here:** the book is on the older layout (`thesis.cls`,
-   `documentclass: thesis`, no `thesis:` block, and possibly
-   `classFile.type: shipped` in the old wording), and the steps below would rewrite
-   `_quarto.yml` into a shape its class cannot read. Run none of steps 3–10. Offer
-   "Moving an older repository to the house class" below and wait for the author's
-   yes; set up the profile after the move.
+2. **Check the layout first.** The book folder is the one "Where things are" gives. **If `<book folder>/thesis-class/sync.py` does not
+   exist, stop here** and run none of steps 3–10: a shipped profile needs the house
+   class ("Where things are", **No `thesis-class/`**).
 3. **Look it up in the registry.** Fetch
    `https://raw.githubusercontent.com/dataimago/dissertation-thesis-classes/main/registry.json`.
    Check `schemaVersion`: this skill reads version 2. If it is anything else,
@@ -138,16 +139,17 @@ of "Steps" above. A routine build never runs these steps.
    and the like are `.acknowledgments` / `.dedication` divs in
    `chapters/00-front-matter.qmd`. Moving text into those places is a move, not
    an edit, and it waits for the author: name each move (what, from where, to
-   where) and wait for a yes before making it, as in "Moving an older repository".
+   where) and wait for a yes before making it.
    If `raw/manuscript/LOCKED.md` exists, that is a second gate: show each move
    against the locked manuscript and wait again.
    Make changes there and in `_quarto.yml`, never
    in the house class files in `thesis-class/` or the shipped profile: using them as-is is what `shipped` means.
 10. **Prepare the commit.** Edit the working tree only; never run `git add`, `commit`, `push` or `gh pr create` yourself. Show the author how to commit `thesis-class/`, `profiles/` and `_quarto.yml`
-   on a branch and propose them as a pull request: in this repository for
-   content-only (`thesis/...` paths); in the R-package layout, first in the
+   on a branch and propose them as a pull request: in this repository for a
+   book here (`<book folder>/...` paths, the folder "Where things are" gives); for
+   a new R package (`quartoHome.repo: package`), first in the
    package's own repository and then the submodule-pointer pull request here, with
-   the same commands as `thesis-format` Step 6 (`git -C packages/r-packages/<name> ...`,
+   the same commands as `thesis-format` Step 6 (`git -C <submodulePath> ...`,
    then the pointer). Ask before touching the package repository. Either way, naming the profile `id`, the
    class `version` and the registry commit in the message. Do not push or open the
    pull request yourself: show the author the commands. The committed files are the
@@ -159,11 +161,9 @@ of "Steps" above. A routine build never runs these steps.
 
 `generated` does not mean writing or adapting a class. The `house` profile is
 the starting point. **Check the layout first**, as in "Setting up a shipped profile"
-step 2: if `<book folder>/thesis-class/sync.py` does not exist, the book is on the
-older layout (`thesis.cls`, no `thesis:` block), the profile cannot be used yet,
-and nothing below applies. Build the book as it is, offer "Moving an older
-repository to the house class" and wait for a yes; never add a `thesis:` block or
-change `documentclass` without that move. On the house class, a build uses the
+step 2: if `<book folder>/thesis-class/sync.py` does not exist, nothing below applies
+("Where things are", **No `thesis-class/`**). Never add a `thesis:` block or change
+`documentclass` there. On the house class, a build uses the
 profile `_quarto.yml` names; adapting a guide is a separate job, only when the
 author asks (or says yes when you offer it). Then run the `thesis-format` skill:
 it writes a new
@@ -183,123 +183,8 @@ drop the house `template-partials`, `filters` and `thesis:` block, set `pdf-engi
 the engine the class names (ask if it names none), and leave `classoption` empty unless
 the class documents required options; set `thesis.classFile.type: vendored` and `path` to the `.cls` file name (it sits beside `_quarto.yml`)
 in `dataimago-spec.yaml`; then remove `_environment`, `thesis-class/` and `profiles/`.
-Nothing is deleted before the yes, and in the R-package layout ask before touching the
+Nothing is deleted before the yes, and for a new R package ask before touching the
 package.
-
-## Moving an older repository to the house class
-
-A repository set up before the house class has `thesis.cls`, `dataimago.sty`,
-`documentclass: thesis` and `pdf-engine: xelatex` in `_quarto.yml`, and a
-`build-thesis.yml` that installs Noto fonts. The move is for books that used the
-old default `thesis.cls` (`shipped` in the old wording, or `generated`), not for
-`vendored` ones: a vendored author keeps their class and does not move. The book
-folder is `thesis/` for content-only, or
-`packages/r-packages/<source.rPackage.name>/<quartoRoot>/` (`ui/www/` by default)
-for an R package. The move is one pull request (two in the R-package layout: the
-package, then the submodule pointer here).
-
-1. **Propose the whole move and wait for a yes.** Change nothing before it. Show
-   the author, in one message:
-   - the public repositories you will clone into a temporary folder:
-     `dataimago/dissertation-rpkg-template`, and for content-only also
-     `dataimago/dissertation-app-template` (for its `build-thesis.yml`);
-   - what you will copy into the book folder: `thesis-class/`, `_environment`,
-     `THESIS-CLS-README.md` (replacing the old one), and `profiles/` merged in
-     without overwriting any profile already there;
-   - every `_quarto.yml` change: `documentclass: thesis` becomes
-     `dataimago-thesis`, `pdf-engine: xelatex` becomes `lualatex`; add the
-     template's `lang`, `template-partials` and `filters`; remove `mainfont`,
-     `sansfont`, `mathfont`, `classoption` and the `\usepackage{dataimago}`
-     header (the profile owns those); add a `thesis:` block with the values you
-     propose and their sources (the manuscript's title page first, then the
-     spec; ask for what neither gives), and `profile:` set to the author's own
-     profile if `profiles/` holds one other than `house`, otherwise `house`; and
-     add `chapters/00-front-matter.qmd` to `chapters:` right after `index.qmd` if
-     it is not listed. Keep the book's own `output-dir` (`../docs` for
-     content-only; the template's `../../docs` is the R package's);
-   - each front-matter move: the abstract into `index.qmd`'s `abstract:`, and
-     acknowledgments and dedication into `.acknowledgments` / `.dedication` divs
-     in `chapters/00-front-matter.qmd` (created if it does not exist);
-   - in `dataimago-spec.yaml`, if `thesis.classFile.type` is `shipped` in the old
-     wording (the book was on the old default `thesis.cls`, not an institution
-     profile), set it to `generated`: after the move the book runs on the `house`
-     profile or the author's own, which is what `generated` means. Setting up a
-     real shipped profile is a separate job, only when the author asks;
-   - the workflow replaced, and, last, `thesis.cls` and `dataimago.sty` deleted;
-   - in the R-package layout, that all of this happens in the package's own
-     repository.
-
-   If `raw/manuscript/LOCKED.md` exists, also show each front-matter move against
-   the locked manuscript and wait for that confirmation too.
-2. **Copy the bundle.** From the repository root (it changes no directory and
-   stops if a template file is missing):
-   ```sh
-   SCRATCH="$(mktemp -d)"
-   git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$SCRATCH/rpkg"
-   W="$SCRATCH/rpkg/ui/www"
-   BOOK=<book folder>
-   for f in thesis-class profiles _environment THESIS-CLS-README.md; do
-     [ -e "$W/$f" ] || { echo "missing in the template: $f (stop and tell the author)"; exit 1; }
-   done
-   cp -a "$W/thesis-class" "$W/_environment" "$W/THESIS-CLS-README.md" "$BOOK/"
-   mkdir -p "$BOOK/profiles"
-   for f in "$W"/profiles/*; do              # never over a profile already there
-     [ -e "$BOOK/profiles/${f##*/}" ] || cp -a "$f" "$BOOK/profiles/"
-   done
-   # recompile the author's own profiles with the generator now vendored with the
-   # class (a .cfg compiled before the move came from another generator)
-   for y in "$BOOK"/profiles/*.yaml; do
-     id="${y##*/}"; id="${id%.yaml}"
-     case "$id" in house|*.test) continue;; esac   # not house, not a test config
-     texlua "$BOOK/thesis-class/thesis-profile.lua" "$BOOK/profiles" "$id"
-   done
-   ```
-   If `texlua` is missing, use `quarto pandoc lua` with the same arguments; if
-   neither is installed, tell the author the author profile's `.cfg` was not
-   recompiled and the move's first render may not match it.
-3. **Edit `_quarto.yml`** exactly as agreed in step 1. The `format: pdf:` keys
-   listed there are replaced (that is the move); the `thesis:` values are the
-   ones the author agreed to.
-4. **Move the front matter** as agreed: create `chapters/00-front-matter.qmd` if it
-   does not exist and list it in `chapters:`. The words stay the author's; move,
-   do not edit. An `index.qmd` landing text that should not print goes inside
-   `::: {.content-visible when-format="html"}`.
-5. **Replace `build-thesis.yml`.** This step stands on its own (a fresh clone, so
-   it does not depend on step 2's shell). From the repository root, content-only
-   (this repository's workflow):
-   ```sh
-   S="$(mktemp -d)"
-   git clone --depth 1 https://github.com/dataimago/dissertation-app-template "$S/app"
-   [ -f "$S/app/.github/workflows/build-thesis.yml" ] || { echo "missing in the template: build-thesis.yml (stop and tell the author)"; exit 1; }
-   cp "$S/app/.github/workflows/build-thesis.yml" .github/workflows/build-thesis.yml
-   ```
-   R package (the package's own workflow, which has the R setup; never this
-   repository's):
-   ```sh
-   S="$(mktemp -d)"
-   git clone --depth 1 https://github.com/dataimago/dissertation-rpkg-template "$S/rpkg"
-   [ -f "$S/rpkg/.github/workflows/build-thesis.yml" ] || { echo "missing in the template: build-thesis.yml (stop and tell the author)"; exit 1; }
-   cp "$S/rpkg/.github/workflows/build-thesis.yml" packages/r-packages/<source.rPackage.name>/.github/workflows/build-thesis.yml
-   ```
-   Do not skip it: a house-class book with the old workflow does not build.
-6. **Delete the old class, last, and only once the book points at the new one**
-   (from the repository root; set `BOOK` again, since this may be a new shell):
-   ```sh
-   BOOK=<book folder>
-   grep -q '^ *documentclass: *dataimago-thesis' "$BOOK/_quarto.yml" \
-     && rm "$BOOK/thesis.cls" "$BOOK/dataimago.sty" \
-     || echo "documentclass is not dataimago-thesis yet: thesis.cls kept"
-   ```
-7. **Render** until the PDF builds (`quarto render --to pdf` in the book folder),
-   then prepare the commit: show the author the `git` commands, never running
-   `git add`, `commit`, `push` or `gh pr create`. Content-only: one branch and pull
-   request here. R package: first in the package's repository, then the
-   submodule-pointer pull request here, with the commands of `thesis-format`
-   Step 6.
-
-`classFile.path` in the spec names the old file; leave it unless the author
-asks. It is not read by the build. `classFile.type` is the one spec field the move
-changes, and only from the old-wording `shipped` to `generated`, as agreed in step 1.
 
 ## Common build failures (from the dissertation-ai alpha, 2026-06-24)
 

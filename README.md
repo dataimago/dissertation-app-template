@@ -13,14 +13,14 @@ git clone --recursive https://github.com/{{user.githubUsername}}/{{metadata.name
 cd {{metadata.name}}
 ```
 
-The `--recursive` flag also pulls in the linked R package that holds your chapters. *If your dissertation has no R package, you can clone normally (without `--recursive`) — your chapters live right here in `thesis/` instead (see step 3).*
+The `--recursive` flag also pulls in your linked R package (with a new R package, that is where your chapters are). *If your dissertation has no R package, you can clone normally (without `--recursive`) — your chapters live right here in `thesis/` instead (see step 3).*
 
 **2. Install what you need to build the PDF locally.** You only need these to preview/build the thesis on your own machine (you can also just push and let the build run for you — step 5):
 
 - [Quarto](https://quarto.org/docs/get-started/) — the document engine. Use the version the build pins (`version:` in `.github/workflows/build-thesis.yml`, 1.11.9 at the time of writing; older releases are on [Quarto's download page](https://quarto.org/docs/download/prerelease.html) and its GitHub releases), so your local PDF matches the one GitHub builds.
 - A current **TeX Live** (2026 or newer) for the LaTeX/PDF step, with the TeX Gyre fonts, `luamml`, `tagpdf` and `latex-lab`: for example [MacTeX](https://tug.org/mactex/) or Homebrew's `texlive` on a Mac, or TeX Live from [tug.org](https://tug.org/texlive/). The thesis is built with LuaLaTeX and comes out as a tagged (accessible) PDF. TinyTeX (`quarto install tinytex`, which earlier versions of this README suggested) is not enough for the house class: use a current TeX Live, or just push and let GitHub build. After installing it, run `tlmgr install tex-gyre tex-gyre-math luamml tagpdf latex-lab latexmk selnolig xurl bookmark pdflscape caption unicode-math fontspec setspace framed footnotehyper booktabs fancyvrb float xcolor colorprofiles tcolorbox fontawesome5 pgf` (from a terminal; on a system install it needs `sudo`; it is the build's own list, and a full MacTeX already has most of it). Or skip this and just push: the build runs on GitHub.
 - The fonts: the house thesis class sets the thesis in **TeX Gyre** (a Times-style family that comes with TeX Live), so there is nothing to install separately. If a build complains a font is missing, your TeX Live lacks `tex-gyre` and `tex-gyre-math`.
-- **R** *only if your dissertation includes an R package* (the no-R path needs none).
+- **R** *only if dissertation.ai created a new R package for you* (the `thesis/` build here needs none).
 
 **3. Build your knowledge base — the first thing to do in a fresh clone.** Open this folder with your AI. In Claude Code, run **`/ingest`**; in any other tool (Codex, opencode, Cursor, ChatGPT with folder access), ask it: *"Read `.claude/skills/ingest/SKILL.md` and follow it."* Either way it is the same procedure. It reads everything under `raw/` and builds `wiki/` from it: one page per source, the synthesis pages, and a report of what it read, what it inferred, and what is still missing. The AI in this repository works *from* that knowledge base; nothing else here depends on it being clever in a single conversation.
 
@@ -29,32 +29,35 @@ The `--recursive` flag also pulls in the linked R package that holds your chapte
 
 **4. Find where your writing lives.** Each chapter is one file.
 
-- **If you have an R package** (most computational dissertations): your manuscript travels with it as a linked sub-repository (Git calls this a *submodule*). Chapters are at `packages/r-packages/<your package>/ui/www/chapters/*.qmd` — the package's name is `source.rPackage.name` in `dataimago-spec.yaml`.
-- **If you don't** (a content-only dissertation, or one whose existing repository is referenced rather than linked): your manuscript lives right here, at `thesis/chapters/*.qmd`. No submodule.
+- **If dissertation.ai created a new R package for you**: your manuscript travels with it as a linked sub-repository (Git calls this a *submodule*). Chapters are at `packages/r-packages/<your package>/ui/www/chapters/*.qmd` — the package's name is `source.rPackage.name` in `dataimago-spec.yaml`.
+- **If you have no R package, or connected an existing R package**: your manuscript lives right here, at `thesis/chapters/*.qmd`. An existing R package is linked at `packages/r-packages/<your package>/` but never written in: cite it from your chapters. The `thesis/` build has no R, so a chapter there shows code as a listing rather than running it.
+- **If you connected an existing repository that holds your whole dissertation** (referenced rather than linked): your manuscript stays in that repository. `/ingest` reads it there; working chapters exist here, in `thesis/chapters/`, only once `/import-manuscript` creates them.
 
-**5. Write + preview.** Edit a chapter, then from the directory that holds `_quarto.yml` (your R package's `ui/www/`, or `thesis/`):
+`dataimago-spec.yaml` records which of these is yours, under `source.quartoHome`. If it does not, this repository was set up before the dissertation.ai beta: the landing page and your AI assistant say so, and the fix is a new repository from dissertation.ai.
+
+**5. Write + preview.** Edit a chapter, then from the directory that holds `_quarto.yml` (your new R package's `ui/www/`, or `thesis/`):
 
 ```sh
 quarto preview        # live HTML preview while you write
 quarto render --to pdf   # build the PDF locally
 ```
 
-**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (R-package dissertations). While the manuscript repository is private, the landing page leaves out the links your readers could not open; see "While your repositories are private" below.
+**6. Commit + push.** A GitHub Actions workflow (`build-thesis.yml`) rebuilds the PDF on every push that changes your chapters: this repository's for `thesis/`, the new R package's own for its `ui/www/`. The built PDF is committed to **`docs/thesis.pdf`** in the manuscript repo and linked from this app's landing page, alongside the GitHub Pages methodology site (a new R package only). While the manuscript repository is private, the landing page leaves out the links your readers could not open; see "While your repositories are private" below.
 
 ### The submodule mental model (R-package dissertations only)
 
-Your R package is its *own* Git repository; this dissertation repo merely **points** at a specific commit of it. So: edit + commit your chapters **inside the package** (`packages/r-packages/<your package>/`), then come back here and commit the updated pointer. `git clone --recursive` and `git submodule update --init --recursive` keep the two in step. (Content-only dissertations have none of this — everything is in this one repo.)
+Your R package is its *own* Git repository; this dissertation repo merely **points** at a specific commit of it. With a new R package, edit + commit your chapters **inside the package** (`packages/r-packages/<your package>/`), then come back here and commit the updated pointer. With an existing R package you connected, your chapters are in `thesis/` here and the package is only pointed at; commit a new pointer when you want this repository to follow a newer version of it. `git clone --recursive` and `git submodule update --init --recursive` keep the two in step. (Content-only dissertations have none of this — everything is in this one repo.)
 
 ### Common problems
 
 - **`packages/r-packages/.../` is empty after cloning** — you cloned without `--recursive`. Run `git submodule update --init --recursive`.
 - **Cloning asks you to sign in, or says the repository was not found** — a private repository can be cloned only by someone signed in to GitHub with access to it, and GitHub answers "not found" to anyone else. Sign in first (`gh auth login` with the [GitHub CLI](https://cli.github.com) is the shortest way), then clone again. A private R package is a second private repository: `--recursive` needs your account to have access to both.
 - **A missing-font or missing-class error when building** — see step 2 (a current TeX Live with the TeX Gyre fonts; TinyTeX is not enough). On the house class (`documentclass: dataimago-thesis` in `_quarto.yml`), check that the folder holding `_quarto.yml` (`ui/www/` or `thesis/`) still has `thesis-class/`, `profiles/` (with the `.cfg` of the profile `_quarto.yml` names) and `_environment`. On your own class (`vendored`), check that the `.cls` sits beside `_quarto.yml` and that `documentclass` is its file name without `.cls`.
-- **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` for R-package dissertations, `thesis/**` for content-only ones).
+- **The PDF didn't rebuild after a push** — check the **Actions** tab; the build only fires on pushes that touch your chapters (`ui/www/**` in a new R package, `thesis/**` here otherwise).
 
 ## Editing your dissertation
 
-`<chapters>` below is `packages/r-packages/<your package>/ui/www/` for an R-package dissertation and `thesis/` for a content-only one.
+`<chapters>` below is `packages/r-packages/<your package>/ui/www/` when dissertation.ai created a new R package for you, and `thesis/` otherwise (an existing R package you connected included).
 
 | What you want to change | Where |
 |---|---|
@@ -78,11 +81,11 @@ After editing `dataimago-spec.yaml`, push to `main`; an automated step keeps the
 
 `<chapters>/THESIS-CLS-README.md` says more about each one.
 
-**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`), starting from the `house` profile: each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile, builds the registry's sample book with it and saves the profile next to your chapters (`<chapters>/profiles/<id>.yaml`, and its compiled `<id>.cfg`, which the PDF build reads); you confirm every value against the guide. To make your own PDF follow it, change `profile:` to `<id>` in the `thesis:` block of `<chapters>/_quarto.yml` (`/thesis-build` helps). A repository set up before the house class has no `thesis:` block yet: `/thesis-build` first proposes moving it to the house class, and the profile is used after that. You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent. To make this repository's own PDF match a profile the registry already has, use `/thesis-build`; "my school isn't in the registry" is the `generated` mode.
+**Turn your formatting guide into a profile.** In Claude Code, run **`/thesis-format`**; in any other tool, ask it: *"Read `.claude/skills/thesis-format/SKILL.md` and follow it."* It reads the guide in `raw/thesis-formatting/` and fills in a profile for the registry's house thesis class (`dataimago-thesis`), starting from the `house` profile: each value cited to the guide's page or section, and what the guide does not say listed as unstated, never guessed. It checks the profile, builds the registry's sample book with it and saves the profile next to your chapters (`<chapters>/profiles/<id>.yaml`, and its compiled `<id>.cfg`, which the PDF build reads); you confirm every value against the guide. To make your own PDF follow it, change `profile:` to `<id>` in the `thesis:` block of `<chapters>/_quarto.yml` (`/thesis-build` helps). A book on your own class (`vendored`) has no `thesis:` block and uses no profile. A book still on the older `thesis.cls` layout is from before the dissertation.ai beta and is not supported: generate a new repository from dissertation.ai. You can then choose to offer the profile to the registry, so other authors at your institution can use it; that is optional and happens only with your explicit consent. To make this repository's own PDF match a profile the registry already has, use `/thesis-build`; "my school isn't in the registry" is the `generated` mode.
 
 ## Adding committee members + advisor
 
-With the house thesis class, the names on the committee page come from the `thesis:` block in `<chapters>/_quarto.yml`: your chair under `advisors:`, the other members under `committee:`. dissertation.ai filled it in from your interview answers. Edit the names there, then commit and push the repository that holds that file: for an R-package dissertation that is the package (then commit the updated submodule pointer here), otherwise this one. `dataimago-spec.yaml`'s `advisors` block keeps a record of your interview answers; changing it does not change the names in the PDF. A `vendored` class or an older book built with `thesis.cls` has no `thesis:` block (do not add one): the names are set the way that class asks, so open the class file beside `<chapters>/_quarto.yml` (the `.cls` whose name, without `.cls`, is `documentclass` there, or `thesis.cls` on the older layout) and use the entries it defines.
+With the house thesis class, the names on the committee page come from the `thesis:` block in `<chapters>/_quarto.yml`: your chair under `advisors:`, the other members under `committee:`. dissertation.ai filled it in from your interview answers. Edit the names there, then commit and push the repository that holds that file: when dissertation.ai created a new R package for you, that is the package (then commit the updated submodule pointer here); otherwise this one. `dataimago-spec.yaml`'s `advisors` block keeps a record of your interview answers; changing it does not change the names in the PDF. A `vendored` class has no `thesis:` block (do not add one): the names are set the way that class asks, so open the class file beside `<chapters>/_quarto.yml` (the `.cls` whose name, without `.cls`, is `documentclass` there) and use the entries it defines.
 
 ## Additional information (fill in over time)
 
@@ -119,7 +122,7 @@ repository keeps your files private; it does not make a website built from
 them private. Read "While your repositories are private" below before turning
 any of it on.
 
-- **GitHub Pages (R-package dissertations):** the R package repo publishes the
+- **GitHub Pages (a new R package):** the R package repo publishes the
   thesis HTML book + PDF + package reference via its `quarto-publish.yml`.
   Enable Pages once (repo Settings → Pages → Source: GitHub Actions) if the
   provisioning flow hasn't already.

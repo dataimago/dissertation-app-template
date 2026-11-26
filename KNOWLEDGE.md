@@ -30,7 +30,7 @@ wiki/         the structured knowledge the AI maintains from raw/ — you own th
   theories/  methods/  findings/  arguments/    the research domain's synthesis pages
   analyses/     synthesized themes, comparisons, open questions; ingest-report.md
   connections/  how ideas (or your app ↔ package) relate
-thesis/       your chapters as .qmd (content-only layout; R-package layout: the package's ui/www/)
+thesis/       your chapters as .qmd (no R package, or an existing one; a referenced repository's once /import-manuscript makes them; a new R package's are in its ui/www/)
 ```
 
 ## Workflows
