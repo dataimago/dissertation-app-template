@@ -121,7 +121,7 @@ Your own work in this repository (your writing, data, analysis, figures and the 
 
 Four template files are places for your own material, and `REUSE.toml` does not list them. `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss` carry no notice at all: what you put in them is yours. `writing/STYLE.md` carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
 
-Any other listed file stays listed after you change it. If you replace one with your own, delete its line from `REUSE.toml`.
+Any other listed file stays listed after you change it, this README included: what you add to a listed file is under its MIT entry until you delete the file's line from `REUSE.toml`. Delete the line when you replace a file with your own, or when you write something in it that you do not want under MIT.
 
 ## Deployment (optional)
 
