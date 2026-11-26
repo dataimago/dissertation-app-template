@@ -3,9 +3,11 @@
 #
 # This repository has no LICENSE file at its root on purpose. The files
 # listed here came from dataimago's dissertation-app-template and are
-# MIT-licensed by dataimago; the text is in LICENSES/MIT.txt. Everything
-# else in the repository is the author's own work. This file says nothing
-# about it and gives nobody a right to reuse it.
+# MIT-licensed by dataimago; the text is in LICENSES/MIT.txt. The two files
+# in LICENSES/ are the licence texts themselves: REUSE does not list them,
+# and they stay with the files they license. Everything else in the
+# repository is the author's own work. This file says nothing about it and
+# gives nobody a right to reuse it.
 #
 # The lists name files one by one, with no wildcards, so a file the author
 # adds is never covered. Three files that came from the template are left
