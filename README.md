@@ -121,7 +121,7 @@ The rule goes by file. A file that `REUSE.toml` does not list, and that carries 
 
 The two files in `LICENSES/` are not listed either, and they are not yours: they are the license texts themselves, and they stay with the files they license. `writing/STYLE.md` is not listed, but it carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
 
-If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
+If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. It changes nothing for the files above: the entries in `REUSE.toml` stay as they are, MIT for dataimago's files and the Open Font License for the fonts.
 
 ## Deployment (optional)
 

@@ -2,8 +2,10 @@
 # https://reuse.software/spec-3.3/).
 #
 # This repository has no LICENSE file at its root on purpose. The files
-# listed here came from dataimago's dissertation-app-template and are
-# MIT-licensed by dataimago; the text is in LICENSES/MIT.txt. The two files
+# listed here came from dataimago's dissertation-app-template. The first
+# list is dataimago's own files, MIT-licensed, text in LICENSES/MIT.txt. The
+# second is the Noto fonts, which belong to the Noto Project Authors under
+# the SIL Open Font License 1.1, text in LICENSES/OFL-1.1.txt. The two files
 # in LICENSES/ are the licence texts themselves: REUSE does not list them,
 # and they stay with the files they license. Everything else in the
 # repository is the author's own work. This file says nothing about it and
