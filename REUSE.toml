@@ -8,16 +8,17 @@
 # about it and gives nobody a right to reuse it.
 #
 # The lists name files one by one, with no wildcards, so a file the author
-# adds is never covered. Two files that came from the template are left out
-# because they hold the author's own project record: dataimago-spec.yaml and
-# raw/MANIFEST.md.
+# adds is never covered. Three files that came from the template are left
+# out, with no notice at all, because they are where the author's own
+# material goes: dataimago-spec.yaml (the project's record), raw/MANIFEST.md
+# (what the author brought) and wiki/assets/site.scss (the site's own rules).
 #
-# Two more template files carry their notice in the file itself and are not
-# listed here, because the guides send the author's own text to them:
-# writing/STYLE.md and wiki/assets/site.scss. Replacing either file removes
-# the notice with the template's text. A notice in a file covers the whole
-# file, so a rule added to wiki/assets/site.scss is under MIT while the
-# notice stays.
+# writing/STYLE.md carries its notice in the file itself and is not listed
+# here: an author who replaces it with a style guide of their own removes
+# the notice with the template's text.
+#
+# An entry here stays true only while the file is still the template's. If
+# you replace a listed file with your own, delete its line.
 #
 # The empty .gitkeep placeholders are listed too, so that every file the
 # template ships is accounted for.
