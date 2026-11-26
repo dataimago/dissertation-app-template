@@ -10,7 +10,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } f
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { HOME_FIELD } from '../src/lib/manuscript-home.ts';
+import { HOME_FIELD, manuscriptHome } from '../src/lib/manuscript-home.ts';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MESSAGE = readFileSync(join(REPO, 'src', 'copy', 'predates-beta.txt'), 'utf8').trim();
@@ -121,15 +121,20 @@ test('comments inside the source block do not hide the field', () => {
 });
 
 // Round 2 on #37: the hook reads a value as YAML does, so it names the same
-// folder manuscriptHome returns (js-yaml): an apostrophe is kept, one pair of
-// surrounding quotes is removed, and ' #' inside quotes is not a comment.
-import { load } from 'js-yaml';
-import { manuscriptHome } from '../src/lib/manuscript-home.ts';
-
-for (const raw of [`author's-book`, `"my #1 book"`, `'it''s mine'`, `"quoted" # a comment`, `plain # a comment`]) {
+// folder manuscriptHome returns: an apostrophe is kept, one pair of surrounding
+// quotes is removed, and ' #' inside quotes is not a comment. Each spelling is
+// paired with the value YAML reads (this job runs with no install, so no
+// js-yaml here).
+for (const [raw, value] of [
+  [`author's-book`, `author's-book`],
+  [`"my #1 book"`, `my #1 book`],
+  [`'it''s mine'`, `it's mine`],
+  [`"quoted" # a comment`, `quoted`],
+  [`plain # a comment`, `plain`],
+]) {
   test(`a path written ${raw} names the folder manuscriptHome names`, () => {
     const s = spec({ kind: 'no-r', home: ['repo: app', `path: ${raw}`] });
-    const expected = manuscriptHome(load(s).source);
+    const expected = manuscriptHome({ case: 'no-r', rPackage: null, referencedRepo: null, [HOME_FIELD]: { repo: 'app', path: value } });
     assert.equal(expected.status, 'ok');
     assert.equal(lineOf(orient(s), '## Book'), `## Book: ${expected.bookFolder}/`);
   });
