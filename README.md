@@ -119,7 +119,7 @@ The files that came from the template are MIT-licensed by dataimago. [`REUSE.tom
 
 Your own work in this repository (your writing, data, analysis, figures and the pages you write) is yours. No file here gives anybody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
 
-Four template files are places for your own material, and `REUSE.toml` does not list them. `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss` carry no notice at all: what you put in them is yours. `writing/STYLE.md` carries dataimago's MIT notice inside the file, so if you replace it with your own style guide, the notice goes with the text you replaced.
+Four template files are places for your own material, and `REUSE.toml` does not list them. `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss` carry no notice at all: what you put in them is yours. `writing/STYLE.md` carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
 
 Any other listed file stays listed after you change it. If you replace one with your own, delete its line from `REUSE.toml`.
 

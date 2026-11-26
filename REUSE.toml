@@ -14,8 +14,8 @@
 # (what the author brought) and wiki/assets/site.scss (the site's own rules).
 #
 # writing/STYLE.md carries its notice in the file itself and is not listed
-# here: an author who replaces it with a style guide of their own removes
-# the notice with the template's text.
+# here. The notice licenses the whole file; a style guide of the author's
+# own replaces the file and leaves the notice out.
 #
 # An entry here stays true only while the file is still the template's. If
 # you replace a listed file with your own, delete its line.
@@ -60,6 +60,7 @@ path = [
   "CLAUDE.md",
   "KNOWLEDGE.md",
   "README.md",
+  "REUSE.toml",
   "next.config.js",
   "package.json",
   "packages/r-packages/.gitkeep",
