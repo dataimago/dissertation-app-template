@@ -117,11 +117,11 @@ This repository has no `LICENSE` file at its root, on purpose: nothing here lice
 
 The files that came from the template are MIT-licensed by dataimago. [`REUSE.toml`](REUSE.toml) lists them one by one, and [`LICENSES/MIT.txt`](LICENSES/MIT.txt) has the text. The fonts under `wiki/assets/fonts/` belong to the Noto Project Authors, under the SIL Open Font License in [`LICENSES/OFL-1.1.txt`](LICENSES/OFL-1.1.txt).
 
-Your own work in this repository (your writing, data, analysis, figures and the pages you write) is yours. No file here gives anybody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
+The rule goes by file. A file that `REUSE.toml` does not list, and that carries no notice of its own, is yours: nothing here gives anybody the right to reuse it. That is every file you create (your writing, data, analysis, figures and the pages you write), and three that came from the template to hold your material: `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss`. A listed file, this README included, stays under its MIT entry with whatever you later add to it, until you delete its line from `REUSE.toml`. Delete the line when you replace a file with your own, or before you write something in it that you do not want under MIT.
 
-Four template files are places for your own material, and `REUSE.toml` does not list them. `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss` carry no notice at all: what you put in them is yours. `writing/STYLE.md` carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
+`writing/STYLE.md` is not listed either, but it carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
 
-Any other listed file stays listed after you change it, this README included: what you add to a listed file is under its MIT entry until you delete the file's line from `REUSE.toml`. Delete the line when you replace a file with your own, or when you write something in it that you do not want under MIT.
+If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
 
 ## Deployment (optional)
 
