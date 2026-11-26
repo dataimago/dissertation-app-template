@@ -122,6 +122,10 @@ test('any other book folder: the unsupported-folder message, and no folder named
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: 'raw/janepkg' }),
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: '/abs/pkg' }),
     spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: null, name: '../../raw' }),
+    // Only packages/r-packages/<name>, the one form the hub writes.
+    ...['./raw/private', '././raw/private', 'raw', 'packages/r-packages/../../raw', 'vendor/janepkg', 'packages/r-packages/a/b'].map(
+      (submodulePath) => spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath }),
+    ),
   ]) {
     const out = orient(s, { dirs: ['thesis/chapters', 'raw/private/chapters'] });
     assert.ok(out.includes(UNSUPPORTED), out);
@@ -136,9 +140,11 @@ test('the package fallback packages/r-packages/<name> is used when submodulePath
 });
 
 test('a value in the spec is read as text, never run', () => {
-  const out = orient(spec({ kind: 'retrofit', rPackage: true, home: ['repo: package', 'path: ui/www'], submodulePath: 'x$(echo RAN-IT)' }));
-  assert.match(lineOf(out, '## Book'), /x\$\(echo RAN-IT\)\/ui\/www\/$/);
-  assert.doesNotMatch(out, /xRAN-IT/);
+  // The submodulePath form now refuses '$(', so the value that would run is the
+  // repo: a command there must not run while the hook reads it.
+  const out = orient(spec({ kind: 'no-r', home: ['repo: $(echo RAN-IT)', 'path: thesis'] }));
+  assert.doesNotMatch(out, /RAN-IT/);
+  assert.ok(out.includes(MESSAGE), out);
 });
 
 // Grok on #37: a YAML comment inside `source`, at any indent, is not a key.

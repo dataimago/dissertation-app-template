@@ -73,16 +73,40 @@ test('any other book folder names no folder, including a schema-valid one', () =
   }
 });
 
-test('the package folder obeys the path rule and never sits at or under raw/', () => {
+// Support only what is built: the hub always writes submodulePath as
+// packages/r-packages/<package name>, so that is the only form accepted.
+test('the package folder is only packages/r-packages/<name>, as the hub writes it', () => {
   const withPackage = (rPackage) =>
     source({ case: 'retrofit', rPackage, ...home({ repo: 'package', path: 'ui/www' }) });
-  for (const submodulePath of ['../raw/private', '/abs/pkg', 'raw', 'raw/janepkg', 'packages/../../out', 'pkg x']) {
+  for (const submodulePath of [
+    './raw/private',
+    '././raw/private',
+    'raw',
+    'packages/r-packages/../../raw',
+    '../raw/private',
+    '/abs/pkg',
+    'raw/janepkg',
+    'vendor/janepkg',
+    'packages/r-packages/',
+    'packages/r-packages/.',
+    'packages/r-packages/..',
+    'packages/r-packages/a/b',
+    'packages//r-packages/janepkg',
+    'packages\\r-packages\\janepkg',
+    'packages/r-packages/jane pkg',
+    'packages/r-packages/pkg\u2028x',
+  ]) {
     assert.deepEqual(manuscriptHome(withPackage({ ...pkg, submodulePath })), UNSUPPORTED, submodulePath);
   }
   // With no submodulePath the fallback packages/r-packages/<name> is checked too.
   const { submodulePath: _drop, ...noPath } = pkg;
   assert.deepEqual(manuscriptHome(withPackage({ ...noPath, name: '../../raw' })), UNSUPPORTED);
   assert.equal(manuscriptHome(withPackage(noPath)).bookFolder, 'packages/r-packages/janepkg/ui/www');
+  // A name with the characters a package or repository name allows.
+  assert.equal(
+    manuscriptHome(withPackage({ ...pkg, submodulePath: 'packages/r-packages/data.table_2-x' })).bookFolder,
+    'packages/r-packages/data.table_2-x/ui/www',
+  );
 });
 
 test('a spec from before the beta, or one the rule cannot read: the predates-beta message', () => {

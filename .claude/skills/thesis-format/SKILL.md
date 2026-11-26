@@ -295,9 +295,9 @@ git -C <submodulePath> fetch origin
 git -C <submodulePath> checkout "$(git -C <submodulePath> symbolic-ref --short refs/remotes/origin/HEAD)"
 git switch -c profile/<id>-pointer
 git add <submodulePath>
-git commit -m "Update <name> to include the <institution> profile"
+git commit -m "Update <source.rPackage.name> to include the <institution> profile"
 git push -u origin profile/<id>-pointer
-gh pr create --title "Update <name> pointer" --body "Points at the merged profile."
+gh pr create --title "Update <source.rPackage.name> pointer" --body "Points at the merged profile."
 ```
 
 The author merges. Never run any git command that writes inside `$SCRATCH/registry`: it

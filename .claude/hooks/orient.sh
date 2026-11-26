@@ -56,14 +56,13 @@ done < <(awk -v F="${HOME_FIELD:-quartoHome}" '
   sect == "referencedRepo" && /^    url:/ { print "referenced=1" }
 ' dataimago-spec.yaml 2>/dev/null)
 book=""; book_note=""; verdict=""
-# A folder from this repository's root that is safe to name: relative by the
-# rules @dataimago/spec and dataimago::validate_spec() enforce (no leading / or
-# \, no .. segment, no control characters or line separators), and not at or
-# under raw/ (the author's sources).
+# The one package folder that is built, as src/lib/manuscript-home.ts's
+# PACKAGE_ROOT: exactly packages/r-packages/<name>, as the hub writes it, with one
+# segment of the characters a package or repository name allows (never . or ..).
 safe_root() {
-  case "$1" in ""|/*|\\*|raw|raw/*) return 1 ;; esac
-  case "/$1/" in */../*|*\\..\\*|*/..\\*|*\\../*) return 1 ;; esac
-  case "$1" in *[[:cntrl:]]*|*$'\xe2\x80\xa8'*|*$'\xe2\x80\xa9'*) return 1 ;; esac
+  case "$1" in packages/r-packages/.|packages/r-packages/..) return 1 ;; esac
+  LC_ALL=C printf '%s' "$1" | LC_ALL=C grep -qE '^packages/r-packages/[A-Za-z0-9._-]+$' || return 1
+  [ "$(printf '%s' "$1" | wc -l | tr -d ' ')" = 0 ] || return 1
   return 0
 }
 if [ -z "$home_set" ] || [ -n "$old_root" ]; then

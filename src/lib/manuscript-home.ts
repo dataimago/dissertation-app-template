@@ -20,16 +20,12 @@
  *
  * A spec from before the beta (no such field, or the old
  * `source.rPackage.quartoRoot`) is not supported: it gets the one plain message
- * in src/copy/predates-beta.txt, never a guess. So does one that breaks the two
- * rules @dataimago/spec enforces (dataimago-ai#365): a referenced repository
- * must say `repo: 'referenced'`, and `path` is relative to its repository: no
- * leading `/` or `\`, no `..` segment, no control characters or line
- * separators (RELATIVE_PATH, the same pattern as @dataimago/spec's and
- * dataimago::validate_spec()'s).
+ * in src/copy/predates-beta.txt, never a guess. So does one whose repo does
+ * not fit the source (a referenced repository must say `repo: 'referenced'`).
+ * Paths are compared as written against the two folders that are built
+ * (BOOK_FOLDER, PACKAGE_ROOT), so a path the schema refuses, or one it allows
+ * but nothing builds, names no folder (src/copy/unsupported-book-folder.txt).
  */
-// eslint-disable-next-line no-control-regex -- refusing control characters is the point
-const RELATIVE_PATH = /^(?![/\\])(?!(?:.*[/\\])?\.\.(?:[/\\]|$))[^\u0000-\u001f\u007f\u2028\u2029]+$/;
-
 export const HOME_FIELD = 'quartoHome';
 
 export interface SpecSource {
@@ -67,11 +63,14 @@ const UNSUPPORTED: ManuscriptHome = { status: 'unsupported-folder' };
  */
 export const BOOK_FOLDER = { app: 'thesis', package: 'ui/www' } as const;
 
-/** A package folder from this repository's root that is safe to name: relative
- *  by the path rule, and not at or under `raw/` (the author's sources). */
-function safePackageRoot(root: string): boolean {
-  return RELATIVE_PATH.test(root) && root !== 'raw' && !root.startsWith('raw/');
-}
+/**
+ * The one form of package folder that is built: `packages/r-packages/<name>`,
+ * exactly as the hub writes `source.rPackage.submodulePath`, with one segment
+ * of the characters a package or repository name allows (never `.` or `..`).
+ * Support only what is built: anything else (`./raw/private`, `raw`, a nested
+ * or backslashed path) names no folder.
+ */
+const PACKAGE_ROOT = /^packages\/r-packages\/(?!\.{1,2}$)[A-Za-z0-9._-]+$/;
 
 function at(
   bookFolder: string,
@@ -97,7 +96,7 @@ export function manuscriptHome(source: SpecSource): ManuscriptHome {
       if (!pkg) return PREDATES;
       if (path !== undefined && path !== BOOK_FOLDER.package) return UNSUPPORTED;
       const root = pkg.submodulePath ?? `packages/r-packages/${pkg.name}`;
-      if (!safePackageRoot(root)) return UNSUPPORTED;
+      if (!PACKAGE_ROOT.test(root)) return UNSUPPORTED;
       return at(`${root}/${BOOK_FOLDER.package}`, true, BOOK_FOLDER.package);
     }
     case 'referenced':
