@@ -2,24 +2,22 @@ MIT License
 
 Copyright (c) 2026 dataimago
 
-Scope. In this license, "the Software" means only the files that dataimago
-publishes in its dissertation-app-template repository
-(https://github.com/dataimago/dissertation-app-template), in the form
-published there, wherever copies of them appear in this repository. That is
-the application shell, the agent harness, the build and publishing workflows,
-and the starter pages the template ships.
+What this license covers. It covers dataimago's template material: every
+file dataimago publishes in its dissertation-app-template repository
+(https://github.com/dataimago/dissertation-app-template), and dataimago's
+portions of any of those files that this repository's author later edits.
 
-"The Software" does not include the work of this repository's author: their
-writing, data, analysis, figures, the pages they write, and their changes to
-the template's files. That work belongs to its author, who alone chooses
-whether and how to license it. This license grants no right to it.
+It does not cover the work of this repository's author: their writing, data,
+analysis, figures, the pages they write, and whatever else is their own
+original expression. That work belongs to its author, who alone chooses
+whether and how to license it, in a license file of their own.
 
-"The Software" does not include third-party material, which keeps its own
-license: the fonts under wiki/assets/fonts/ are under the SIL Open Font
-License, and each font's license text sits beside it.
+It does not cover third-party material, which keeps its own license: the
+fonts under wiki/assets/fonts/ are under the SIL Open Font License, and each
+font's license text sits beside it.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of the Software as defined above and its associated documentation files, to deal
+of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
