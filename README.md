@@ -113,9 +113,11 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 
 ## License
 
-The files that came from the template are MIT-licensed by dataimago, and stay so where you edit them, for the part that is dataimago's. [`LICENSE`](LICENSE) has the text and says what it covers.
+This repository has no `LICENSE` file at its root, on purpose: nothing here licenses your work for you.
 
-Your own work in this repository (your writing, data, analysis, figures and the pages you write) is yours. `LICENSE` does not cover it, and it gives nobody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a license file of your own that names what it covers. A note in this README does not change what `LICENSE` says.
+The files that came from the template are MIT-licensed by dataimago. [`REUSE.toml`](REUSE.toml) lists them one by one, and [`LICENSES/MIT.txt`](LICENSES/MIT.txt) has the text. The fonts under `wiki/assets/fonts/` belong to the Noto Project Authors, under the SIL Open Font License in [`LICENSES/OFL-1.1.txt`](LICENSES/OFL-1.1.txt).
+
+Your own work in this repository (your writing, data, analysis, figures and the pages you write) is yours. No file here gives anybody the right to reuse it. If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. The template's files stay MIT either way.
 
 ## Deployment (optional)
 
