@@ -5,9 +5,13 @@
 # listed here came from dataimago's dissertation-app-template. The first
 # list is dataimago's own files, MIT-licensed, text in LICENSES/MIT.txt. The
 # second is the Noto fonts, which belong to the Noto Project Authors under
-# the SIL Open Font License 1.1, text in LICENSES/OFL-1.1.txt. The two files
-# in LICENSES/ are the licence texts themselves: REUSE does not list them,
-# and they stay with the files they license. Everything else in the
+# the SIL Open Font License 1.1, text in LICENSES/OFL-1.1.txt. The last two
+# lists are for the thesis book when dissertation.ai puts it in this
+# repository: dataimago's thesis tooling and profiles, MIT, and the house
+# thesis class, under the LaTeX Project Public License 1.3c or later, text
+# in LICENSES/LPPL-1.3c.txt. The files in LICENSES/ are the licence texts
+# themselves: REUSE does not list them, and they stay with the files they
+# license. Everything else in the
 # repository is the author's own work. This file says nothing about it and
 # gives nobody a right to reuse it.
 #
@@ -166,3 +170,43 @@ path = [
 ]
 SPDX-FileCopyrightText = "2022 The Noto Project Authors"
 SPDX-License-Identifier = "OFL-1.1"
+
+# The thesis book, when it lives in this repository. dissertation.ai copies
+# these files into thesis/ at provisioning when the book's home is here (no R
+# package of its making); the template itself does not ship them, and an
+# entry whose file is not there is ignored. They are named one by one. The
+# files the author writes under thesis/ (the chapters, index.qmd,
+# references.bib, _quarto.yml, the AI statement) have no entry.
+
+# dataimago's thesis tooling and the profiles.
+[[annotations]]
+path = [
+  "thesis/THESIS-CLS-README.md",
+  "thesis/_environment",
+  "thesis/profiles/house.cfg",
+  "thesis/profiles/house.yaml",
+  "thesis/thesis-class/check-pdf-fonts.sh",
+  "thesis/thesis-class/registry-source.json",
+  "thesis/thesis-class/sync.py",
+]
+SPDX-FileCopyrightText = "2026 dataimago"
+SPDX-License-Identifier = "MIT"
+
+# The house thesis class, copied from dataimago/dissertation-thesis-classes
+# by way of dissertation-rpkg-template. Each file carries the same notice in
+# its own header: the LaTeX Project Public License, 1.3c or later, text in
+# LICENSES/LPPL-1.3c.txt.
+[[annotations]]
+path = [
+  "thesis/thesis-class/before-body.tex",
+  "thesis/thesis-class/dataimago-thesis.cls",
+  "thesis/thesis-class/doc-class.tex",
+  "thesis/thesis-class/font-settings.latex",
+  "thesis/thesis-class/fonts.latex",
+  "thesis/thesis-class/thesis-divs.lua",
+  "thesis/thesis-class/thesis-profile.lua",
+  "thesis/thesis-class/title.tex",
+  "thesis/thesis-class/toc.tex",
+]
+SPDX-FileCopyrightText = "2026 dataimago"
+SPDX-License-Identifier = "LPPL-1.3c+"
