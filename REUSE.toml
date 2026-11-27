@@ -1,0 +1,168 @@
+# What dataimago licenses in this repository, file by file (REUSE 3.3,
+# https://reuse.software/spec-3.3/).
+#
+# This repository has no LICENSE file at its root on purpose. The files
+# listed here came from dataimago's dissertation-app-template. The first
+# list is dataimago's own files, MIT-licensed, text in LICENSES/MIT.txt. The
+# second is the Noto fonts, which belong to the Noto Project Authors under
+# the SIL Open Font License 1.1, text in LICENSES/OFL-1.1.txt. The two files
+# in LICENSES/ are the licence texts themselves: REUSE does not list them,
+# and they stay with the files they license. Everything else in the
+# repository is the author's own work. This file says nothing about it and
+# gives nobody a right to reuse it.
+#
+# The lists name files one by one, with no wildcards, so a file the author
+# adds is never covered. Three files that came from the template are left
+# out, with no notice at all, because they are where the author's own
+# material goes: dataimago-spec.yaml (the project's record), raw/MANIFEST.md
+# (what the author brought) and wiki/assets/site.scss (the site's own rules).
+#
+# writing/STYLE.md carries its notice in the file itself and is not listed
+# here. The notice licenses the whole file; a style guide of the author's
+# own replaces the file and leaves the notice out.
+#
+# An entry here stays true only while the file is still the template's. If
+# you replace a listed file with your own, delete its line.
+#
+# The empty .gitkeep placeholders are listed too, so that every file the
+# template ships is accounted for.
+#
+# An entry here stays true only while the file is still the template's. If
+# you replace a listed file with your own, delete its line.
+#
+# `precedence` is left at its default (`closest`): a copyright and licence
+# header inside a file replaces the entry for that file here, for the whole
+# file.
+
+version = 1
+
+# dataimago's template files.
+[[annotations]]
+path = [
+  ".claude/agents/literature-synthesizer.md",
+  ".claude/agents/methods-reviewer.md",
+  ".claude/agents/repo-coordinator.md",
+  ".claude/agents/thesis-build-agent.md",
+  ".claude/hooks/orient.sh",
+  ".claude/settings.json",
+  ".claude/skills/coordinate/SKILL.md",
+  ".claude/skills/import-manuscript/SKILL.md",
+  ".claude/skills/ingest/SKILL.md",
+  ".claude/skills/thesis-build/SKILL.md",
+  ".claude/skills/thesis-format/SKILL.md",
+  ".eslintrc.json",
+  ".github/template-review/RULES.md",
+  ".github/workflows/build-thesis.yml",
+  ".github/workflows/ci.yml",
+  ".github/workflows/composer-review.yml",
+  ".github/workflows/design-sync-check.yml",
+  ".github/workflows/generate.yml",
+  ".github/workflows/vercel-deploy.yml",
+  ".github/workflows/wiki-publish.yml",
+  ".gitignore",
+  "AGENTS.md",
+  "CLAUDE.md",
+  "KNOWLEDGE.md",
+  "README.md",
+  "REUSE.toml",
+  "next.config.js",
+  "package.json",
+  "packages/r-packages/.gitkeep",
+  "postcss.config.js",
+  "public/.gitkeep",
+  "raw/.ingestignore",
+  "raw/INBOX.md",
+  "raw/PRIVATE.md",
+  "raw/README.md",
+  "raw/advisor/.gitkeep",
+  "raw/background/.gitkeep",
+  "raw/code/.gitkeep",
+  "raw/data/.gitkeep",
+  "raw/inbox/.dataimago-keep",
+  "raw/manuscript/.gitkeep",
+  "raw/private/.dataimago-keep",
+  "raw/research/.gitkeep",
+  "raw/style/.gitkeep",
+  "raw/thesis-formatting/.gitkeep",
+  "src/app/globals.css",
+  "src/app/layout.tsx",
+  "src/app/page.tsx",
+  "src/copy/predates-beta.txt",
+  "src/copy/unsupported-book-folder.txt",
+  "src/lib/manuscript-home.ts",
+  "src/lib/read-links.ts",
+  "tailwind.config.js",
+  "tools/ingest-check.mjs",
+  "tools/manuscript-home.test.mjs",
+  "tools/orient.test.mjs",
+  "tools/read-links.test.mjs",
+  "tsconfig.json",
+  "wiki/.dataimago/design-update.json",
+  "wiki/.dataimago/design.json",
+  "wiki/.dataimago/specimen.md",
+  "wiki/.gitignore",
+  "wiki/_quarto.yml",
+  "wiki/assets/a11y-fixups.html",
+  "wiki/assets/a11y-skip-link.html",
+  "wiki/assets/fonts/cyrillic-ext/fonts.css",
+  "wiki/assets/fonts/cyrillic/fonts.css",
+  "wiki/assets/fonts/greek-ext/fonts.css",
+  "wiki/assets/fonts/greek/fonts.css",
+  "wiki/assets/fonts/lang.css",
+  "wiki/assets/fonts/latin-ext/fonts.css",
+  "wiki/assets/fonts/latin/fonts.css",
+  "wiki/assets/fonts/math/fonts.css",
+  "wiki/assets/fonts/vietnamese/fonts.css",
+  "wiki/assets/neutral-dark.scss",
+  "wiki/assets/neutral-light.scss",
+  "wiki/claims.qmd",
+  "wiki/registry.qmd",
+  "writing/README.md",
+]
+SPDX-FileCopyrightText = "2026 dataimago"
+SPDX-License-Identifier = "MIT"
+
+# The Noto fonts and the licence texts shipped beside them. They are not
+# dataimago's: the SIL Open Font License 1.1 is in LICENSES/OFL-1.1.txt.
+[[annotations]]
+path = [
+  "wiki/assets/fonts/cyrillic-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/cyrillic-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/cyrillic-ext/noto-sans.woff2",
+  "wiki/assets/fonts/cyrillic/OFL-NotoSans.txt",
+  "wiki/assets/fonts/cyrillic/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/cyrillic/noto-sans-italic.woff2",
+  "wiki/assets/fonts/cyrillic/noto-sans-mono.woff2",
+  "wiki/assets/fonts/cyrillic/noto-sans.woff2",
+  "wiki/assets/fonts/greek-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/greek-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/greek-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/greek-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/greek-ext/noto-sans.woff2",
+  "wiki/assets/fonts/greek/OFL-NotoSans.txt",
+  "wiki/assets/fonts/greek/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/greek/noto-sans-italic.woff2",
+  "wiki/assets/fonts/greek/noto-sans-mono.woff2",
+  "wiki/assets/fonts/greek/noto-sans.woff2",
+  "wiki/assets/fonts/latin-ext/OFL-NotoSans.txt",
+  "wiki/assets/fonts/latin-ext/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/latin-ext/noto-sans-italic.woff2",
+  "wiki/assets/fonts/latin-ext/noto-sans-mono.woff2",
+  "wiki/assets/fonts/latin-ext/noto-sans.woff2",
+  "wiki/assets/fonts/latin/OFL-NotoSans.txt",
+  "wiki/assets/fonts/latin/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/latin/noto-sans-italic.woff2",
+  "wiki/assets/fonts/latin/noto-sans-mono.woff2",
+  "wiki/assets/fonts/latin/noto-sans.woff2",
+  "wiki/assets/fonts/math/OFL-NotoSansMath.txt",
+  "wiki/assets/fonts/math/noto-sans-math.woff2",
+  "wiki/assets/fonts/vietnamese/OFL-NotoSans.txt",
+  "wiki/assets/fonts/vietnamese/OFL-NotoSansMono.txt",
+  "wiki/assets/fonts/vietnamese/noto-sans-italic.woff2",
+  "wiki/assets/fonts/vietnamese/noto-sans-mono.woff2",
+  "wiki/assets/fonts/vietnamese/noto-sans.woff2",
+]
+SPDX-FileCopyrightText = "2022 The Noto Project Authors"
+SPDX-License-Identifier = "OFL-1.1"

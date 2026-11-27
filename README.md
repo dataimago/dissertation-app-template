@@ -113,7 +113,15 @@ The principle: the `dataimago-spec.yaml` is the complete representation of your 
 
 ## License
 
-MIT
+This repository has no `LICENSE` file at its root, on purpose: nothing here licenses your work for you.
+
+The files that came from the template are MIT-licensed by dataimago. [`REUSE.toml`](REUSE.toml) lists them one by one, and [`LICENSES/MIT.txt`](LICENSES/MIT.txt) has the text. The fonts under `wiki/assets/fonts/` belong to the Noto Project Authors, under the SIL Open Font License in [`LICENSES/OFL-1.1.txt`](LICENSES/OFL-1.1.txt).
+
+The rule goes by file. A file that `REUSE.toml` does not list, and that carries no notice of its own, is yours: nothing here gives anybody the right to reuse it. That is every file you create (your writing, data, analysis, figures and the pages you write), and three that came from the template to hold your material: `dataimago-spec.yaml`, `raw/MANIFEST.md` and `wiki/assets/site.scss`. A listed file, this README included, stays under its MIT entry with whatever you later add to it, until you delete its line from `REUSE.toml`. Delete the line when you replace a file with your own, or before you write something in it that you do not want under MIT.
+
+The two files in `LICENSES/` are not listed either, and they are not yours: they are the license texts themselves, and they stay with the files they license. `writing/STYLE.md` is not listed, but it carries dataimago's MIT notice inside the file, as two `SPDX` lines that license the whole file. A style guide of your own replaces the file and leaves those lines out.
+
+If you want to license your work, that is your choice to make, with your advisor and your institution's rules in mind: add a `LICENSE` file of your own, and say in it what it covers. It changes nothing for the files above: the entries in `REUSE.toml` stay as they are, MIT for dataimago's files and the Open Font License for the fonts.
 
 ## Deployment (optional)
 
