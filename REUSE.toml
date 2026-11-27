@@ -13,8 +13,8 @@
 # themselves: REUSE does not list them, and they stay with the files they
 # license. Everything else the author wrote is the author's own work. This
 # file says nothing about it and gives nobody a right to reuse it. A file
-# copied in from somewhere else keeps its owner's terms, whether or not it
-# has a line here: a profile from the thesis-class registry is dataimago's,
+# that came from somewhere else keeps its owner's terms, whoever put it here
+# and whether or not it has a line here: a profile from the thesis-class registry is dataimago's,
 # MIT, and its two paths belong in the "thesis tooling and the profiles"
 # list below, beside the house profile's.
 #
