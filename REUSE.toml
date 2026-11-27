@@ -14,9 +14,9 @@
 # license. Everything else the author wrote is the author's own work. This
 # file says nothing about it and gives nobody a right to reuse it. A file
 # that came from somewhere else keeps its owner's terms, whoever put it here
-# and whether or not it has a line here: a profile from the thesis-class registry is dataimago's,
-# MIT, and its two paths belong in the "thesis tooling and the profiles"
-# list below, beside the house profile's.
+# and whether or not it has a line here: a profile from the thesis-class
+# registry is dataimago's, MIT, and its two files say so in their first
+# lines, so it needs no line here.
 #
 # The lists name files one by one, with no wildcards, so a file the author
 # adds is never covered. Three files that came from the template are left
@@ -181,10 +181,9 @@ SPDX-License-Identifier = "OFL-1.1"
 # references.bib, _quarto.yml, ai-contribution-statement.qmd) have no entry,
 # and neither has a profile the author writes. Only the house profile is
 # copied at provisioning. A profile copied in later from the thesis-class
-# registry is dataimago's too, under the same MIT terms. Its name is not
-# known ahead of time: add its two paths to the list just below, as
-#   "thesis/profiles/<id>.cfg",
-#   "thesis/profiles/<id>.yaml",
+# registry is dataimago's too, under the same MIT terms. Its two files name
+# the copyright holder and the licence in their first lines, as the house
+# profile's do, so it needs no entry here.
 
 # dataimago's thesis tooling and the profiles.
 [[annotations]]
