@@ -11,9 +11,12 @@
 # thesis class, under the LaTeX Project Public License 1.3c or later, text
 # in LICENSES/LPPL-1.3c.txt. The files in LICENSES/ are the licence texts
 # themselves: REUSE does not list them, and they stay with the files they
-# license. Everything else in the
-# repository is the author's own work. This file says nothing about it and
-# gives nobody a right to reuse it.
+# license. Everything else the author wrote is the author's own work. This
+# file says nothing about it and gives nobody a right to reuse it. A file
+# copied in from somewhere else keeps its owner's terms, whether or not it
+# has a line here: a profile from the thesis-class registry is dataimago's,
+# MIT, and its two paths belong in the "thesis tooling and the profiles"
+# list below, beside the house profile's.
 #
 # The lists name files one by one, with no wildcards, so a file the author
 # adds is never covered. Three files that came from the template are left
@@ -25,14 +28,13 @@
 # here. The notice licenses the whole file; a style guide of the author's
 # own replaces the file and leaves the notice out.
 #
-# An entry here stays true only while the file is still the template's. If
-# you replace a listed file with your own, delete its line.
-#
 # The empty .gitkeep placeholders are listed too, so that every file the
 # template ships is accounted for.
 #
-# An entry here stays true only while the file is still the template's. If
-# you replace a listed file with your own, delete its line.
+# An MIT entry here stays true only while the file is still the template's.
+# If you replace such a file with your own, delete its line. The thesis
+# class and the fonts are different: their terms are in the files and in
+# LICENSES/, and stay with them whether or not their lines remain here.
 #
 # `precedence` is left at its default (`closest`): a copyright and licence
 # header inside a file replaces the entry for that file here, for the whole
@@ -179,8 +181,10 @@ SPDX-License-Identifier = "OFL-1.1"
 # references.bib, _quarto.yml, ai-contribution-statement.qmd) have no entry,
 # and neither has a profile the author writes. Only the house profile is
 # copied at provisioning. A profile copied in later from the thesis-class
-# registry is dataimago's, MIT under the registry's licence, and is not
-# named here because its name is not known ahead of time.
+# registry is dataimago's too, under the same MIT terms. Its name is not
+# known ahead of time: add its two paths to the list just below, as
+#   "thesis/profiles/<id>.cfg",
+#   "thesis/profiles/<id>.yaml",
 
 # dataimago's thesis tooling and the profiles.
 [[annotations]]
