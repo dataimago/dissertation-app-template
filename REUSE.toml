@@ -175,8 +175,12 @@ SPDX-License-Identifier = "OFL-1.1"
 # these files into thesis/ at provisioning when the book's home is here (no R
 # package of its making); the template itself does not ship them, and an
 # entry whose file is not there is ignored. They are named one by one. The
-# files the author writes under thesis/ (the chapters, index.qmd,
-# references.bib, _quarto.yml, the AI statement) have no entry.
+# files the author writes under thesis/ (chapters/, index.qmd,
+# references.bib, _quarto.yml, ai-contribution-statement.qmd) have no entry,
+# and neither has a profile the author writes. Only the house profile is
+# copied at provisioning. A profile copied in later from the thesis-class
+# registry is dataimago's, MIT under the registry's licence, and is not
+# named here because its name is not known ahead of time.
 
 # dataimago's thesis tooling and the profiles.
 [[annotations]]
