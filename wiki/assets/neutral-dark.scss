@@ -1,4 +1,4 @@
-// @dataimago/css-neutral@0.1.0-alpha.27 dist/quarto/neutral-dark.scss · sha256:945b96e43a2d060a4132b14a4edea94c0d732a83ab6e1b2c174951a34ebe8749 · generated from tokens; do not edit · restore: npx -p @dataimago/css-neutral@0.1.0-alpha.27 dataimago-sync
+// @dataimago/css-neutral@0.1.0-alpha.28 dist/quarto/neutral-dark.scss · sha256:a00de9b9ad4bef457dd98874bfbc5897241bd5dc344fc41873e4429f102a899e · generated from tokens; do not edit · restore: npx -p @dataimago/css-neutral@0.1.0-alpha.28 dataimago-sync
 // neutral dark theme for Quarto 1.11 — generated from the design tokens (tools/formats/quarto.mjs).
 // Bootstrap Sass variables are compile-time sRGB; runtime colours come from the custom properties below.
 
@@ -134,6 +134,8 @@ $text-muted: #a8a29e;
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --measure-prose: 65ch;
+  --measure-wide: 72ch;
   --color-dataviz-okabe-ito-orange: #E69F00;
   --color-dataviz-okabe-ito-sky-blue: #56B4E9;
   --color-dataviz-okabe-ito-bluish-green: #009E73;
